@@ -1,0 +1,31 @@
+{
+  "name": "rda-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "watch": "nodemon index.js",
+    "test": "jest --config=./jestConfig.js --runInBand"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.1",
+    "jest": "^28.1.0",
+    "koa": "^2.13.4",
+    "koa-body": "^5.0.0",
+    "lodash": "^4.17.21",
+    "mongoose": "^6.3.4",
+    "nodemon": "^2.0.16",
+    "uuid": "^8.3.2"
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "semi": false,
+    "max-len": 120,
+    "printWidth": 120,
+    "tabWidth": 2,
+    "arrowParens": "avoid"
+  }
+}
