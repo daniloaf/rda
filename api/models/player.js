@@ -7,7 +7,7 @@ const Player = new mongoose.Schema({
     type: String,
     required: true
   },
-  giveName: {
+  nickname: {
     type: String,
     required: true
   },

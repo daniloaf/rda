@@ -18,6 +18,6 @@ app.use(async (ctx, next) => {
   }
 })
 
-app.use(router)
+app.use(router.routes())
 
 module.exports = app
