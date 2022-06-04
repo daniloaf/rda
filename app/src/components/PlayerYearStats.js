@@ -1,15 +1,116 @@
-import Box from "@mui/material/Box";
-import { DataGrid } from "@mui/x-data-grid";
+import React from "react";
+import Table from "@mui/material/Table";
+import TableCell from "@mui/material/TableCell";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import TableContainer from "@mui/material/TableContainer";
+import TableBody from "@mui/material/TableBody";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import Collapse from "@mui/material/Collapse";
+import IconButton from "@mui/material/IconButton";
+import { DateTime, Info } from "luxon";
 
-const columns = [
-  { field: "year", headerName: "Ano" },
-  { field: "goals", headerName: "Gols" },
-  { field: "assists", headerName: "Assistências" },
-  { field: "attendance", headerName: "Presentas" },
-  { field: "wins", headerName: "Vitórias" },
-  { field: "draws", headerName: "Empates" },
-  { field: "losses", headerName: "Derrotas" },
-];
+const getMonthName = (monthNumber) => {
+  return Info.months("long", { locale: DateTime.local().locale })[monthNumber];
+};
+
+const YearRow = (props) => {
+  const { stat } = props;
+  const [open, setOpen] = React.useState(false);
+
+  return (
+    <React.Fragment>
+      <TableRow sx={{ borderBottom: "unset" }}>
+        <TableCell>
+          <IconButton
+            aria-label="expand row"
+            size="small"
+            onClick={() => setOpen(!open)}
+          >
+            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+          </IconButton>
+        </TableCell>
+        <TableCell>{stat.year}</TableCell>
+        <TableCell>{stat.attendance}</TableCell>
+        <TableCell>{stat.goals}</TableCell>
+        <TableCell>{stat.assists}</TableCell>
+        <TableCell>{stat.wins}</TableCell>
+        <TableCell>{stat.draws}</TableCell>
+        <TableCell>{stat.losses}</TableCell>
+      </TableRow>
+      <MonthRows open={open} />
+    </React.Fragment>
+  );
+};
+
+const MonthCell = ({ open, children }) => {
+  return (
+    <TableCell
+      style={{ paddingBottom: 0, paddingTop: 0, border: "none" }}
+      colSpan={1}
+    >
+      <Collapse in={open} timeout="auto" unmountOnExit>
+        {children}
+      </Collapse>
+    </TableCell>
+  );
+};
+
+const MonthRows = ({ monthStats, open }) => {
+  monthStats = monthStats || [
+    {
+      month: 2,
+      goals: 1,
+      assists: 1,
+      attendance: 3,
+      wins: 2,
+      draws: 1,
+      losses: 1,
+    },
+    {
+      month: 3,
+      goals: 1,
+      assists: 1,
+      attendance: 3,
+      wins: 2,
+      draws: 1,
+      losses: 1,
+    },
+    {
+      month: 4,
+      goals: 1,
+      assists: 1,
+      attendance: 3,
+      wins: 2,
+      draws: 1,
+      losses: 1,
+    },
+    {
+      month: 8,
+      goals: 1,
+      assists: 1,
+      attendance: 3,
+      wins: 2,
+      draws: 1,
+      losses: 1,
+    },
+  ];
+  return monthStats.map((stat) => {
+    return (
+      <TableRow style={{ border: "none" }}>
+        <MonthCell open={open} />
+        <MonthCell open={open}>{getMonthName(stat.month)}</MonthCell>
+        <MonthCell open={open}>{stat.attendance}</MonthCell>
+        <MonthCell open={open}>{stat.goals}</MonthCell>
+        <MonthCell open={open}>{stat.assists}</MonthCell>
+        <MonthCell open={open}>{stat.wins}</MonthCell>
+        <MonthCell open={open}>{stat.draws}</MonthCell>
+        <MonthCell open={open}>{stat.losses}</MonthCell>
+      </TableRow>
+    );
+  });
+};
 
 const PlayerYearStats = ({ stats }) => {
   stats = stats || [
@@ -45,9 +146,25 @@ const PlayerYearStats = ({ stats }) => {
     },
   ];
   return (
-    <Box sx={{ display: "inline-flex", height: "100%" }}>
-      <DataGrid hideFooter={true} columns={columns} rows={stats} />
-    </Box>
+    <TableContainer>
+      <Table>
+        <TableHead>
+          <TableCell />
+          <TableCell>Ano</TableCell>
+          <TableCell>Presenças</TableCell>
+          <TableCell>Gols</TableCell>
+          <TableCell>Assistências</TableCell>
+          <TableCell>Vitórias</TableCell>
+          <TableCell>Empates</TableCell>
+          <TableCell>Derrotas</TableCell>
+        </TableHead>
+        <TableBody>
+          {stats.map((stat) => {
+            return <YearRow stat={stat} />;
+          })}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 };
 

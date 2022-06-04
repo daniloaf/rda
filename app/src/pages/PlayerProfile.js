@@ -36,7 +36,9 @@ const PlayerProfile = ({ playerId }) => {
           <PlayerData data={playerData} />
         </Grid>
       </Grid>
-      <PlayerYearStats />
+      <Paper>
+        <PlayerYearStats />
+      </Paper>
     </Stack>
   );
 };

@@ -1,13 +1,11 @@
 import { DateTime } from "luxon";
 
-import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
 import TableContainer from "@mui/material/TableContainer";
-import Typography from "@mui/material/Typography";
 
-import { styled, createTheme, ThemeProvider } from "@mui/system";
+import { styled } from "@mui/system";
 
 const CustomizedTableCell = styled(TableCell)(({ theme }) => ({
   border: "none",
@@ -33,8 +31,8 @@ const getPlayerAge = (data) => {
 
 const PlayerData = ({ data }) => {
   return (
-    <TableContainer sx={{ display: "inline-flex" }}>
-      <Table>
+    <TableContainer sx={{ display: "inline-flex", marginTop: "10px" }}>
+      <Table size="small">
         <TableRow>
           <CustomizedTableCell width={50} align="left">
             <b>Nome</b>
