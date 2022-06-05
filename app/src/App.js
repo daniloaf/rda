@@ -9,8 +9,7 @@ import '@fontsource/roboto/700.css';
 function App() {
   return (
     <div className="App">
-      <PlayerProfile playerId={1} />
-
+      <PlayerProfile playerId={"8bf07d58-9e2b-4d37-81d3-788ba17582a3"} />
     </div>
   );
 }

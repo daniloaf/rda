@@ -1,7 +1,7 @@
 const playerServices = require("../services/player")
 
 const getPlayer = async ctx => {
-  const player = playerServices.getPlayerById(ctx.params.id)
+  const player = await playerServices.getPlayerById(ctx.params.id)
   if (!player) {
     throw {
       status: 400,

@@ -47,7 +47,7 @@ const YearRow = (props) => {
 const MonthCell = ({ open, children }) => {
   return (
     <TableCell
-      style={{ paddingBottom: 0, paddingTop: 0, border: "none" }}
+      style={{ paddingBottom: 0, paddingTop: 5, border: "none" }}
       colSpan={1}
     >
       <Collapse in={open} timeout="auto" unmountOnExit>
@@ -98,7 +98,7 @@ const MonthRows = ({ monthStats, open }) => {
   ];
   return monthStats.map((stat) => {
     return (
-      <TableRow style={{ border: "none" }}>
+      <TableRow>
         <MonthCell open={open} />
         <MonthCell open={open}>{getMonthName(stat.month)}</MonthCell>
         <MonthCell open={open}>{stat.attendance}</MonthCell>
