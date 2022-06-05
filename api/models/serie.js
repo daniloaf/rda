@@ -1,4 +1,4 @@
-const mongoose = require("mongoose")
+const mongoose = require("../services/mongoose")
 const BaseSchema = require("./baseSchema")
 const Match = require("./match")
 const Team = require("./team")

@@ -1,15 +1,5 @@
-const mongoose = require('mongoose');
 const app = require("./app")
-
-mongoose.connection.on('error', (err) => {
-  console.log('mongo connection error: %s', err.message || err);
-});
-
-mongoose.connection.on('open', () => {
-  console.log('mongo connection opened');
-});
-
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true });
+require("./services/mongoose")
 
 const port = process.env.PORT
 

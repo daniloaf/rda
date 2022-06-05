@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "watch": "nodemon index.js",
-    "test": "jest --config=./jestConfig.js --runInBand"
+    "test": "jest --config=./jestConfig.js --runInBand",
+    "createTestData": "node scripts/createTestData.js"
   },
   "author": "",
   "license": "ISC",

@@ -1,5 +1,5 @@
 const uuid = require("uuid")
-const mongoose = require("mongoose")
+const mongoose = require("../services/mongoose")
 
 const BaseSchema = new mongoose.Schema({
   _id: {

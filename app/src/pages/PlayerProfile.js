@@ -19,7 +19,7 @@ const PlayerProfile = ({ playerId }) => {
   
   useEffect(() => {
     getPlayerData(playerId).then(setPlayerData).catch()
-  }, [])
+  }, [playerId])
   
   return (
     <Stack
@@ -32,8 +32,8 @@ const PlayerProfile = ({ playerId }) => {
         <Grid item>
           <PlayerCard
             data={{
-              givenName: "Gordão",
-              image: "https://i.stack.imgur.com/gMbrL.jpg",
+              givenName: playerData.nickname,
+              image: playerData.picture || "https://i.stack.imgur.com/gMbrL.jpg",
             }}
             width={150}
             height={200}
