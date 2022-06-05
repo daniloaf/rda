@@ -11,6 +11,13 @@ const getPlayer = async ctx => {
   ctx.body = player
 }
 
+const getPlayers = async ctx => {
+  const query = ctx.request.query
+  const players = await playerServices.getPlayers(query)
+  ctx.body = players
+}
+
 module.exports = {
-  getPlayer
+  getPlayer,
+  getPlayers
 }

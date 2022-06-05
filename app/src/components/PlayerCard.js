@@ -1,13 +1,27 @@
 import React from "react";
-import Typography from '@mui/material/Typography';
-import Stack from '@mui/material/Stack';
+import Typography from "@mui/material/Typography";
+import Card from "@mui/material/Card";
+import CardActionArea from "@mui/material/CardActionArea";
+import CardMedia from "@mui/material/CardMedia";
+import CardContent from "@mui/material/CardContent";
 
-
-const PlayerCard = ({ data, width, height }) => {
-  return <Stack direction="column" spacing={0} sx={{ display: 'inline-flex' }} padding={1}>
-    <img alt="Jogador" src={data.image} width={width} height={height} />
-    <Typography variant="h4">{data.givenName}</Typography>
-  </Stack>
+const PlayerCard = ({ data, width = 150, height = 200, onClick }) => {
+  return (
+    <Card variant="outlined" sx={{ maxWidth: width, padding: 1 }}>
+      <CardActionArea disabled={!onClick} onClick={onClick} >
+        <CardMedia
+          component="img"
+          alt="Jogador"
+          src={data.picture}
+          width={width}
+          height={height}
+        />
+        <CardContent sx={{ height: 10 }}>
+          <Typography variant="h5">{data.nickname}</Typography>
+        </CardContent>
+      </CardActionArea>
+    </Card>
+  );
 };
 
 export default PlayerCard;

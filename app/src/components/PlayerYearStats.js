@@ -98,7 +98,7 @@ const MonthRows = ({ monthStats, open }) => {
   ];
   return monthStats.map((stat) => {
     return (
-      <TableRow>
+      <TableRow key={stat.month}>
         <MonthCell open={open} />
         <MonthCell open={open}>{getMonthName(stat.month)}</MonthCell>
         <MonthCell open={open}>{stat.attendance}</MonthCell>
@@ -149,18 +149,20 @@ const PlayerYearStats = ({ stats }) => {
     <TableContainer>
       <Table>
         <TableHead>
-          <TableCell />
-          <TableCell>Ano</TableCell>
-          <TableCell>Presenças</TableCell>
-          <TableCell>Gols</TableCell>
-          <TableCell>Assistências</TableCell>
-          <TableCell>Vitórias</TableCell>
-          <TableCell>Empates</TableCell>
-          <TableCell>Derrotas</TableCell>
+          <TableRow>
+            <TableCell />
+            <TableCell>Ano</TableCell>
+            <TableCell>Presenças</TableCell>
+            <TableCell>Gols</TableCell>
+            <TableCell>Assistências</TableCell>
+            <TableCell>Vitórias</TableCell>
+            <TableCell>Empates</TableCell>
+            <TableCell>Derrotas</TableCell>
+          </TableRow>
         </TableHead>
         <TableBody>
           {stats.map((stat) => {
-            return <YearRow stat={stat} />;
+            return <YearRow key={`year-${stat.year}`} stat={stat} />;
           })}
         </TableBody>
       </Table>
