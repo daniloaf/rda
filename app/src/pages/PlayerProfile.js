@@ -25,9 +25,8 @@ const PlayerProfile = () => {
 
   return (
     <Stack
-      width="50%"
       spacing={1}
-      sx={{ display: "inline-flex", justifyContent: "flex-start" }}
+      sx={{ display: "inline-flex", position: "fixed", left: 0, width: "80%" }}
     >
       <Grid container spacing={0} component={Paper}>
         <Grid item>

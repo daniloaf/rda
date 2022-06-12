@@ -14,11 +14,11 @@ const PlayersBoard = () => {
   }, []);
 
   return (
-    <Box width="50%" sx={{ display: "inline-flex" }} component={Paper}>
-      <Grid container spacing={2} padding={1}>
+    <Box sx={{ display: "inline-flex", position: "fixed", left: 0, width: "80%" }}>
+      <Grid container spacing={1} padding={5}>
         {players.map((player) => {
           return (
-            <Grid item key={player._id} xs={3}>
+            <Grid item key={player._id} xs={6} sm={4} md={3} lg={3} xl={2}>
               <PlayerCard
                 data={player}
                 onClick={() => navigate(`./${player._id}`)}

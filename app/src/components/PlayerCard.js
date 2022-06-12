@@ -7,7 +7,7 @@ import CardContent from "@mui/material/CardContent";
 
 const PlayerCard = ({ data, width = 150, height = 200, onClick }) => {
   return (
-    <Card variant="outlined" sx={{ maxWidth: width, padding: 1 }}>
+    <Card variant="outlined" sx={{ width: width, padding: 1 }}>
       <CardActionArea disabled={!onClick} onClick={onClick} >
         <CardMedia
           component="img"
