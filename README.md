@@ -1,2 +1,1 @@
-# rda
-Web application for Racha dos Amigles
+This is a starter template for [Learn Next.js](https://nextjs.org/learn).
