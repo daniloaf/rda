@@ -1,4 +1,6 @@
 import React, { ReactNode } from "react";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import Table from "@mui/material/Table";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
@@ -9,62 +11,25 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import Collapse from "@mui/material/Collapse";
 import IconButton from "@mui/material/IconButton";
-// import { DateTime, Info } from "luxon";
 import PlayerYearStats from "../types/PlayerYearStats";
 import PlayerMonthStatsData from "../types/PlayerMonthStatsData";
+import useRequest from "../utils/useRequest";
+import { useRouter } from "next/router";
 
 const getMonthName = (monthNumber: number) => {
-  return String(monthNumber);
-  // return Info.months("long", { locale: DateTime.local().locale })[monthNumber];
+  const date = new Date();
+  date.setMonth(monthNumber - 1);
+  return format(date, "LLL", { locale: ptBR }).toLocaleUpperCase();
 };
 
 const YearRow = ({ stats }: { stats: PlayerYearStats }) => {
   const [open, setOpen] = React.useState(false);
-  const monthStats = [
-    {
-      month: 2,
-      goals: 1,
-      assists: 1,
-      attendance: 3,
-      wins: 2,
-      draws: 1,
-      losses: 1,
-    },
-    {
-      month: 3,
-      goals: 1,
-      assists: 1,
-      attendance: 3,
-      wins: 2,
-      draws: 1,
-      losses: 1,
-    },
-    {
-      month: 4,
-      goals: 1,
-      assists: 1,
-      attendance: 3,
-      wins: 2,
-      draws: 1,
-      losses: 1,
-    },
-    {
-      month: 8,
-      goals: 1,
-      assists: 1,
-      attendance: 3,
-      wins: 2,
-      draws: 1,
-      losses: 1,
-    },
-  ];
 
   return (
-    <React.Fragment>
+    <>
       <TableRow sx={{ borderBottom: "unset" }}>
         <TableCell>
           <IconButton
-            aria-label="expand row"
             size="small"
             onClick={() => setOpen(!open)}
           >
@@ -75,12 +40,13 @@ const YearRow = ({ stats }: { stats: PlayerYearStats }) => {
         <TableCell>{stats.attendance}</TableCell>
         <TableCell>{stats.goals}</TableCell>
         <TableCell>{stats.assists}</TableCell>
+        <TableCell>{stats.score}</TableCell>
         <TableCell>{stats.wins}</TableCell>
         <TableCell>{stats.draws}</TableCell>
         <TableCell>{stats.losses}</TableCell>
       </TableRow>
-      {/* <MonthRows open={open} monthStats={monthStats} /> */}
-    </React.Fragment>
+      <MonthRows open={open} year={stats.year} />
+    </>
   );
 };
 
@@ -104,26 +70,46 @@ const MonthCell = ({
 };
 
 const MonthRows = ({
-  monthStats,
+  year,
   open,
 }: {
-  monthStats: Array<PlayerMonthStatsData>;
+  year: number;
   open: boolean;
 }) => {
-  return monthStats.map((stat) => {
-    return (
-      <TableRow key={stat.month}>
-        <MonthCell open={open} />
-        <MonthCell open={open}>{getMonthName(stat.month)}</MonthCell>
-        <MonthCell open={open}>{stat.attendance}</MonthCell>
-        <MonthCell open={open}>{stat.goals}</MonthCell>
-        <MonthCell open={open}>{stat.assists}</MonthCell>
-        <MonthCell open={open}>{stat.wins}</MonthCell>
-        <MonthCell open={open}>{stat.draws}</MonthCell>
-        <MonthCell open={open}>{stat.losses}</MonthCell>
-      </TableRow>
-    );
+  const router = useRouter();
+
+  const { id: playerId } = router.query;
+
+  const { data, error } = useRequest({
+    url: `/api/players/${playerId}/stats/${year}`,
   });
+
+  if (open) {
+    if (error) return <div>Failed to load</div>;
+    if (!data) return <div>Loading...</div>;
+  }
+
+  const monthStats = data as Array<PlayerMonthStatsData>;
+
+  return (
+    <>
+      {open && monthStats && monthStats.map((stat) => {
+        return (
+          <TableRow key={`${stat.month}/${stat.year}`}>
+            <MonthCell open={open} />
+            <MonthCell open={open}>{getMonthName(stat.month)}</MonthCell>
+            <MonthCell open={open}>{stat.attendance}</MonthCell>
+            <MonthCell open={open}>{stat.goals}</MonthCell>
+            <MonthCell open={open}>{stat.assists}</MonthCell>
+            <MonthCell open={open}>{stat.score}</MonthCell>
+            <MonthCell open={open}>{stat.wins}</MonthCell>
+            <MonthCell open={open}>{stat.draws}</MonthCell>
+            <MonthCell open={open}>{stat.losses}</MonthCell>
+          </TableRow>
+        );
+      })}
+    </>
+  );
 };
 
 export default function PlayerYearStatsComponent({
@@ -131,38 +117,6 @@ export default function PlayerYearStatsComponent({
 }: {
   stats: Array<PlayerYearStats>;
 }) {
-  stats = stats || [
-    {
-      id: 1,
-      year: 2022,
-      goals: 5,
-      assists: 3,
-      attendance: 12,
-      wins: 6,
-      draws: 4,
-      losses: 2,
-    },
-    {
-      id: 2,
-      year: 2021,
-      goals: 5,
-      assists: 3,
-      attendance: 12,
-      wins: 6,
-      draws: 4,
-      losses: 2,
-    },
-    {
-      id: 3,
-      year: 2020,
-      goals: 5,
-      assists: 3,
-      attendance: 12,
-      wins: 6,
-      draws: 4,
-      losses: 2,
-    },
-  ];
   return (
     <TableContainer>
       <Table>
@@ -173,6 +127,7 @@ export default function PlayerYearStatsComponent({
             <TableCell>Presenças</TableCell>
             <TableCell>Gols</TableCell>
             <TableCell>Assistências</TableCell>
+            <TableCell>Nota</TableCell>
             <TableCell>Vitórias</TableCell>
             <TableCell>Empates</TableCell>
             <TableCell>Derrotas</TableCell>

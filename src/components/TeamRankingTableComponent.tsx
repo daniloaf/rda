@@ -8,25 +8,6 @@ import Typography from "@mui/material/Typography";
 import { Paper } from "@mui/material";
 import TeamRankingData from "../types/TeamRankingData";
 
-const teamName = (color: string) => {
-  let team;
-  switch (color) {
-    case "blue":
-      team = "Azul";
-      break;
-    case "orange":
-      team = "Laranja";
-      break;
-    case "white":
-      team = "Branco";
-      break;
-    default:
-      team = "Sem cor";
-      break;
-  }
-  return team;
-};
-
 export default function TeamRankingTableComponent({
   title,
   ranking,
@@ -35,8 +16,8 @@ export default function TeamRankingTableComponent({
   ranking: Array<TeamRankingData>;
 }) {
   return (
-    <Paper sx={{ padding: 1 }}>
-      <Typography>{title}</Typography>
+    <Paper sx={{ padding: 1 }} elevation={2}>
+      <Typography variant="h6"  align="center">{title}</Typography>
       <TableContainer>
         <Table>
           <TableHead>
@@ -53,7 +34,7 @@ export default function TeamRankingTableComponent({
               <TableRow key={r.color}>
                 <TableCell>{r.color}</TableCell>
                 <TableCell>{r.score}</TableCell>
-                <TableCell>{r.victories}</TableCell>
+                <TableCell>{r.wins}</TableCell>
                 <TableCell>{r.draws}</TableCell>
                 <TableCell>{r.losses}</TableCell>
               </TableRow>

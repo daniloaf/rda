@@ -16,54 +16,44 @@ const CustomizedTableCell = styled(TableCell)(() => ({
 export default function GameDayPlayerStatsComponent({
   title,
   playersStats,
+  abbreviate = false,
+  limit,
 }: {
   title: string;
   playersStats: Array<GameDayPlayerStats>;
+  abbreviate?: boolean;
+  limit?: number;
 }) {
   return (
-    <Paper sx={{ padding: 1 }}>
-      <Typography>{title}</Typography>
+    <Paper sx={{ padding: 1 }} elevation={2}>
+      <Typography variant="h6" align="center">
+        {title}
+      </Typography>
       <TableContainer sx={{ display: "inline-flex", marginTop: "10px" }}>
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell>Atleta</TableCell>
-              <TableCell>Gols</TableCell>
-              <TableCell>Assistências</TableCell>
-              <TableCell>Nota</TableCell>
-              <TableCell>Vitórias</TableCell>
-              <TableCell>Empates</TableCell>
-              <TableCell>Derrotas</TableCell>
+              <TableCell>{abbreviate ? "A" : "Atleta"}</TableCell>
+              <TableCell>{abbreviate ? "G" : "Gols"}</TableCell>
+              <TableCell>{abbreviate ? "A" : "Assitências"}</TableCell>
+              <TableCell>{abbreviate ? "N" : "Notas"}</TableCell>
+              <TableCell>{abbreviate ? "T" : "Time"}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {playersStats.map((playerStats) => {
-              return (
-                <TableRow key={playerStats.playerId}>
-                  <TableCell align="left">
-                    {playerStats.nickname}
-                  </TableCell>
-                  <TableCell align="left">
-                    {playerStats.goals}
-                  </TableCell>
-                  <TableCell align="left">
-                    {playerStats.assists}
-                  </TableCell>
-                  <TableCell align="left">
-                    {playerStats.score}
-                  </TableCell>
-                  <TableCell align="left">
-                    {playerStats.victories}
-                  </TableCell>
-                  <TableCell align="left">
-                    {playerStats.draws}
-                  </TableCell>
-                  <TableCell align="left">
-                    {playerStats.losses}
-                  </TableCell>
-                </TableRow>
-              );
-            })}
+            {playersStats
+              .slice(0, limit || playersStats.length)
+              .map((playerStats) => {
+                return (
+                  <TableRow key={playerStats.playerId}>
+                    <TableCell align="left">{playerStats.nickname}</TableCell>
+                    <TableCell align="left">{playerStats.goals}</TableCell>
+                    <TableCell align="left">{playerStats.assists}</TableCell>
+                    <TableCell align="left">{playerStats.score}</TableCell>
+                    <TableCell align="left">{playerStats.teamColor}</TableCell>
+                  </TableRow>
+                );
+              })}
           </TableBody>
         </Table>
       </TableContainer>

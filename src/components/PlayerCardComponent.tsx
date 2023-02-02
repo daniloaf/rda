@@ -6,7 +6,6 @@ import CardActionArea from "@mui/material/CardActionArea";
 import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
 import { PlayerCardData } from "../types/PlayerCardData";
-import Image from "next/image";
 
 export default function PlayerCardComponent({
   player,
@@ -20,7 +19,7 @@ export default function PlayerCardComponent({
   linkEndabled?: boolean;
 }) {
   return (
-    <Card variant="outlined" sx={{ minWidth: width, width: width, padding: 1 }}>
+    <Card variant="outlined" sx={{ minWidth: width, width: width}}>
       <CardActionArea
         disabled={!linkEndabled}
         LinkComponent={Link}
@@ -31,10 +30,9 @@ export default function PlayerCardComponent({
           alt="Jogador"
           image={player.picture}
           width={width}
-          height={height}
         />
-        <CardContent sx={{ height: 10 }}>
-          <Typography variant="h5">{player.nickname}</Typography>
+        <CardContent sx={{ height: 5, display: "flex", justifyContent: "center" }}>
+          <Typography align="center" variant="caption">{player.nickname}</Typography>
         </CardContent>
       </CardActionArea>
     </Card>

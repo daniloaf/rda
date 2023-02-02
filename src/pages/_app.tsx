@@ -1,16 +1,13 @@
 import * as React from "react";
-import useSWR from "swr";
 import Head from "next/head";
 import { AppProps } from "next/app";
 import { CacheProvider, EmotionCache } from "@emotion/react";
-import { ThemeProvider, CssBaseline } from "@mui/material";
+import { ThemeProvider, CssBaseline, Grid, Paper } from "@mui/material";
 import theme from "../config/theme";
 import ApplicationBarComponent from "../components/ApplicationBarComponent";
 import SideBarComponent from "../components/SideBarComponent";
 import createEmotionCache from "../config/createEmotionCache";
-import axios, { AxiosError } from "axios";
-import TeamRankingData from "../types/TeamRankingData";
-import GameDayPlayerStats from "../types/GameDayPlayerStats";
+import useRequest from "../utils/useRequest";
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -20,14 +17,7 @@ interface MyAppProps extends AppProps {
 }
 
 export default function MyApp(props: MyAppProps) {
-  const fetcher = (url: string) => axios.get(url).then((res) => res.data);
-  const { data, error } = useSWR("api/sidebarData", fetcher) as {
-    data: {
-      currentTeamRanking: Array<TeamRankingData>;
-      currentGameDayPlayerStats: Array<GameDayPlayerStats>;
-    };
-    error: AxiosError;
-  };
+  const { data, error } = useRequest({ url: "/api/sidebarData" });
 
   if (error) return <div>Failed to load</div>;
   if (!data) return <div>Loading...</div>;
@@ -37,37 +27,30 @@ export default function MyApp(props: MyAppProps) {
     <CacheProvider value={emotionCache}>
       <Head>
         <title>Racha dos Amigles</title>
-        <meta name="viewport" content="initial-scale=1, width=device-width" />
       </Head>
       <ThemeProvider theme={theme}>
-        {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline />
         <ApplicationBarComponent />
-        <br />
-        <div
-          style={{
-            width: "19%",
-            position: "fixed",
-            float: "right",
-            right: 5,
-            margin: 1,
-            padding: 1,
-          }}
+        <Grid
+          container
+          direction="row"
+          xs={12}
+          width="100%"
+          justifyContent="flex-end"
+          padding={1}
         >
-          <SideBarComponent currentTeamRanking={data.currentTeamRanking} />
-        </div>
-        <div
-          style={{
-            width: "79%",
-            padding: 1,
-            position: "fixed",
-            float: "left",
-            left: 5,
-          }}
-        ></div>
-        <div style={{ width: "80%" }}>
-          <Component {...pageProps} />
-        </div>
+          <Grid item xs={10}>
+            <Paper sx={{ padding: 1 }} variant="outlined">
+              <Component {...pageProps} />
+            </Paper>
+          </Grid>
+          <Grid item xs={2}>
+            <SideBarComponent
+              currentTeamRanking={data.currentTeamRanking}
+              currentPlayersStats={data.currentPlayersStats}
+            />
+          </Grid>
+        </Grid>
       </ThemeProvider>
     </CacheProvider>
   );

@@ -1,28 +1,27 @@
-import { Schema, model } from "mongoose";
+import mongoose from "../services/mongoose";
 import BaseSchema, { IBaseSchema } from "./baseSchema";
-import Match, { IMatch } from "./match";
+import GameDay, { IGameDay } from "./gameDay";
 import Team, { ITeam } from "./team";
 
-interface IPlayerStats {
-  playerId: string;
-  amount: number;
-}
-
-interface IGameDay {
-  matches: IMatch;
-  goals: Array<IPlayerStats>;
-  assists: Array<IPlayerStats>;
-}
-
-interface ISerie extends IBaseSchema {
+export interface ISerie extends IBaseSchema {
+  startDate: Date;
+  endDate: Date;
   month: number;
   year: Number;
   teams: Array<ITeam>;
   gameDays: Array<IGameDay>;
 }
 
-const Serie = new Schema<ISerie>({
+const SerieSchema = new mongoose.Schema<ISerie>({
   ...BaseSchema.obj,
+  startDate: {
+    type: Date,
+    required: true,
+  },
+  endDate: {
+    type: Date,
+    required: false,
+  },
   month: {
     type: Number,
     required: true,
@@ -38,33 +37,12 @@ const Serie = new Schema<ISerie>({
   ],
   gameDays: [
     {
-      matches: {
-        type: Match.schema,
-      },
-      goals: [
-        {
-          playerId: {
-            type: String,
-            ref: "Player",
-          },
-          amount: {
-            type: Number,
-          },
-        },
-      ],
-      assists: [
-        {
-          playerId: {
-            type: String,
-            ref: "Player",
-          },
-          amount: {
-            type: Number,
-          },
-        },
-      ],
+      type: GameDay.schema,
     },
   ],
 });
 
-export default model("serie", Serie);
+const Serie =
+  mongoose.models.Serie || mongoose.model<ISerie>("Serie", SerieSchema);
+
+export default Serie;

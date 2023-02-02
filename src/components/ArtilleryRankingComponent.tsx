@@ -52,7 +52,7 @@ export default function ArtilleryRankingComponent({
 
   return (
     <Paper sx={{ padding: 1 }}>
-      <Typography>Artilharia (Maio)</Typography>
+      <Typography>Artilharia</Typography>
       <TableContainer>
         <Table>
           <TableHead>

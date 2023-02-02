@@ -1,97 +1,80 @@
-import { Paper, Typography } from "@mui/material";
+import { Collapse, Grid, IconButton, Paper, Typography } from "@mui/material";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { GetServerSideProps } from "next";
 import GameDayPlayerStatsComponent from "../components/GameDayPlayerStatsComponent";
 import TeamRankingTableComponent from "../components/TeamRankingTableComponent";
-import dbConnect from "../services/dbConnect";
 import GameDayPlayerStats from "../types/GameDayPlayerStats";
 import TeamRankingData from "../types/TeamRankingData";
+import * as GameDayServices from "../services/gameDay";
+import DateComponent from "../components/DateComponent";
+import MatchesListComponent from "../components/MatchesListComponent";
+import GameDayMatchData from "../types/GameDayMatchData";
+import { useState } from "react";
 
 export default function Home({
   latestTeamRanking,
   latestGameDayPlayerStats,
+  latestGameDate,
+  latestGameDayMatches,
 }: {
   latestTeamRanking: Array<TeamRankingData>;
   latestGameDayPlayerStats: Array<GameDayPlayerStats>;
+  latestGameDate: string;
+  latestGameDayMatches: Array<GameDayMatchData>;
 }) {
+  const [open, setOpen] = useState(true);
   return (
     <>
-      <Paper variant="outlined" sx={{ padding: 1 }}>
-        <Typography>Racha 02/02/2023</Typography>
-        <GameDayPlayerStatsComponent
-          title="Atletas"
-          playersStats={latestGameDayPlayerStats}
-        />
+      <Grid container direction="row">
+        <IconButton
+          aria-label="expand row"
+          size="small"
+          onClick={() => setOpen(!open)}
+        >
+          {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+        </IconButton>
+        <Typography variant="h5">
+          Racha <DateComponent dateString={latestGameDate} />
+        </Typography>
+      </Grid>
+      <Collapse in={open} timeout="auto" unmountOnExit>
         <br />
-        <TeamRankingTableComponent title="Times" ranking={latestTeamRanking} />
-      </Paper>
+        <Grid container width="100%">
+          <Grid item width="50%">
+            <GameDayPlayerStatsComponent
+              title="Atletas"
+              playersStats={latestGameDayPlayerStats}
+            />
+          </Grid>
+          <Grid item width="50%">
+            <TeamRankingTableComponent
+              title="Times"
+              ranking={latestTeamRanking}
+            />
+            <br />
+            <MatchesListComponent matches={latestGameDayMatches} />
+          </Grid>
+        </Grid>
+      </Collapse>
     </>
   );
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  await dbConnect();
-
-  const latestTeamRanking = [
-    {
-      color: "Azul",
-      score: 9,
-      victories: 3,
-      draws: 0,
-      losses: 0,
-    },
-    {
-      color: "Laranja",
-      score: 4,
-      victories: 1,
-      draws: 1,
-      losses: 2,
-    },
-    {
-      color: "Branco",
-      score: 1,
-      victories: 0,
-      draws: 1,
-      losses: 3,
-    },
-  ];
-
-  const latestGameDayPlayerStats = [
-    {
-      playerId: "1",
-      nickname: "Gordão",
-      goals: 1,
-      assists: 1,
-      score: 1,
-      victories: 1,
-      draws: 1,
-      losses: 1,
-    },
-    {
-      playerId: "2",
-      nickname: "Vieira",
-      goals: 1,
-      assists: 1,
-      score: 1,
-      victories: 1,
-      draws: 1,
-      losses: 1,
-    },
-    {
-      playerId: "3",
-      nickname: "Zé",
-      goals: 1,
-      assists: 1,
-      score: 1,
-      victories: 1,
-      draws: 1,
-      losses: 1,
-    },
-  ];
+  const {
+    latestTeamRanking,
+    latestGameDayPlayerStats,
+    latestGameDate,
+    latestGameDayMatches,
+  } = await GameDayServices.getLatestGameDayRankings();
 
   return {
     props: {
       latestTeamRanking,
       latestGameDayPlayerStats,
+      latestGameDate,
+      latestGameDayMatches,
     },
   };
 };

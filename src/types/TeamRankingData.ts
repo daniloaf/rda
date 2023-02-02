@@ -1,7 +1,7 @@
 export default interface TeamRankingData {
   color: "string";
   score: number;
-  victories: number;
+  wins: number;
   draws: number;
   losses: number;
 }

@@ -1,12 +1,13 @@
-import { Schema, model } from "mongoose";
+import mongoose from "../services/mongoose";
 import BaseSchema, { IBaseSchema } from "./baseSchema";
+import Player from "./player";
 
 export interface ITeam extends IBaseSchema {
-  color: String;
+  color: string;
   players: Array<string>;
 }
 
-const Team = new Schema<ITeam>({
+const TeamSchema = new mongoose.Schema<ITeam>({
   ...BaseSchema.obj,
   color: {
     type: String,
@@ -15,9 +16,11 @@ const Team = new Schema<ITeam>({
   players: [
     {
       type: String,
-      ref: "Player",
+      ref: Player,
     },
   ],
 });
 
-export default model("team", Team);
+const Team = mongoose.models.Team || mongoose.model<ITeam>("Team", TeamSchema);
+
+export default Team;

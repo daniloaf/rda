@@ -1,10 +1,9 @@
-// import { DateTime } from "date-fns";
-
+import { parseISO, differenceInYears } from "date-fns";
+import TableContainer from "@mui/material/TableContainer";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
-import TableContainer from "@mui/material/TableContainer";
 
 import { styled } from "@mui/system";
 import PlayerProfileData from "../types/PlayerProfileData";
@@ -20,26 +19,25 @@ const CustomizedTableCell = styled(TableCell)(() => ({
 //     M: "Meio-campo",
 //     F: "Atacante",
 //   };
-//   return positionsMap[data.preferredPosition] || "-";
+//   return positionsMap[data.position] || "-";
 // };
 
-// const getPlayerAge = (data) => {
-//   return (
-//     parseInt(
-//       "1"
-//       // DateTime.fromISO(data.birthdate, "dd.MM.yyyy").diffNow("years").years
-//     ) * -1
-//   ).toString();
-// };
+const getPlayerAge = (date: string) => {
+  return differenceInYears(new Date(), parseISO(date)).toString();
+};
 
-export default function PlayerDataComponent({ player }: { player: PlayerProfileData }) {
+export default function PlayerDataComponent({
+  player,
+}: {
+  player: PlayerProfileData;
+}) {
   return (
     <TableContainer sx={{ display: "inline-flex", marginTop: "10px" }}>
       <Table size="small">
         <TableBody>
           <TableRow>
             <CustomizedTableCell width={50} align="left">
-              <b>Nome</b>
+              <b>Nome:</b>
             </CustomizedTableCell>
             <CustomizedTableCell align="left">
               {player.fullName}
@@ -47,18 +45,18 @@ export default function PlayerDataComponent({ player }: { player: PlayerProfileD
           </TableRow>
           <TableRow>
             <CustomizedTableCell align="left">
-              <b>Idade</b>
+              <b>Idade:</b>
             </CustomizedTableCell>
             <CustomizedTableCell align="left">
-              {/* {getPlayerAge(player)} */}
+              {getPlayerAge(player.birthdate)} anos
             </CustomizedTableCell>
           </TableRow>
           <TableRow>
             <CustomizedTableCell align="left">
-              <b>Posição</b>
+              <b>Posição:</b>
             </CustomizedTableCell>
             <CustomizedTableCell align="left">
-              {/* {getPlayerPosition(player)} */}
+              {player.position}
             </CustomizedTableCell>
           </TableRow>
         </TableBody>

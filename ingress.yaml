@@ -1,0 +1,13 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: rda-ingress
+spec:
+  rules:
+  - host: rda.offthread.org
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: rda-app
+          servicePort: 80

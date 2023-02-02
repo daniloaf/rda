@@ -1,4 +1,4 @@
-import uuid from "uuid"
+import { v4 as uuid } from "uuid"
 import { Schema } from "mongoose"
 
 export interface IBaseSchema {
@@ -8,7 +8,7 @@ export interface IBaseSchema {
 const BaseSchema = new Schema<IBaseSchema>({
   _id: {
     type: String,
-    default: () => uuid.v4(),
+    default: () => uuid(),
   },
 })
 

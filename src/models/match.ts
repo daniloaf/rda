@@ -1,28 +1,24 @@
-import { Schema, model } from "mongoose";
+import mongoose from "../services/mongoose";
 import BaseSchema, { IBaseSchema } from "./baseSchema";
+import Team from "./team";
 
 interface ITeam {
-  teamId: string;
+  team: string;
   goals: number;
 }
 
 export interface IMatch extends IBaseSchema {
-  date: Date;
   teamA: ITeam;
   teamB: ITeam;
 }
 
-const Match = new Schema<IMatch>({
+const MatchSchema = new mongoose.Schema<IMatch>({
   ...BaseSchema.obj,
-  date: {
-    type: Date,
-    required: true,
-  },
   teamA: {
-    teamId: {
+    team: {
       type: String,
       required: true,
-      ref: "Team",
+      ref: Team,
     },
     goals: {
       type: Number,
@@ -30,10 +26,10 @@ const Match = new Schema<IMatch>({
     },
   },
   teamB: {
-    teamId: {
+    team: {
       type: String,
       required: true,
-      ref: "Team",
+      ref: Team,
     },
     goals: {
       type: Number,
@@ -42,4 +38,7 @@ const Match = new Schema<IMatch>({
   },
 });
 
-export default model("match", Match);
+const Match =
+  mongoose.models.Match || mongoose.model<IMatch>("Match", MatchSchema);
+
+export default Match;

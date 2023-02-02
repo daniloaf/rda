@@ -5,7 +5,7 @@ import PlayerCardComponent from "../../components/PlayerCardComponent";
 import { PlayerCardData } from "../../types/PlayerCardData";
 
 import * as PlayerServices from "../../services/player";
-import dbConnect from "../../services/dbConnect";
+import { Paper } from "@mui/material";
 
 export default function PlayersPage({
   players,
@@ -13,28 +13,25 @@ export default function PlayersPage({
   players: Array<PlayerCardData>;
 }) {
   return (
-    <Box
-      sx={{ display: "inline-flex", position: "fixed", left: 0, width: "80%" }}
-    >
-      <Grid container spacing={1} padding={5}>
-        {players.map((player) => {
-          return (
-            <Grid item key={player._id} xs={6} sm={4} md={3} lg={3} xl={2}>
-              <PlayerCardComponent
-                player={player}
-                linkEndabled={true}
-              ></PlayerCardComponent>
-            </Grid>
-          );
-        })}
-      </Grid>
-    </Box>
+    <Grid container padding={1} spacing={1}>
+      {players.map((player) => {
+        return (
+          <Grid item key={player._id} xs={3} sm={3} md={2} lg={2} xl={1}>
+            <PlayerCardComponent
+              player={player}
+              width={75}
+              height={80}
+              linkEndabled={true}
+            ></PlayerCardComponent>
+          </Grid>
+        );
+      })}
+    </Grid>
   );
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  await dbConnect()
-  const players = await PlayerServices.getPlayers();
+  const players = await PlayerServices.getPlayers({ active: true });
 
   return {
     props: {
