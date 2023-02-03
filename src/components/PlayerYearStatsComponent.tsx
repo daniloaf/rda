@@ -1,6 +1,4 @@
 import React, { ReactNode } from "react";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
 import Table from "@mui/material/Table";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
@@ -15,12 +13,7 @@ import PlayerYearStats from "../types/PlayerYearStats";
 import PlayerMonthStatsData from "../types/PlayerMonthStatsData";
 import useRequest from "../utils/useRequest";
 import { useRouter } from "next/router";
-
-const getMonthName = (monthNumber: number) => {
-  const date = new Date();
-  date.setMonth(monthNumber - 1);
-  return format(date, "LLL", { locale: ptBR }).toLocaleUpperCase();
-};
+import getMonthName from "../utils/getMonthName";
 
 const YearRow = ({ stats }: { stats: PlayerYearStats }) => {
   const [open, setOpen] = React.useState(false);

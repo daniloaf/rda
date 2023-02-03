@@ -11,7 +11,6 @@ const MatchDetailsComponent = ({ match }: { match: GameDayMatchData }) => {
       direction="row"
       justifyContent="center"
       alignItems="center"
-      xs={12}
       elevation={2}
     >
       <Grid item xs={2}>

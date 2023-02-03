@@ -11,6 +11,7 @@ import DateComponent from "../components/DateComponent";
 import MatchesListComponent from "../components/MatchesListComponent";
 import GameDayMatchData from "../types/GameDayMatchData";
 import { useState } from "react";
+import { Stack } from "@mui/system";
 
 export default function Home({
   latestTeamRanking,
@@ -26,7 +27,7 @@ export default function Home({
   const [open, setOpen] = useState(true);
   return (
     <>
-      <Grid container direction="row">
+      <Stack direction="row">
         <IconButton
           aria-label="expand row"
           size="small"
@@ -37,17 +38,17 @@ export default function Home({
         <Typography variant="h5">
           Racha <DateComponent dateString={latestGameDate} />
         </Typography>
-      </Grid>
+      </Stack>
       <Collapse in={open} timeout="auto" unmountOnExit>
         <br />
-        <Grid container width="100%">
-          <Grid item width="50%">
+        <Grid container spacing={1}>
+          <Grid item xs={12} sm={6}>
             <GameDayPlayerStatsComponent
               title="Atletas"
               playersStats={latestGameDayPlayerStats}
             />
           </Grid>
-          <Grid item width="50%">
+          <Grid item xs={12} sm={6}>
             <TeamRankingTableComponent
               title="Times"
               ranking={latestTeamRanking}

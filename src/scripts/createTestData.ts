@@ -142,7 +142,7 @@ const createPlayers = async () => {
       picture: "https://i.stack.imgur.com/gMbrL.jpg",
     },
     {
-      fullName: "Raniere Aguiar",
+      fullName: "Francisco Raniere Aguiar",
       nickname: "Raniere",
       position: "Goleiro",
       birthdate: "1989-05-19",
@@ -732,6 +732,11 @@ const createSeries = async (players: Array<any>) => {
         },
       ],
     },
+    {
+      startDate: new Date("2023-02-02"),
+      month: 2,
+      year: 2023,
+    }
   ];
 
   let series = [];
@@ -742,7 +747,6 @@ const createSeries = async (players: Array<any>) => {
 };
 
 const main = async () => {
-  // await dbConnect()
   const players = await createPlayers();
   console.log(`Created ${players.length} players`);
   const series = await createSeries(players);

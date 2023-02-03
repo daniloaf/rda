@@ -33,18 +33,15 @@ export default function MyApp(props: MyAppProps) {
         <ApplicationBarComponent />
         <Grid
           container
-          direction="row"
-          xs={12}
           width="100%"
-          justifyContent="flex-end"
           padding={1}
         >
-          <Grid item xs={10}>
+          <Grid item xs={12} sm={10}>
             <Paper sx={{ padding: 1 }} variant="outlined">
               <Component {...pageProps} />
             </Paper>
           </Grid>
-          <Grid item xs={2}>
+          <Grid item xs={12} sm={2}>
             <SideBarComponent
               currentTeamRanking={data.currentTeamRanking}
               currentPlayersStats={data.currentPlayersStats}

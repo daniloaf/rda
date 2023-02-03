@@ -1,11 +1,11 @@
 import { ptBR } from "date-fns/locale";
-import { parseISO, format } from "date-fns";
+import { parseISO, format, isValid } from "date-fns";
 
-export default function DateComponent({ dateString }: { dateString: string }) {
-  const date = parseISO(dateString);
+export default function DateComponent({ dateString }: { dateString?: string }) {
+  const date = parseISO(dateString || "");
   return (
     <time dateTime={dateString}>
-      {format(date, "dd/MM/yyyy", { locale: ptBR })}
+      {isValid(date) && format(date, "dd/MM/yyyy", { locale: ptBR })}
     </time>
   );
 }

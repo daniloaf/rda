@@ -33,6 +33,7 @@ export const getCurrentSerieStats = async () => {
 
   const currentPlayersStats: {
     [index: string]: {
+      playerId: string;
       nickname: string;
       teamColor: string;
       goals: number;
@@ -83,6 +84,7 @@ export const getCurrentSerieStats = async () => {
       const playerId = stats.player._id;
       if (!currentPlayersStats[playerId])
         currentPlayersStats[playerId] = {
+          playerId: playerId,
           teamColor: playersTeams[playerId].color,
           nickname: stats.player.nickname,
           goals: 0,

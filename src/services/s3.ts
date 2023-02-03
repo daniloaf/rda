@@ -13,15 +13,15 @@ const s3config = {
   },
 }
 
-const s3Client = new S3Client(s3config);
+// const s3Client = new S3Client(s3config);
 
 export const uploadObject = async (name: string, data: PutObjectRequest["Body"]) => {
-  const params = {
-    Bucket: process.env.S3_BUCKET_NAME,
-    Key: name,
-    Body: data,
-    ACL: "public-read",
-  };
-  const result = await s3Client.send(new PutObjectCommand(params));
-  return result;
+  // const params = {
+  //   Bucket: process.env.S3_BUCKET_NAME,
+  //   Key: name,
+  //   Body: data,
+  //   ACL: "public-read",
+  // };
+  // const result = await s3Client.send(new PutObjectCommand(params));
+  // return result;
 };

@@ -81,7 +81,7 @@ export const getLatestGameDayRankings = async () => {
     teamA: { color: match.teamA.team.color, goals: match.teamA.goals },
     teamB: { color: match.teamB.team.color, goals: match.teamB.goals },
   }));
-
+  
   return {
     latestTeamRanking: Object.values(latestTeamStats).sort(
       (a, b) => b.score - a.score

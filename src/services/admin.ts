@@ -1,8 +1,7 @@
-import uuid from "uuid";
+import _ from "lodash";
 import * as PlayerServices from "../services/player";
-import * as ImageServices from "../services/image";
-import * as S3Services from "../services/s3";
 import { IPlayer } from "../models/player";
+import Serie, { ISerie } from "../models/serie";
 
 export const addPlayer = async (player: IPlayer) => {
   return await PlayerServices.createPlayer(player);
@@ -23,4 +22,21 @@ export const setPlayerPicture = async (playerId: string, picture: any) => {
   // const imageUrl = `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET_NAME}/${fileName}`
   // await PlayerServices.updatePlayer(playerId, { picture: imageUrl })
   // ctx.body = { url: imageUrl }
+};
+
+export const getSeriesSummaryByYear = async () => {
+  const series = await Serie.find({}, [
+    "_id",
+    "month",
+    "year",
+    "startDate",
+    "endDate",
+  ]).sort({ startDate: -1 });
+  const seriesByYear = _.groupBy(series, "year");
+  return seriesByYear;
+};
+
+export const getSerieDetails = async (serieId: string) => {
+  const serie = await Serie.findById(serieId).populate(["teams.players"]);
+  return serie;
 };
