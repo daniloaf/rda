@@ -4,8 +4,8 @@ import { GetServerSideProps } from "next";
 import Link from "next/link";
 import DateComponent from "../../../components/DateComponent";
 import * as AdminServices from "../../../services/admin";
+import SerieSummaryByYearData from "../../../types/SerieSummaryByYearData";
 import getMonthName from "../../../utils/getMonthName";
-import { SerieSummaryByYearData } from "./types";
 
 export default function AdminSeriesPage({
   seriesByYear,
@@ -15,20 +15,20 @@ export default function AdminSeriesPage({
   return (
     <>
       {Object.keys(seriesByYear)
-        .sort((a, b) => b - a)
+        .sort((a, b) => parseInt(b) - parseInt(a))
         .map((year) => {
           const series = seriesByYear[year];
           return (
-            <Stack spacing={1}>
+            <Stack key={year} spacing={1}>
               <Typography>{year}</Typography>
               {series.map((serie) => {
                 return (
-                  <Card>
+                  <Card key={serie._id}>
                     <CardActionArea
                       LinkComponent={Link}
                       href={`/admin/series/${serie._id}`}
                     >
-                      <Grid container component={Paper} padding={1} xs={12}>
+                      <Grid container component={Paper} padding={1}>
                         <Grid item xs={12}>
                           <Typography>
                             {getMonthName(serie.month, "LLLL")}/{serie.year}

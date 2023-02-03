@@ -1,11 +1,10 @@
-import { Card, Grid, Paper, Typography } from "@mui/material";
+import { Grid, Paper, Typography } from "@mui/material";
 import { Stack } from "@mui/system";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import DateComponent from "../../../components/DateComponent";
-import Player from "../../../models/player";
 import * as AdminServices from "../../../services/admin";
 import getMonthName from "../../../utils/getMonthName";
-import { SerieDetailsData } from "./types";
+import SerieDetailsData from "../../../types/SerieDetailsData";
 
 export default function AdminSerieDetailsPage({ serie }: { serie: SerieDetailsData }) {
   return (
