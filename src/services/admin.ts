@@ -31,7 +31,8 @@ export const getSeriesSummaryByYear = async () => {
     "year",
     "startDate",
     "endDate",
-  ]).sort({ startDate: -1 });
+    "gameDays"
+  ]).populate(["teams.players"]).sort({ startDate: -1 });
   const seriesByYear = _.groupBy(series, "year");
   return seriesByYear;
 };

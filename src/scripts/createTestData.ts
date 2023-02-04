@@ -190,29 +190,29 @@ const createSeries = async (players: Array<any>) => {
   const octoberTeams = [
     await new Team({
       color: "Azul",
-      players: players.slice(7, 14).map((p) => p._id),
+      players: players.slice(8, 16).map((p) => p._id),
     }).save(),
     await new Team({
       color: "Laranja",
-      players: players.slice(14).map((p) => p._id),
+      players: players.slice(16).map((p) => p._id),
     }).save(),
     await new Team({
       color: "Branco",
-      players: players.slice(0, 7).map((p) => p._id),
+      players: players.slice(0, 8).map((p) => p._id),
     }).save(),
   ];
   const novemberTeams = [
     await new Team({
       color: "Azul",
-      players: players.slice(0, 7).map((p) => p._id),
+      players: players.slice(0, 8).map((p) => p._id),
     }).save(),
     await new Team({
       color: "Laranja",
-      players: players.slice(7, 14).map((p) => p._id),
+      players: players.slice(8, 16).map((p) => p._id),
     }).save(),
     await new Team({
       color: "Branco",
-      players: players.slice(14).map((p) => p._id),
+      players: players.slice(16).map((p) => p._id),
     }).save(),
   ];
 
