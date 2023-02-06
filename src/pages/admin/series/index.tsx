@@ -1,10 +1,17 @@
-import { Card, CardActionArea, Grid, Paper, Typography } from "@mui/material";
+import {
+  Button,
+  Card,
+  CardActionArea,
+  Grid,
+  Paper,
+  Typography,
+} from "@mui/material";
 import { Stack } from "@mui/system";
 import { GetServerSideProps } from "next";
 import Link from "next/link";
 import DateComponent from "../../../components/DateComponent";
 import * as AdminServices from "../../../services/admin";
-import SerieSummaryByYearData from "../../../types/SerieSummaryByYearData";
+import SerieSummaryByYearData from "../../../types/admin/SerieSummaryByYearData";
 import getMonthName from "../../../utils/getMonthName";
 
 export default function AdminSeriesPage({
@@ -13,7 +20,10 @@ export default function AdminSeriesPage({
   seriesByYear: SerieSummaryByYearData;
 }) {
   return (
-    <>
+    <Stack spacing={1}>
+      <Paper>
+        <Button fullWidth>Adicionar Série</Button>
+      </Paper>
       {Object.keys(seriesByYear)
         .sort((a, b) => parseInt(b) - parseInt(a))
         .map((year) => {
@@ -28,7 +38,14 @@ export default function AdminSeriesPage({
                       LinkComponent={Link}
                       href={`/admin/series/${serie._id}`}
                     >
-                      <Grid container component={Paper} padding={1}>
+                      <Grid
+                        container
+                        component={Paper}
+                        padding={1}
+                        sx={{
+                          backgroundColor: serie.endDate ? "#167fae" : "#7fae16",
+                        }}
+                      >
                         <Grid item xs={12}>
                           <Typography>
                             {getMonthName(serie.month, "LLLL")}/{serie.year}
@@ -36,8 +53,7 @@ export default function AdminSeriesPage({
                         </Grid>
                         <Grid item xs={6}>
                           <Typography>
-                            Início:{" "}
-                            <DateComponent dateString={serie.startDate} />
+                            Início: <DateComponent dateString={serie.startDate} />
                           </Typography>
                         </Grid>
                         <Grid item xs={6}>
@@ -53,7 +69,7 @@ export default function AdminSeriesPage({
             </Stack>
           );
         })}
-    </>
+    </Stack>
   );
 }
 

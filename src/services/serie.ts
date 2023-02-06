@@ -1,3 +1,4 @@
+import Player from "../models/player";
 import Serie from "../models/serie";
 import { ITeam } from "../models/team";
 
@@ -12,15 +13,6 @@ export const getCurrentSerieStats = async () => {
       startDate: -1,
     });
 
-  const playersTeams: {
-    [index: string]: ITeam;
-  } = {};
-  for (const team of latestSerie.teams) {
-    for (const playerId of team.players) {
-      playersTeams[playerId] = team;
-    }
-  }
-
   const currentTeamStats: {
     [index: string]: {
       color: string;
@@ -30,6 +22,23 @@ export const getCurrentSerieStats = async () => {
       score: number;
     };
   } = {};
+
+  const playersTeams: {
+    [index: string]: ITeam;
+  } = {};
+
+  for (const team of latestSerie.teams) {
+    currentTeamStats[team._id] = {
+      color: team.color,
+      wins: 0,
+      draws: 0,
+      losses: 0,
+      score: 0,
+    };
+    for (const playerId of team.players) {
+      playersTeams[playerId] = team;
+    }
+  }
 
   const currentPlayersStats: {
     [index: string]: {
@@ -46,22 +55,6 @@ export const getCurrentSerieStats = async () => {
   for (const gameDay of latestSerie.gameDays) {
     for (const match of gameDay.matches) {
       const { teamA, teamB } = match;
-      if (!currentTeamStats[teamA.team._id])
-        currentTeamStats[teamA.team._id] = {
-          color: teamA.team.color,
-          wins: 0,
-          draws: 0,
-          losses: 0,
-          score: 0,
-        };
-      if (!currentTeamStats[teamB.team._id])
-        currentTeamStats[teamB.team._id] = {
-          color: teamB.team.color,
-          wins: 0,
-          draws: 0,
-          losses: 0,
-          score: 0,
-        };
 
       const goalsDiff = match.teamA.goals - match.teamB.goals;
       if (goalsDiff > 0) {
