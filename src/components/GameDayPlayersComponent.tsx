@@ -103,7 +103,7 @@ export default function GameDayPlayersComponent({
                 >
                   {missingPlayers.map((player, index) => {
                     return (
-                      <Grid item xs={3}>
+                      <Grid key={player._id} item xs={3}>
                         <DraggablePlayer player={player} index={index} />
                       </Grid>
                     );

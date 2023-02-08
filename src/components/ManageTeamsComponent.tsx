@@ -27,32 +27,33 @@ export default function ManageTeamsComponent({
   const [availablePlayers, setAvailablePlayers] =
     useState<typeof players>(players);
 
-  const teams: {
-    [index: string]: {
-      color?: string;
-      setColor?: (color?: string) => void;
-      players: typeof players;
-      setPlayers: typeof setAvailablePlayers;
-    };
-  } = {};
-
-  teams["availablePlayers"] = {
-    players: availablePlayers,
-    setPlayers: setAvailablePlayers,
-  };
-
+    const initialTeams: {
+      [index: string]: {
+        color?: string;
+        players: typeof players;
+      };
+    } = {};
   const defaultColors = ["Branco", "Azul", "Laranja"];
   for (const index in defaultColors) {
     const color = defaultColors[index];
-    const [teamColor, setTeamColor] = useState<string | undefined>(color);
-    const [teamPlayers, setTeamPlayers] = useState<typeof players>([]);
-    teams[`team${index}`] = {
-      color: teamColor,
-      setColor: setTeamColor,
-      players: teamPlayers,
-      setPlayers: setTeamPlayers,
+    initialTeams[`team${index}`] = {
+      color: color,
+      players: [],
     };
   }
+
+  const [teams, setTeams] = useState<{
+    [index: string]: {
+      color?: string;
+      players: typeof players;
+    };
+  }>({
+    availablePlayers: {
+      color: undefined,
+      players: availablePlayers,
+    },
+    ...initialTeams,
+  });
 
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
@@ -65,15 +66,15 @@ export default function ManageTeamsComponent({
 
     sourcePlayers.players.splice(sourceIndex, 1);
     destinationPlayers.players.splice(destinationIndex, 0, player);
-    sourcePlayers.setPlayers(sourcePlayers.players);
-    destinationPlayers.setPlayers(destinationPlayers.players);
+
+    setTeams({ ...teams });
   };
 
   const handleSubmit: FormEventHandler = async (event) => {
     event.preventDefault();
 
     const data = Object.keys(teams)
-      .filter((key) => !!teams[key].setColor)
+      .filter((key) => teams[key].color !== undefined)
       .map((key) => {
         const team = teams[key];
 
@@ -125,7 +126,7 @@ export default function ManageTeamsComponent({
             </Typography>
             <Grid container spacing={1}>
               {Object.entries(teams).map(([key, team]) => {
-                if (!team?.setColor) return <></>;
+                if (team?.color === undefined) return <></>;
 
                 return (
                   <Grid key={key} item xs={4}>
@@ -133,7 +134,8 @@ export default function ManageTeamsComponent({
                       label="Time"
                       value={team.color}
                       onChange={(event) => {
-                        team.setColor && team.setColor(event.target.value);
+                        team.color = event.target.value;
+                        setTeams({...teams});
                       }}
                       fullWidth
                       required
