@@ -33,7 +33,6 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.14.191",
-    "@types/mongoose": "^5.11.97",
     "@types/node": "18.11.18",
     "@types/react": "18.0.27",
     "@types/react-beautiful-dnd": "^13.1.3",
