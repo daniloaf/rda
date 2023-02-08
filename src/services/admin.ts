@@ -3,6 +3,7 @@ import * as PlayerServices from "../services/player";
 import Player, { IPlayer } from "../models/player";
 import Serie from "../models/serie";
 import Team, { ITeam } from "../models/team";
+import { IGameDay } from "../models/gameDay";
 
 export const addPlayer = async (player: IPlayer) => {
   return await PlayerServices.createPlayer(player);
@@ -51,7 +52,24 @@ export const getActivePlayers = async () => {
 
 export const setSerieTeams = async (serieId: string, teams: Array<ITeam>) => {
   const serie = await Serie.findById(serieId);
-  serie.teams = teams.map((team) => new Team(team));
+  console.log(teams)
+  await Team.deleteMany({
+    _id: { $in: serie.teams.map((team: ITeam) => team._id) },
+  });
+  const newTeams = await Team.insertMany(teams.map((team) => new Team(team)));
+  console.log(newTeams)
+  serie.teams = newTeams;
   await serie.save();
   return serie;
+};
+
+export const addGameDay = async (serieId: string, gameDay: IGameDay) => {
+  try {
+    const serie = await Serie.findById(serieId);
+    serie.gameDays.push(gameDay);
+    await serie.save();
+    return serie;
+  } catch (err) {
+    console.error(err);
+  }
 };

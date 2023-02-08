@@ -1,7 +1,6 @@
 import {
   Button,
   Dialog,
-  DialogActions,
   DialogContent,
   DialogTitle,
   Grid,
@@ -18,13 +17,11 @@ import { ReactElement, useState } from "react";
 import GameDayFormComponent from "../../../components/GameDayFormComponent";
 import ManageTeamsComponent from "../../../components/ManageTeamsComponent";
 import ActivePlayerData from "../../../types/admin/ActivePlayerData";
-import axios from "axios";
 
 const AddContentDialog = ({
   title,
   open = false,
   handleClose,
-  handleSave,
   children,
 }: {
   title: string;
@@ -34,13 +31,15 @@ const AddContentDialog = ({
   children: ReactElement | null;
 }) => {
   return (
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      fullWidth
+      maxWidth="lg"
+      sx={{ width: "100%" }}
+    >
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>{children}</DialogContent>
-      <DialogActions>
-        <Button onClick={handleClose}>Cancelar</Button>
-        <Button onClick={handleSave}>Salvar</Button>
-      </DialogActions>
     </Dialog>
   );
 };
@@ -54,39 +53,35 @@ export default function AdminSerieDetailsPage({
 }) {
   const [manageGameDayDialogOpen, setManageGameDayOpen] = useState(false);
   const [manageTeamsDialogOpen, setManageTeamsOpen] = useState(false);
-  const [teams, setTeams] = useState(
-    {} as { [index: string]: Array<{ _id: string }> }
-  );
-
-  const handleManageDameDayDialogClose = () => {
-    setManageGameDayOpen(false);
+  const handleManageTeamsOnClick = () => {
+    setManageTeamsOpen(true);
   };
 
   const handleManageTeamsDialogClose = () => {
     setManageTeamsOpen(false);
   };
 
-  const handleAddGameDayOnClick = () => {
-    setManageGameDayOpen(true);
-  };
-
   const handleManageTeamsSave = async () => {
-    const teamsData = Object.entries(teams).map(([key, value]) => {
-      return {
-        color: key,
-        players: value.map((p) => p._id),
-      };
-    });
+    // const teamsData = Object.entries(teams).map(([key, value]) => {
+    //   return {
+    //     color: key,
+    //     players: value.map((p) => p._id),
+    //   };
+    // });
 
-    const response = await axios.put(
-      `/api/admin/series/${serie._id}/teams`,
-      teamsData
-    );
+    // const response = await axios.put(
+    //   `/api/admin/series/${serie._id}/teams`,
+    //   teamsData
+    // );
     handleManageTeamsDialogClose();
   };
 
-  const handleManageTeamsOnClick = () => {
-    setManageTeamsOpen(true);
+  const handleManageGameDayOnClick = () => {
+    setManageGameDayOpen(true);
+  };
+
+  const handleManageDameDayDialogClose = () => {
+    setManageGameDayOpen(false);
   };
 
   return (
@@ -143,7 +138,7 @@ export default function AdminSerieDetailsPage({
               </Paper>
             );
           })}
-          <Button onClick={handleAddGameDayOnClick}>Adicionar Racha</Button>
+          <Button onClick={handleManageGameDayOnClick}>Adicionar Racha</Button>
         </Stack>
       </Stack>
       <AddContentDialog
@@ -154,7 +149,7 @@ export default function AdminSerieDetailsPage({
       >
         <ManageTeamsComponent
           players={activePlayers}
-          handleDataChange={setTeams}
+          serieId={serie._id}
         />
       </AddContentDialog>
       <AddContentDialog
@@ -163,7 +158,10 @@ export default function AdminSerieDetailsPage({
         handleClose={handleManageDameDayDialogClose}
         handleSave={handleManageDameDayDialogClose}
       >
-        <GameDayFormComponent teams={serie.teams} />
+        <GameDayFormComponent
+          teams={serie.teams}
+          serieId={serie._id}
+        />
       </AddContentDialog>
     </>
   );
