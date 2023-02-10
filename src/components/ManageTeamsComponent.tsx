@@ -38,7 +38,7 @@ export default function ManageTeamsComponent({
     };
   } = {};
 
-  if (teams) {
+  if (teams && teams.length) {
     for (const index in teams) {
       initialTeams[`team${index}`] = teams[index];
       teams[index].players.forEach((player) => {

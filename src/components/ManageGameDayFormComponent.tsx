@@ -65,18 +65,20 @@ export default function ManageGameDayFormComponent({
   );
   const [matches, setMatches] = useState<Array<SerieDetailsMatchData>>(
     gameDay?.matches ??
-      Array(6).fill({
-        teamA: {
-          team: "",
-          goals: 0,
-          goalkeeper: "",
-        },
-        teamB: {
-          team: "",
-          goals: 0,
-          goalkeeper: "",
-        },
-      })
+      Array(6)
+        .fill(null)
+        .map(() => ({
+          teamA: {
+            team: "",
+            goals: 0,
+            goalkeeper: undefined,
+          },
+          teamB: {
+            team: "",
+            goals: 0,
+            goalkeeper: undefined,
+          },
+        }))
   );
 
   const initialPlayersStats: {
@@ -311,11 +313,13 @@ export default function ManageGameDayFormComponent({
             <TableContainer>
               <Table>
                 <TableHead>
-                  <TableCell>Goleiro</TableCell>
-                  <TableCell>Gols</TableCell>
-                  <TableCell>Assistências</TableCell>
-                  <TableCell>Notas</TableCell>
-                  <TableCell>Time</TableCell>
+                  <TableRow>
+                    <TableCell>Goleiro</TableCell>
+                    <TableCell>Gols</TableCell>
+                    <TableCell>Assistências</TableCell>
+                    <TableCell>Notas</TableCell>
+                    <TableCell>Time</TableCell>
+                  </TableRow>
                 </TableHead>
                 <TableBody>
                   {matchPlayers.presentPlayers
@@ -427,7 +431,7 @@ export default function ManageGameDayFormComponent({
                             onChange={handleTeamGoalkeeperChange(match.teamA)}
                             select
                           >
-                            <MenuItem value=""></MenuItem>
+                            <MenuItem value={""}>Convidado</MenuItem>
                             {teamGoalkeeperMenuItems()}
                           </TextField>
                         </Grid>
@@ -492,7 +496,7 @@ export default function ManageGameDayFormComponent({
                             onChange={handleTeamGoalkeeperChange(match.teamB)}
                             select
                           >
-                            <MenuItem value=""></MenuItem>
+                            <MenuItem value={""}>Convidado</MenuItem>
                             {teamGoalkeeperMenuItems()}
                           </TextField>
                         </Grid>

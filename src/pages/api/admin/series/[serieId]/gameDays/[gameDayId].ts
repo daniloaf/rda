@@ -6,7 +6,6 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === "PUT") {
-    console.log("QUERY", req.query);
     const serieId = req.query.serieId as string;
     const gameDayId = req.query.gameDayId as string;
     const data = req.body;

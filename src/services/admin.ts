@@ -49,9 +49,13 @@ export const getActivePlayers = async () => {
 export const setSerieTeams = async (serieId: string, teams: Array<ITeam>) => {
   const serie = await Serie.findById(serieId);
   const newTeams = await Promise.all(
-    teams.map(async (team) =>
-      Team.findByIdAndUpdate(team._id, team, { upsert: true, new: true })
-    )
+    teams.map(async (team) => {
+      if (team._id) {
+        return Team.findByIdAndUpdate(team._id, new Team(team));
+      } else {
+        return Team.create(team);
+      }
+    })
   );
   serie.teams = newTeams;
   await serie.save();
@@ -80,12 +84,9 @@ export const updateGameDay = async (
     (gd: IGameDay) => gd._id === gameDayId
   );
   gameDays[gameDayIndex] = new GameDay(gameDay);
-  console.log("before", gameDays.map(gd => gd.date));
   gameDays = _.sortBy(gameDays, ["date"]);
-  console.log("after", gameDays.map(gd => gd.date));
   serie.gameDays = gameDays;
   await serie.save();
-  console.log(serie.gameDays);
   return serie.toJSON({ virtuals: true });
 };
 

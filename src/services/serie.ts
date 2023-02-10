@@ -13,6 +13,14 @@ export const getCurrentSerieStats = async () => {
       startDate: -1,
     });
 
+  if (!latestSerie) {
+    return {
+      currentTeamRanking: [],
+      currentPlayersStats: [],
+      month: null,
+    };
+  }
+
   const currentTeamStats: {
     [index: string]: {
       color: string;

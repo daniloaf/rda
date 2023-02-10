@@ -11,6 +11,15 @@ export const getLatestGameDayRankings = async () => {
     .sort({
       startDate: -1,
     });
+
+  if (!latestSerie) {
+    return {
+      latestTeamRanking: [],
+      latestGameDayPlayerStats: [],
+      latestGameDate: null,
+      latestGameDayMatches: [],
+    };
+  }
   const latestGameDay = latestSerie.gameDays.at(-1);
 
   const latestTeamStats: {
@@ -81,7 +90,7 @@ export const getLatestGameDayRankings = async () => {
     teamA: { color: match.teamA.team.color, goals: match.teamA.goals },
     teamB: { color: match.teamB.team.color, goals: match.teamB.goals },
   }));
-  
+
   return {
     latestTeamRanking: Object.values(latestTeamStats).sort(
       (a, b) => b.score - a.score

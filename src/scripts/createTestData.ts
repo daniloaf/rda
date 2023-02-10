@@ -10,21 +10,21 @@ const createPlayers = async () => {
   const playersData = [
     {
       fullName: "Antônio Marques",
-      nickname: "Meia",
+      nickname: "Antônio",
       position: "Atacante",
       birthdate: "1989-05-19",
       picture: "https://i.stack.imgur.com/gMbrL.jpg",
     },
     {
       fullName: "Arthur Freire",
-      nickname: "TeyTey",
+      nickname: "Arthur Freire",
       position: "Meia",
       birthdate: "1989-05-19",
       picture: "https://i.stack.imgur.com/gMbrL.jpg",
     },
     {
       fullName: "Arthur Ribeiro",
-      nickname: "Arthur",
+      nickname: "Arthur Ribeiro",
       position: "Zagueiro",
       birthdate: "1989-05-19",
       picture: "https://i.stack.imgur.com/gMbrL.jpg",
@@ -38,8 +38,8 @@ const createPlayers = async () => {
     },
     {
       fullName: "Daniel Gondim",
-      nickname: "Daniel",
-      position: "Volante",
+      nickname: "Gondim",
+      position: "Meia",
       birthdate: "1989-05-19",
       picture: "https://i.stack.imgur.com/gMbrL.jpg",
     },
@@ -73,7 +73,7 @@ const createPlayers = async () => {
     },
     {
       fullName: "Igor Dantas",
-      nickname: "Igor",
+      nickname: "Iguinho",
       position: "Meia",
       birthdate: "1989-05-19",
       picture: "https://i.stack.imgur.com/gMbrL.jpg",
@@ -109,7 +109,7 @@ const createPlayers = async () => {
     {
       fullName: "João Victor",
       nickname: "Painha",
-      position: "Volante",
+      position: "Meia",
       birthdate: "1989-05-19",
       picture: "https://i.stack.imgur.com/gMbrL.jpg",
     },
@@ -128,7 +128,7 @@ const createPlayers = async () => {
       picture: "https://i.stack.imgur.com/gMbrL.jpg",
     },
     {
-      fullName: "Pedro",
+      fullName: "Pedro Raunny",
       nickname: "Pedrão",
       position: "Goleiro",
       birthdate: "1989-05-19",
@@ -142,7 +142,7 @@ const createPlayers = async () => {
       picture: "https://i.stack.imgur.com/gMbrL.jpg",
     },
     {
-      fullName: "Francisco Raniere Aguiar",
+      fullName: "Francisco Raniere",
       nickname: "Raniere",
       position: "Atacante",
       birthdate: "1989-05-19",
@@ -178,7 +178,7 @@ const createPlayers = async () => {
     },
     {
       fullName: "Silvio Leoterio",
-      nickname: "Lorota",
+      nickname: "Leoterio",
       position: "Meia",
       birthdate: "1989-05-19",
       picture: "https://i.stack.imgur.com/gMbrL.jpg",
