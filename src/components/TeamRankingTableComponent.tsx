@@ -30,7 +30,7 @@ export default function TeamRankingTableComponent({
             </TableRow>
           </TableHead>
           <TableBody>
-            {ranking.map((r) => (
+            {ranking?.map((r) => (
               <TableRow key={r.color}>
                 <TableCell>{r.color}</TableCell>
                 <TableCell>{r.score}</TableCell>

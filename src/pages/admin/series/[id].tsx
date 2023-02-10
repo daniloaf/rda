@@ -121,7 +121,7 @@ export default function AdminSerieDetailsPage({
           <Typography variant="h5" align="center">
             Rachas
           </Typography>
-          {serie.gameDays.map((gameDay) => {
+          {serie?.gameDays?.map((gameDay) => {
             return (
               <Paper key={gameDay.date}>
                 <Button
