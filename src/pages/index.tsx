@@ -12,6 +12,7 @@ import MatchesListComponent from "../components/MatchesListComponent";
 import GameDayMatchData from "../types/GameDayMatchData";
 import { useState } from "react";
 import { Stack } from "@mui/system";
+import EnhancedTableComponent from "../components/utils/EnchancedTableComponent";
 
 export default function Home({
   latestTeamRanking,
@@ -50,7 +51,7 @@ export default function Home({
           </Grid>
           <Grid item xs={12} sm={6}>
             <TeamRankingTableComponent
-              title="Times"
+              title="Classificação"
               ranking={latestTeamRanking}
             />
             <br />

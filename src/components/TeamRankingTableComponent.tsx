@@ -1,12 +1,7 @@
-import TableContainer from "@mui/material/TableContainer";
-import Table from "@mui/material/Table";
-import TableHead from "@mui/material/TableHead";
-import TableBody from "@mui/material/TableBody";
-import TableRow from "@mui/material/TableRow";
-import TableCell from "@mui/material/TableCell";
 import Typography from "@mui/material/Typography";
 import { Paper } from "@mui/material";
 import TeamRankingData from "../types/TeamRankingData";
+import EnhancedTableComponent from "./utils/EnchancedTableComponent";
 
 export default function TeamRankingTableComponent({
   title,
@@ -17,31 +12,19 @@ export default function TeamRankingTableComponent({
 }) {
   return (
     <Paper sx={{ padding: 1 }} elevation={2}>
-      <Typography variant="h6"  align="center">{title}</Typography>
-      <TableContainer>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell align="left">Time</TableCell>
-              <TableCell>P</TableCell>
-              <TableCell>V</TableCell>
-              <TableCell>E</TableCell>
-              <TableCell>D</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {ranking?.map((r) => (
-              <TableRow key={r.color}>
-                <TableCell>{r.color}</TableCell>
-                <TableCell>{r.score}</TableCell>
-                <TableCell>{r.wins}</TableCell>
-                <TableCell>{r.draws}</TableCell>
-                <TableCell>{r.losses}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <Typography variant="h6" align="center">
+        {title}
+      </Typography>
+      <EnhancedTableComponent
+        columns={[
+          { field: "color", label: "Time" },
+          { field: "score", label: "P" },
+          { field: "wins", label: "V" },
+          { field: "draws", label: "E" },
+          { field: "losses", label: "D" },
+        ]}
+        data={ranking}
+      />
     </Paper>
   );
 }

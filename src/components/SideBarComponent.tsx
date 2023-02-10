@@ -1,7 +1,6 @@
-import { Paper } from "@mui/material";
+import { Paper, Stack, Typography } from "@mui/material";
 import GameDayPlayerStats from "../types/GameDayPlayerStats";
 import TeamRankingData from "../types/TeamRankingData";
-import ArtilleryRankingComponent from "./ArtilleryRankingComponent";
 import GameDayPlayerStatsComponent from "./GameDayPlayerStatsComponent";
 import TeamRankingTableComponent from "./TeamRankingTableComponent";
 
@@ -13,18 +12,20 @@ export default function SideBarComponent({
   currentPlayersStats: Array<GameDayPlayerStats>;
 }) {
   return (
-    <Paper variant="outlined" sx={{ padding: 1 }}>
+    <Stack spacing={1} component={Paper} variant="outlined">
+      <Typography variant="h5" align="center">
+        Série atual
+      </Typography>
       <TeamRankingTableComponent
-        title="Classificação Atual"
+        title="Classificação"
         ranking={currentTeamRanking}
       />
-      <br />
       <GameDayPlayerStatsComponent
         title={"Atletas"}
         playersStats={currentPlayersStats}
         abbreviate={true}
         limit={5}
       />
-    </Paper>
+    </Stack>
   );
 }

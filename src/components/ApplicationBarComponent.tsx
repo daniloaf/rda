@@ -9,7 +9,6 @@ export default function ApplicationBarComponent() {
       <Toolbar>
         <Button LinkComponent={Link} sx={{ color: "white" }} href="/">Início</Button>
         <Button LinkComponent={Link} sx={{ color: "white" }} href="/players">Jogadores</Button>
-        <Button LinkComponent={Link} sx={{ color: "white" }} href="/teams">Times</Button>
       </Toolbar>
     </AppBar>
   );

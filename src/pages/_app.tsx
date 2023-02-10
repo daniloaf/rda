@@ -35,13 +35,14 @@ export default function MyApp(props: MyAppProps) {
           container
           width="100%"
           padding={1}
+          spacing={1}
         >
-          <Grid item xs={12} sm={10}>
+          <Grid item xs={12} sm={9}>
             <Paper sx={{ padding: 1 }} variant="outlined">
               <Component {...pageProps} />
             </Paper>
           </Grid>
-          <Grid item xs={12} sm={2}>
+          <Grid item xs={12} sm={3}>
             <SideBarComponent
               currentTeamRanking={data.currentTeamRanking}
               currentPlayersStats={data.currentPlayersStats}
