@@ -95,7 +95,7 @@ export default function ManageGameDayFormComponent({
       player: player,
       goals: 0,
       assists: 0,
-      score: 0,
+      score: 0.0,
     };
   }
 
@@ -239,55 +239,56 @@ export default function ManageGameDayFormComponent({
                               return (
                                 <TableRow key={player._id}>
                                   <TableCell>{player.nickname}</TableCell>
-                                  <TableCell width={10}>
+                                  <TableCell>
                                     <TextField
                                       inputProps={{
                                         inputMode: "numeric",
                                         pattern: "[0-9]*",
                                       }}
                                       required
+                                      defaultValue={0}
                                       value={playersStats[player._id].goals}
                                       onChange={(event) => {
                                         playersStats[player._id].goals =
-                                          parseInt(event.target.value);
+                                          parseInt(event.target.value) ?? 0;
                                         serPlayerStats({ ...playersStats });
                                       }}
                                       variant="standard"
-                                      sx={{ width: 30, height: 30 }}
                                     ></TextField>
                                   </TableCell>
-                                  <TableCell width={10}>
+                                  <TableCell>
                                     <TextField
                                       inputProps={{
                                         inputMode: "numeric",
                                         pattern: "[0-9]*",
                                       }}
                                       required
+                                      defaultValue={0}
                                       value={playersStats[player._id].assists}
                                       onChange={(event) => {
                                         playersStats[player._id].assists =
-                                          parseInt(event.target.value);
+                                          parseInt(event.target.value) ?? 0;
                                         serPlayerStats({ ...playersStats });
                                       }}
                                       variant="standard"
-                                      sx={{ width: 30 }}
                                     ></TextField>
                                   </TableCell>
-                                  <TableCell width={10}>
+                                  <TableCell>
                                     <TextField
                                       inputProps={{
                                         inputMode: "numeric",
-                                        pattern: "[0-9]*",
+                                        step: 0.01,
                                       }}
+                                      type="number"
                                       required
+                                      defaultValue={0}
                                       value={playersStats[player._id].score}
                                       onChange={(event) => {
                                         playersStats[player._id].score =
-                                          parseInt(event.target.value);
+                                          parseFloat(event.target.value) ?? 0;
                                         serPlayerStats({ ...playersStats });
                                       }}
                                       variant="standard"
-                                      sx={{ width: 30 }}
                                     ></TextField>
                                   </TableCell>
                                 </TableRow>
@@ -328,25 +329,24 @@ export default function ManageGameDayFormComponent({
                       return (
                         <TableRow key={goalkeeper._id}>
                           <TableCell>{goalkeeper.nickname}</TableCell>
-                          <TableCell width={10}>
+                          <TableCell>
                             <TextField
                               inputProps={{
                                 inputMode: "numeric",
                                 pattern: "[0-9]*",
                               }}
                               required
+                              defaultValue={0}
                               value={playersStats[goalkeeper._id].goals}
                               onChange={(event) => {
-                                playersStats[goalkeeper._id].goals = parseInt(
-                                  event.target.value
-                                );
+                                playersStats[goalkeeper._id].goals =
+                                  parseInt(event.target.value) ?? 0;
                                 serPlayerStats({ ...playersStats });
                               }}
                               variant="standard"
-                              sx={{ width: 30, height: 30 }}
                             ></TextField>
                           </TableCell>
-                          <TableCell width={10}>
+                          <TableCell>
                             <TextField
                               inputProps={{
                                 inputMode: "numeric",
@@ -354,32 +354,32 @@ export default function ManageGameDayFormComponent({
                               }}
                               required
                               value={playersStats[goalkeeper._id].assists}
+                              defaultValue={0}
                               onChange={(event) => {
-                                playersStats[goalkeeper._id].assists = parseInt(
-                                  event.target.value
-                                );
+                                playersStats[goalkeeper._id].assists =
+                                  parseInt(event.target.value) ?? 0;
                                 serPlayerStats({ ...playersStats });
                               }}
                               variant="standard"
-                              sx={{ width: 30 }}
                             ></TextField>
                           </TableCell>
-                          <TableCell width={10}>
+                          <TableCell>
                             <TextField
                               inputProps={{
                                 inputMode: "numeric",
-                                pattern: "[0-9]*",
+                                // pattern: "[0-9\.]*",
+                                step: 0.01,
                               }}
+                              type="number"
                               required
                               value={playersStats[goalkeeper._id].score}
+                              defaultValue={0}
                               onChange={(event) => {
-                                playersStats[goalkeeper._id].score = parseInt(
-                                  event.target.value
-                                );
+                                playersStats[goalkeeper._id].score =
+                                  parseFloat(event.target.value) ?? 0;
                                 serPlayerStats({ ...playersStats });
                               }}
                               variant="standard"
-                              sx={{ width: 30 }}
                             ></TextField>
                           </TableCell>
                           <TableCell>

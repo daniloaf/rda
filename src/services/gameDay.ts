@@ -83,7 +83,7 @@ export const getLatestGameDayRankings = async () => {
     goals: stats.goals,
     assists: stats.assists,
     score: stats.score,
-    teamColor: playersTeams[stats.player._id].color,
+    teamColor: playersTeams[stats.player._id]?.color,
   }));
 
   const latestGameDayMatches = latestGameDay.matches.map((match: any) => ({

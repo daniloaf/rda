@@ -35,7 +35,7 @@ export const getCurrentSerieStats = async () => {
     [index: string]: ITeam;
   } = {};
 
-  for (const team of latestSerie.teams) {
+  for (const team of latestSerie?.teams) {
     currentTeamStats[team._id] = {
       color: team.color,
       wins: 0,
@@ -60,7 +60,7 @@ export const getCurrentSerieStats = async () => {
     };
   } = {};
 
-  for (const gameDay of latestSerie.gameDays) {
+  for (const gameDay of latestSerie?.gameDays) {
     for (const match of gameDay.matches) {
       const { teamA, teamB } = match;
 

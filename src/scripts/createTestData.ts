@@ -756,8 +756,8 @@ const createSeries = async (players: Array<any>) => {
 const main = async () => {
   const players = await createPlayers();
   console.log(`Created ${players.length} players`);
-  const series = await createSeries(players);
-  console.log(`Created ${series.length} series`);
+  // const series = await createSeries(players);
+  // console.log(`Created ${series.length} series`);
 };
 
 main()
