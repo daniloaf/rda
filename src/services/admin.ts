@@ -3,7 +3,7 @@ import * as PlayerServices from "../services/player";
 import Player, { IPlayer } from "../models/player";
 import Serie from "../models/serie";
 import Team, { ITeam } from "../models/team";
-import { IGameDay } from "../models/gameDay";
+import GameDay, { IGameDay } from "../models/gameDay";
 
 export const addPlayer = async (player: IPlayer) => {
   return await PlayerServices.createPlayer(player);
@@ -27,23 +27,19 @@ export const setPlayerPicture = async (playerId: string, picture: any) => {
 };
 
 export const getSeriesSummaryByYear = async () => {
-  const series = await Serie.find({}, [
-    "_id",
-    "month",
-    "year",
-    "startDate",
-    "endDate",
-    "gameDays",
-  ])
+  const series = await Serie.find({}, ["_id", "month", "year", "gameDays"])
     .populate(["teams.players"])
     .sort({ startDate: -1 });
-  const seriesByYear = _.groupBy(series, "year");
+  const seriesByYear = _(series)
+    .map((serie) => serie.toJSON({ virtuals: true }))
+    .groupBy("year")
+    .value();
   return seriesByYear;
 };
 
 export const getSerieDetails = async (serieId: string) => {
   const serie = await Serie.findById(serieId).populate(["teams.players"]);
-  return serie;
+  return serie.toJSON({ virtuals: true });
 };
 
 export const getActivePlayers = async () => {
@@ -52,15 +48,14 @@ export const getActivePlayers = async () => {
 
 export const setSerieTeams = async (serieId: string, teams: Array<ITeam>) => {
   const serie = await Serie.findById(serieId);
-  console.log(teams)
-  await Team.deleteMany({
-    _id: { $in: serie.teams.map((team: ITeam) => team._id) },
-  });
-  const newTeams = await Team.insertMany(teams.map((team) => new Team(team)));
-  console.log(newTeams)
+  const newTeams = await Promise.all(
+    teams.map(async (team) =>
+      Team.findByIdAndUpdate(team._id, team, { upsert: true, new: true })
+    )
+  );
   serie.teams = newTeams;
   await serie.save();
-  return serie;
+  return serie.toJSON({ virtuals: true });
 };
 
 export const addGameDay = async (serieId: string, gameDay: IGameDay) => {
@@ -68,8 +63,45 @@ export const addGameDay = async (serieId: string, gameDay: IGameDay) => {
     const serie = await Serie.findById(serieId);
     serie.gameDays.push(gameDay);
     await serie.save();
-    return serie;
+    return serie.toJSON({ virtuals: true });
   } catch (err) {
     console.error(err);
   }
+};
+
+export const updateGameDay = async (
+  serieId: string,
+  gameDayId: string,
+  gameDay: IGameDay
+) => {
+  const serie = await Serie.findById(serieId);
+  let gameDays: Array<IGameDay> = serie.gameDays;
+  const gameDayIndex = gameDays.findIndex(
+    (gd: IGameDay) => gd._id === gameDayId
+  );
+  gameDays[gameDayIndex] = new GameDay(gameDay);
+  console.log("before", gameDays.map(gd => gd.date));
+  gameDays = _.sortBy(gameDays, ["date"]);
+  console.log("after", gameDays.map(gd => gd.date));
+  serie.gameDays = gameDays;
+  await serie.save();
+  console.log(serie.gameDays);
+  return serie.toJSON({ virtuals: true });
+};
+
+export const addSerie = async ({
+  month,
+  year,
+}: {
+  month: number;
+  year: number;
+}) => {
+  const serieExists = await Serie.exists({ month, year });
+  if (serieExists)
+    throw {
+      status: 409,
+      message: "Série já existe",
+    };
+  const serie = await Serie.create({ month, year });
+  return serie.toJSON({ virtuals: true });
 };

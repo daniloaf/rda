@@ -1,3 +1,7 @@
+import SerieDetailsMatchData from "./SerieDetailsMatchData";
+
 export default interface SerieDetailsGameDayData {
-  date: string
+  _id: string;
+  date: string;
+  matches: Array<SerieDetailsMatchData>;
 }

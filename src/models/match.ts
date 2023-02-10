@@ -1,10 +1,12 @@
 import mongoose from "../services/mongoose";
 import BaseSchema, { IBaseSchema } from "./baseSchema";
+import Player from "./player";
 import Team from "./team";
 
 interface ITeam {
   team: string;
   goals: number;
+  goalkeeper?: string;
 }
 
 export interface IMatch extends IBaseSchema {
@@ -24,6 +26,10 @@ const MatchSchema = new mongoose.Schema<IMatch>({
       type: Number,
       required: true,
     },
+    goalkeeper: {
+      type: String,
+      ref: Player,
+    },
   },
   teamB: {
     team: {
@@ -34,6 +40,10 @@ const MatchSchema = new mongoose.Schema<IMatch>({
     goals: {
       type: Number,
       required: true,
+    },
+    goalkeeper: {
+      type: String,
+      ref: Player,
     },
   },
 });

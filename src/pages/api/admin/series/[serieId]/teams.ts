@@ -6,7 +6,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === "PUT") {
-    const serieId = req.query.id as string;
+    const serieId = req.query.serieId as string;
     const data = req.body;
     const serie = await AdminServices.setSerieTeams(serieId, data);
 

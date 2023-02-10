@@ -55,16 +55,22 @@ export default function GameDayPlayersComponent({
   return (
     <>
       <DragDropContext onDragEnd={handleDragEnd}>
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
+        <Grid container spacing={1}>
+          <Grid item xs={12} md={6}>
             <Typography variant="h6" align="center">
               Presentes
             </Typography>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <Typography variant="h6" align="center">
+              Faltantes
+            </Typography>
+          </Grid>
+          <Grid item xs={12} md={6}>
             <Droppable droppableId="presentPlayers">
               {(provided) => (
                 <Grid
                   container
-                  spacing={1}
                   padding={1}
                   component={Paper}
                   variant="outlined"
@@ -85,14 +91,10 @@ export default function GameDayPlayersComponent({
             </Droppable>
           </Grid>
           <Grid item xs={6}>
-            <Typography variant="h6" align="center">
-              Faltantes
-            </Typography>
             <Droppable droppableId="missingPlayers">
               {(provided) => (
                 <Grid
                   container
-                  spacing={1}
                   padding={1}
                   component={Paper}
                   variant="outlined"

@@ -75,16 +75,17 @@ export const getCurrentSerieStats = async () => {
 
     for (const stats of gameDay.playersStats) {
       const playerId = stats.player._id;
-      if (!currentPlayersStats[playerId])
+      if (!currentPlayersStats[playerId]) {
         currentPlayersStats[playerId] = {
           playerId: playerId,
-          teamColor: playersTeams[playerId].color,
+          teamColor: playersTeams[playerId]?.color,
           nickname: stats.player.nickname,
           goals: 0,
           assists: 0,
           totalScore: 0,
           numScores: 0,
         };
+      }
 
       currentPlayersStats[playerId].goals += stats.goals;
       currentPlayersStats[playerId].assists += stats.assists;

@@ -14,14 +14,6 @@ export interface ISerie extends IBaseSchema {
 
 const SerieSchema = new mongoose.Schema<ISerie>({
   ...BaseSchema.obj,
-  startDate: {
-    type: Date,
-    required: true,
-  },
-  endDate: {
-    type: Date,
-    required: false,
-  },
   month: {
     type: Number,
     required: true,
@@ -40,6 +32,14 @@ const SerieSchema = new mongoose.Schema<ISerie>({
       type: GameDay.schema,
     },
   ],
+});
+
+SerieSchema.virtual("startDate").get(function () {
+  return this.gameDays?.[0]?.date;
+});
+
+SerieSchema.virtual("endDate").get(function () {
+  return this.gameDays?.[this.gameDays.length - 1]?.date;
 });
 
 const Serie =

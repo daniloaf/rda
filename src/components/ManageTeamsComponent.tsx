@@ -15,42 +15,58 @@ import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import DraggablePlayer from "./DraggablePlayer";
 import axios from "axios";
 import { useRouter } from "next/router";
+import SerieDetailsTeamData from "../types/admin/SerieDetailsTeamData";
 
 export default function ManageTeamsComponent({
   players,
   serieId,
+  teams,
 }: {
   players: Array<ActivePlayerData>;
   serieId: string;
+  teams?: Array<SerieDetailsTeamData>;
 }) {
   const router = useRouter();
-  const [availablePlayers, setAvailablePlayers] =
-    useState<typeof players>(players);
 
-    const initialTeams: {
-      [index: string]: {
-        color?: string;
-        players: typeof players;
-      };
-    } = {};
-  const defaultColors = ["Branco", "Azul", "Laranja"];
-  for (const index in defaultColors) {
-    const color = defaultColors[index];
-    initialTeams[`team${index}`] = {
-      color: color,
-      players: [],
+  const playersById = _.keyBy(players, "_id");
+
+  const initialTeams: {
+    [index: string]: {
+      _id?: string;
+      color?: string;
+      players: typeof players;
     };
+  } = {};
+
+  if (teams) {
+    for (const index in teams) {
+      initialTeams[`team${index}`] = teams[index];
+      teams[index].players.forEach((player) => {
+        // Player is not available
+        delete playersById[player._id];
+      });
+    }
+  } else {
+    const defaultColors = ["Branco", "Azul", "Laranja"];
+    for (const index in defaultColors) {
+      const color = defaultColors[index];
+      initialTeams[`team${index}`] = {
+        color: color,
+        players: [],
+      };
+    }
   }
 
-  const [teams, setTeams] = useState<{
+  const [currentTeams, setCurrentTeams] = useState<{
     [index: string]: {
+      _id?: string;
       color?: string;
       players: typeof players;
     };
   }>({
     availablePlayers: {
       color: undefined,
-      players: availablePlayers,
+      players: Object.values(playersById),
     },
     ...initialTeams,
   });
@@ -58,8 +74,8 @@ export default function ManageTeamsComponent({
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
 
-    const sourcePlayers = teams[result.source.droppableId];
-    const destinationPlayers = teams[result.destination.droppableId];
+    const sourcePlayers = currentTeams[result.source.droppableId];
+    const destinationPlayers = currentTeams[result.destination.droppableId];
     const sourceIndex = result.source.index;
     const destinationIndex = result.destination.index;
     const player = sourcePlayers.players[sourceIndex];
@@ -67,18 +83,19 @@ export default function ManageTeamsComponent({
     sourcePlayers.players.splice(sourceIndex, 1);
     destinationPlayers.players.splice(destinationIndex, 0, player);
 
-    setTeams({ ...teams });
+    setCurrentTeams({ ...currentTeams });
   };
 
   const handleSubmit: FormEventHandler = async (event) => {
     event.preventDefault();
 
-    const data = Object.keys(teams)
-      .filter((key) => teams[key].color !== undefined)
+    const data = Object.keys(currentTeams)
+      .filter((key) => currentTeams[key].color !== undefined)
       .map((key) => {
-        const team = teams[key];
+        const team = currentTeams[key];
 
         return {
+          _id: team._id,
           color: team.color,
           players: team.players.map((p) => p._id),
         };
@@ -112,11 +129,13 @@ export default function ManageTeamsComponent({
                     ref={provided.innerRef}
                     {...provided.droppableProps}
                   >
-                    {players.map((player, index) => (
-                      <Grid item key={player._id}>
-                        <DraggablePlayer player={player} index={index} />
-                      </Grid>
-                    ))}
+                    {currentTeams.availablePlayers.players.map(
+                      (player, index) => (
+                        <Grid item key={player._id}>
+                          <DraggablePlayer player={player} index={index} />
+                        </Grid>
+                      )
+                    )}
                   </Grid>
                 )}
               </Droppable>
@@ -125,7 +144,7 @@ export default function ManageTeamsComponent({
               Times
             </Typography>
             <Grid container spacing={1}>
-              {Object.entries(teams).map(([key, team]) => {
+              {Object.entries(currentTeams).map(([key, team]) => {
                 if (team?.color === undefined) return <></>;
 
                 return (
@@ -135,7 +154,7 @@ export default function ManageTeamsComponent({
                       value={team.color}
                       onChange={(event) => {
                         team.color = event.target.value;
-                        setTeams({...teams});
+                        setCurrentTeams({ ...currentTeams });
                       }}
                       fullWidth
                       required

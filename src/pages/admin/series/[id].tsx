@@ -14,11 +14,12 @@ import * as AdminServices from "../../../services/admin";
 import getMonthName from "../../../utils/getMonthName";
 import SerieDetailsData from "../../../types/admin/SerieDetailsData";
 import { ReactElement, useState } from "react";
-import GameDayFormComponent from "../../../components/GameDayFormComponent";
+import ManageGameDayFormComponent from "../../../components/ManageGameDayFormComponent";
 import ManageTeamsComponent from "../../../components/ManageTeamsComponent";
 import ActivePlayerData from "../../../types/admin/ActivePlayerData";
+import SerieDetailsGameDayData from "../../../types/admin/SerieDetailsGameDayData";
 
-const AddContentDialog = ({
+const ManageContentDialog = ({
   title,
   open = false,
   handleClose,
@@ -34,7 +35,6 @@ const AddContentDialog = ({
     <Dialog
       open={open}
       onClose={handleClose}
-      fullWidth
       maxWidth="lg"
       sx={{ width: "100%" }}
     >
@@ -62,17 +62,6 @@ export default function AdminSerieDetailsPage({
   };
 
   const handleManageTeamsSave = async () => {
-    // const teamsData = Object.entries(teams).map(([key, value]) => {
-    //   return {
-    //     color: key,
-    //     players: value.map((p) => p._id),
-    //   };
-    // });
-
-    // const response = await axios.put(
-    //   `/api/admin/series/${serie._id}/teams`,
-    //   teamsData
-    // );
     handleManageTeamsDialogClose();
   };
 
@@ -80,9 +69,12 @@ export default function AdminSerieDetailsPage({
     setManageGameDayOpen(true);
   };
 
-  const handleManageDameDayDialogClose = () => {
+  const handleManageGameDayDialogClose = () => {
+    setEditGameDay(undefined);
     setManageGameDayOpen(false);
   };
+
+  const [editGameDay, setEditGameDay] = useState<SerieDetailsGameDayData>();
 
   return (
     <>
@@ -108,7 +100,7 @@ export default function AdminSerieDetailsPage({
           <Grid container spacing={2} padding={1} justifyContent="center">
             {serie.teams.map((team) => {
               return (
-                <Grid key={team._id} item xs={3}>
+                <Grid key={team._id} item xs={12} md={3}>
                   <Paper sx={{ padding: 1 }}>
                     <Typography variant="subtitle2">
                       Time {team.color}
@@ -132,16 +124,22 @@ export default function AdminSerieDetailsPage({
           {serie.gameDays.map((gameDay) => {
             return (
               <Paper key={gameDay.date}>
-                <Typography>
+                <Button
+                  fullWidth
+                  onClick={() => {
+                    setEditGameDay(gameDay);
+                    handleManageGameDayOnClick();
+                  }}
+                >
                   <DateComponent dateString={gameDay.date} />
-                </Typography>
+                </Button>
               </Paper>
             );
           })}
           <Button onClick={handleManageGameDayOnClick}>Adicionar Racha</Button>
         </Stack>
       </Stack>
-      <AddContentDialog
+      <ManageContentDialog
         title="Alterar times"
         open={manageTeamsDialogOpen}
         handleClose={handleManageTeamsDialogClose}
@@ -150,19 +148,22 @@ export default function AdminSerieDetailsPage({
         <ManageTeamsComponent
           players={activePlayers}
           serieId={serie._id}
+          teams={serie.teams}
         />
-      </AddContentDialog>
-      <AddContentDialog
+      </ManageContentDialog>
+      <ManageContentDialog
         title="Adicionar Racha"
         open={manageGameDayDialogOpen}
-        handleClose={handleManageDameDayDialogClose}
-        handleSave={handleManageDameDayDialogClose}
+        handleClose={handleManageGameDayDialogClose}
+        handleSave={handleManageGameDayDialogClose}
       >
-        <GameDayFormComponent
+        <ManageGameDayFormComponent
+          players={activePlayers}
           teams={serie.teams}
           serieId={serie._id}
+          gameDay={editGameDay}
         />
-      </AddContentDialog>
+      </ManageContentDialog>
     </>
   );
 }
