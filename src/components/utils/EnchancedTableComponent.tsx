@@ -74,13 +74,19 @@ export default function EnhancedTableComponent<T>({
   data,
   columns,
   limit,
+  defaultOrderBy,
+  defaultOrder,
 }: {
   columns: Array<{ field: keyof T; label: string }>;
   data: Array<T>;
   limit?: number;
+  defaultOrderBy?: keyof T;
+  defaultOrder?: Order;
 }) {
-  const [order, setOrder] = React.useState<Order>("asc");
-  const [orderBy, setOrderBy] = React.useState<keyof T>(columns[0].field);
+  const [order, setOrder] = React.useState<Order>(defaultOrder ?? "asc");
+  const [orderBy, setOrderBy] = React.useState<keyof T>(
+    defaultOrderBy ?? columns[0].field
+  );
 
   const handleRequestSort = (property: keyof T) => {
     const isAsc = orderBy === property && order === "asc";

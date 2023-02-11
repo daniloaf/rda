@@ -5,32 +5,34 @@ import SerieDetailsPlayerData from "../types/admin/SerieDetailsPlayerData";
 import DraggablePlayer from "./DraggablePlayer";
 
 export default function GameDayPlayersComponent({
-  allPlayers,
+  initialPresentPlayers,
+  initialMissingPlayers,
   handleDataChange,
 }: {
-  allPlayers: Array<SerieDetailsPlayerData>;
+  initialPresentPlayers: Array<SerieDetailsPlayerData>;
+  initialMissingPlayers: Array<SerieDetailsPlayerData>;
   handleDataChange: (data: any) => void;
 }) {
   const [presentPlayers, setPresentPlayers] = useState(
-    allPlayers.sort((p1, p2) => p1.nickname.localeCompare(p2.nickname))
+    initialPresentPlayers.sort((p1, p2) => p1.nickname.localeCompare(p2.nickname))
   );
 
-  const [missingPlayers, setMissingPlayers] = useState<typeof presentPlayers>(
-    []
+  const [missingPlayers, setMissingPlayers] = useState<typeof initialPresentPlayers>(
+    initialMissingPlayers.sort((p1, p2) => p1.nickname.localeCompare(p2.nickname))
   );
 
   const droppablePlayers: {
     [index: string]: {
-      players: typeof presentPlayers;
+      players: typeof initialPresentPlayers;
       setPlayers: typeof setPresentPlayers;
     };
   } = {
     presentPlayers: {
-      players: presentPlayers,
+      players: initialPresentPlayers,
       setPlayers: setPresentPlayers,
     },
     missingPlayers: {
-      players: missingPlayers,
+      players: initialMissingPlayers,
       setPlayers: setMissingPlayers,
     },
   };
@@ -49,7 +51,7 @@ export default function GameDayPlayersComponent({
     sourcePlayers.setPlayers(sourcePlayers.players);
     destinationPlayers.setPlayers(destinationPlayers.players);
 
-    handleDataChange({ presentPlayers, missingPlayers });
+    handleDataChange({ presentPlayers: initialPresentPlayers, missingPlayers: initialMissingPlayers });
   };
 
   return (
@@ -79,7 +81,7 @@ export default function GameDayPlayersComponent({
                   ref={provided.innerRef}
                   {...provided.droppableProps}
                 >
-                  {presentPlayers.map((player, index) => {
+                  {initialPresentPlayers.map((player, index) => {
                     return (
                       <Grid key={player._id} item xs={4}>
                         <DraggablePlayer player={player} index={index} />
@@ -103,7 +105,7 @@ export default function GameDayPlayersComponent({
                   ref={provided.innerRef}
                   {...provided.droppableProps}
                 >
-                  {missingPlayers.map((player, index) => {
+                  {initialMissingPlayers.map((player, index) => {
                     return (
                       <Grid key={player._id} item xs={3}>
                         <DraggablePlayer player={player} index={index} />

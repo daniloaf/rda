@@ -24,6 +24,8 @@ export default function TeamRankingTableComponent({
           { field: "losses", label: "D" },
         ]}
         data={ranking}
+        defaultOrderBy="score"
+        defaultOrder="desc"
       />
     </Paper>
   );

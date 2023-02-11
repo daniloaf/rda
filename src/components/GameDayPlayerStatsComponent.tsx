@@ -1,5 +1,3 @@
-import { styled } from "@mui/system";
-import TableCell from "@mui/material/TableCell";
 import GameDayPlayerStats from "../types/GameDayPlayerStats";
 import EnhancedTableComponent from "./utils/EnchancedTableComponent";
 import { Paper, Typography } from "@mui/material";
@@ -24,12 +22,14 @@ export default function GameDayPlayerStatsComponent({
         columns={[
           { field: "nickname", label: abbreviate ? "A" : "Atleta" },
           { field: "goals", label: abbreviate ? "G" : "Gols" },
-          { field: "assists", label: abbreviate ? "N" : "Assitências" },
-          { field: "score", label: abbreviate ? "S" : "Nota" },
+          { field: "assists", label: abbreviate ? "A" : "Assitências" },
+          { field: "score", label: abbreviate ? "N" : "Nota" },
           { field: "teamColor", label: abbreviate ? "T" : "Time" },
         ]}
         data={playersStats}
         limit={limit}
+        defaultOrderBy="score"
+        defaultOrder="desc"
       />
     </Paper>
   );

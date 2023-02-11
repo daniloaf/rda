@@ -38,7 +38,7 @@ export const getSeriesSummaryByYear = async () => {
 };
 
 export const getSerieDetails = async (serieId: string) => {
-  const serie = await Serie.findById(serieId).populate(["teams.players"]);
+  const serie = await Serie.findById(serieId).populate(["teams.players", "gameDays.playersStats.player"]);
   return serie.toJSON({ virtuals: true });
 };
 
