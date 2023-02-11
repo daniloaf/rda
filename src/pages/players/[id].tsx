@@ -45,7 +45,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const playerId = context.query.id as string;
   const player = await PlayerServices.getPlayerById(playerId);
   const playerStats = await PlayerServices.getPlayerStats(playerId);
-
+  
   return {
     props: {
       player: JSON.parse(JSON.stringify(player)),

@@ -64,11 +64,17 @@ export const getPlayerStats = async (playerId: string) => {
 
       for (const match of gameDay.matches) {
         const goalsDiff = match.teamA.goals - match.teamB.goals;
-        if (match.teamA.teamId === playerTeam._id) {
+        if (
+          match.teamA.teamId === playerTeam._id ||
+          match.teamA.goalkeeper === playerId
+        ) {
           if (goalsDiff > 0) yearStats.wins += 1;
           else if (goalsDiff < 0) yearStats.losses += 1;
           else yearStats.draws += 1;
-        } else if (match.teamB.teamId === playerTeam._id) {
+        } else if (
+          match.teamB.teamId === playerTeam._id ||
+          match.teamB.goalkeeper === playerId
+        ) {
           if (goalsDiff < 0) yearStats.wins += 1;
           else if (goalsDiff > 0) yearStats.losses += 1;
           else yearStats.draws += 1;
