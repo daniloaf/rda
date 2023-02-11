@@ -74,9 +74,9 @@ export const getCurrentSerieStats = async () => {
         currentTeamStats[teamB.team._id].score += 3;
         currentTeamStats[teamA.team._id].losses += 1;
       } else {
-        currentTeamStats[teamA.team._id].draws += 3;
+        currentTeamStats[teamA.team._id].draws += 1;
         currentTeamStats[teamA.team._id].score += 1;
-        currentTeamStats[teamB.team._id].draws += 3;
+        currentTeamStats[teamB.team._id].draws += 1;
         currentTeamStats[teamB.team._id].score += 1;
       }
     }

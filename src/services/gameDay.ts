@@ -70,9 +70,9 @@ export const getLatestGameDayRankings = async () => {
       latestTeamStats[teamB.team._id].score += 3;
       latestTeamStats[teamA.team._id].losses += 1;
     } else {
-      latestTeamStats[teamA.team._id].draws += 3;
+      latestTeamStats[teamA.team._id].draws += 1;
       latestTeamStats[teamA.team._id].score += 1;
-      latestTeamStats[teamB.team._id].draws += 3;
+      latestTeamStats[teamB.team._id].draws += 1;
       latestTeamStats[teamB.team._id].score += 1;
     }
   }
