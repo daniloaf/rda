@@ -1,17 +1,17 @@
 import mongoose from "../services/mongoose";
 import BaseSchema, { IBaseSchema } from "./baseSchema";
 import Player from "./player";
-import Team from "./team";
+import Team, { ITeam } from "./team";
 
-interface ITeam {
-  team: string;
+interface IMatchTeam {
+  team: string|ITeam;
   goals: number;
   goalkeeper?: string;
 }
 
 export interface IMatch extends IBaseSchema {
-  teamA: ITeam;
-  teamB: ITeam;
+  teamA: IMatchTeam;
+  teamB: IMatchTeam;
 }
 
 const MatchSchema = new mongoose.Schema<IMatch>({

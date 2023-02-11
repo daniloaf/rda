@@ -1,6 +1,7 @@
 import { FilterQuery } from "mongoose";
+import { IGameDay } from "../models/gameDay";
 import Player, { IPlayer } from "../models/player";
-import Serie from "../models/serie";
+import Serie, { ISerie } from "../models/serie";
 import { ITeam } from "../models/team";
 
 export const getPlayerById = async (playerId: string) => {
@@ -12,11 +13,11 @@ export const getPlayers = async (query: FilterQuery<IPlayer>) => {
 };
 
 export const getPlayerStats = async (playerId: string) => {
-  const series = await Serie.find({ "teams.players": playerId })
+  const series = (await Serie.find({ "teams.players": playerId })
     .populate(["gameDays.playersStats.player"])
     .sort({
       year: 1,
-    });
+    })) as Array<ISerie>;
 
   const playerStats: {
     [index: number]: {
@@ -47,7 +48,7 @@ export const getPlayerStats = async (playerId: string) => {
     }
     const yearStats = playerStats[serie.year];
 
-    const playerTeam = serie.teams.find((team: ITeam) =>
+    const playerTeam = serie.teams.find((team) =>
       team.players.includes(playerId)
     );
 
@@ -65,14 +66,14 @@ export const getPlayerStats = async (playerId: string) => {
       for (const match of gameDay.matches) {
         const goalsDiff = match.teamA.goals - match.teamB.goals;
         if (
-          match.teamA.teamId === playerTeam._id ||
+          match.teamA.team === playerTeam?._id ||
           match.teamA.goalkeeper === playerId
         ) {
           if (goalsDiff > 0) yearStats.wins += 1;
           else if (goalsDiff < 0) yearStats.losses += 1;
           else yearStats.draws += 1;
         } else if (
-          match.teamB.teamId === playerTeam._id ||
+          match.teamB.team === playerTeam?._id ||
           match.teamB.goalkeeper === playerId
         ) {
           if (goalsDiff < 0) yearStats.wins += 1;
@@ -90,9 +91,9 @@ export const getPlayerStats = async (playerId: string) => {
 };
 
 export const getPlayerYearStats = async (playerId: string, year: number) => {
-  const series = await Serie.find({ year })
-    .populate(["gameDays.matches.teamA.team", "gameDays.matches.teamB.team"])
-    .sort({ month: 1 });
+  const series = (await Serie.find({ year }).sort({
+    month: 1,
+  })) as Array<ISerie>;
 
   const playerYearStats: {
     [index: number]: {
@@ -121,7 +122,7 @@ export const getPlayerYearStats = async (playerId: string, year: number) => {
         numScores: 0,
       };
     }
-    const playerTeam = serie.teams.find((team: ITeam) =>
+    const playerTeam = serie.teams.find((team) =>
       team.players.includes(playerId)
     );
 
@@ -138,11 +139,17 @@ export const getPlayerYearStats = async (playerId: string, year: number) => {
 
       for (const match of gameDay.matches) {
         const goalsDiff = match.teamA.goals - match.teamB.goals;
-        if (match.teamA.teamId === playerTeam._id) {
+        if (
+          match.teamA.team === playerTeam?._id ||
+          match.teamA.goalkeeper === playerId
+        ) {
           if (goalsDiff > 0) playerYearStats[serie.month].wins += 1;
           else if (goalsDiff < 0) playerYearStats[serie.month].losses += 1;
           else playerYearStats[serie.month].draws += 1;
-        } else if (match.teamB.teamId === playerTeam._id) {
+        } else if (
+          match.teamB.team === playerTeam?._id ||
+          match.teamB.goalkeeper === playerId
+        ) {
           if (goalsDiff < 0) playerYearStats[serie.month].wins += 1;
           else if (goalsDiff > 0) playerYearStats[serie.month].losses += 1;
           else playerYearStats[serie.month].draws += 1;

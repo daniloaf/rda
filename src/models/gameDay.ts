@@ -12,7 +12,7 @@ interface IPlayerStats {
 
 export interface IGameDay extends IBaseSchema {
   date: Date;
-  matches: IMatch;
+  matches: Array<IMatch>;
   playersStats: Array<IPlayerStats>;
 }
 

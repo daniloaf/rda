@@ -7,7 +7,7 @@ export interface ISerie extends IBaseSchema {
   startDate: Date;
   endDate: Date;
   month: number;
-  year: Number;
+  year: number;
   teams: Array<ITeam>;
   gameDays: Array<IGameDay>;
 }
