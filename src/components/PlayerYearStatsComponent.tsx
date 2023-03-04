@@ -11,6 +11,7 @@ import Collapse from "@mui/material/Collapse";
 import IconButton from "@mui/material/IconButton";
 import PlayerYearStats from "../types/PlayerYearStats";
 import PlayerMonthStatsData from "../types/PlayerMonthStatsData";
+import StyleTwoToneIcon from "@mui/icons-material/StyleTwoTone";
 import useRequest from "../utils/useRequest";
 import { useRouter } from "next/router";
 import getMonthName from "../utils/getMonthName";
@@ -22,10 +23,7 @@ const YearRow = ({ stats }: { stats: PlayerYearStats }) => {
     <>
       <TableRow sx={{ borderBottom: "unset" }}>
         <TableCell>
-          <IconButton
-            size="small"
-            onClick={() => setOpen(!open)}
-          >
+          <IconButton size="small" onClick={() => setOpen(!open)}>
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
@@ -34,6 +32,8 @@ const YearRow = ({ stats }: { stats: PlayerYearStats }) => {
         <TableCell>{stats.goals}</TableCell>
         <TableCell>{stats.assists}</TableCell>
         <TableCell>{stats.score}</TableCell>
+        <TableCell>{stats.yellowCards}</TableCell>
+        <TableCell>{stats.redCards}</TableCell>
         <TableCell>{stats.wins}</TableCell>
         <TableCell>{stats.draws}</TableCell>
         <TableCell>{stats.losses}</TableCell>
@@ -62,13 +62,7 @@ const MonthCell = ({
   );
 };
 
-const MonthRows = ({
-  year,
-  open,
-}: {
-  year: number;
-  open: boolean;
-}) => {
+const MonthRows = ({ year, open }: { year: number; open: boolean }) => {
   const router = useRouter();
 
   const { id: playerId } = router.query;
@@ -86,21 +80,25 @@ const MonthRows = ({
 
   return (
     <>
-      {open && monthStats && monthStats.map((stat) => {
-        return (
-          <TableRow key={`${stat.month}/${stat.year}`}>
-            <MonthCell open={open} />
-            <MonthCell open={open}>{getMonthName(stat.month)}</MonthCell>
-            <MonthCell open={open}>{stat.attendance}</MonthCell>
-            <MonthCell open={open}>{stat.goals}</MonthCell>
-            <MonthCell open={open}>{stat.assists}</MonthCell>
-            <MonthCell open={open}>{stat.score}</MonthCell>
-            <MonthCell open={open}>{stat.wins}</MonthCell>
-            <MonthCell open={open}>{stat.draws}</MonthCell>
-            <MonthCell open={open}>{stat.losses}</MonthCell>
-          </TableRow>
-        );
-      })}
+      {open &&
+        monthStats &&
+        monthStats.map((stat) => {
+          return (
+            <TableRow key={`${stat.month}/${stat.year}`}>
+              <MonthCell open={open} />
+              <MonthCell open={open}>{getMonthName(stat.month)}</MonthCell>
+              <MonthCell open={open}>{stat.attendance}</MonthCell>
+              <MonthCell open={open}>{stat.goals}</MonthCell>
+              <MonthCell open={open}>{stat.assists}</MonthCell>
+              <MonthCell open={open}>{stat.score}</MonthCell>
+              <MonthCell open={open}>{stat.yellowCards}</MonthCell>
+              <MonthCell open={open}>{stat.redCards}</MonthCell>
+              <MonthCell open={open}>{stat.wins}</MonthCell>
+              <MonthCell open={open}>{stat.draws}</MonthCell>
+              <MonthCell open={open}>{stat.losses}</MonthCell>
+            </TableRow>
+          );
+        })}
     </>
   );
 };
@@ -121,6 +119,12 @@ export default function PlayerYearStatsComponent({
             <TableCell>Gols</TableCell>
             <TableCell>Assistências</TableCell>
             <TableCell>Nota</TableCell>
+            <TableCell>
+              <StyleTwoToneIcon style={{ fill: "#f5d742" }} />
+            </TableCell>
+            <TableCell>
+              <StyleTwoToneIcon style={{ fill: "#fc1919" }} />
+            </TableCell>
             <TableCell>Vitórias</TableCell>
             <TableCell>Empates</TableCell>
             <TableCell>Derrotas</TableCell>

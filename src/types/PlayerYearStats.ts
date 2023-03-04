@@ -5,6 +5,8 @@ export default interface PlayerYearStats {
   assists: number;
   score: number;
   attendance: number;
+  yellowCards: number;
+  redCards: number;
   wins: number;
   draws: number;
   losses: number;

@@ -4,8 +4,8 @@ import GameDay, { IGameDay } from "./gameDay";
 import Team, { ITeam } from "./team";
 
 export interface ISerie extends IBaseSchema {
-  startDate: Date;
-  endDate: Date;
+  startDate?: Date;
+  endDate?: Date;
   month: number;
   year: number;
   teams: Array<ITeam>;

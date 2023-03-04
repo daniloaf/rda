@@ -7,7 +7,9 @@ interface IPlayerStats {
   player: string;
   goals: number;
   assists: number;
-  score: number;
+  score?: number;
+  yellowCards: number;
+  redCards: number;
 }
 
 export interface IGameDay extends IBaseSchema {
@@ -45,7 +47,12 @@ const GameDaySchema = new mongoose.Schema<IGameDay>({
       },
       score: {
         type: Number,
-        required: true,
+      },
+      yellowCards: {
+        type: Number,
+      },
+      redCards: {
+        type: Number,
       },
     },
   ],

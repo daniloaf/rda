@@ -5,7 +5,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "createTestData": "ts-node --project ./node.tsconfig.json src/scripts/createTestData.ts "
+    "createTestData": "ts-node --project ./node.tsconfig.json src/scripts/createTestData.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.259.0",

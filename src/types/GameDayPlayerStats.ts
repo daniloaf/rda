@@ -4,5 +4,7 @@ export default interface GameDayPlayerStats {
   goals: number;
   assists: number;
   score: number;
+  yellowCards: number;
+  redCards: number;
   teamColor: string;
 }

@@ -19,7 +19,14 @@ export default function PlayerCardComponent({
   linkEndabled?: boolean;
 }) {
   return (
-    <Card variant="outlined" sx={{ minWidth: width, width: width}}>
+    <Card
+      variant="outlined"
+      sx={{
+        minWidth: width,
+        width: width,
+        borderColor: player.active ? "green" : "red",
+      }}
+    >
       <CardActionArea
         disabled={!linkEndabled}
         LinkComponent={Link}
@@ -31,8 +38,12 @@ export default function PlayerCardComponent({
           image={player.picture}
           width={width}
         />
-        <CardContent sx={{ height: 5, display: "flex", justifyContent: "center" }}>
-          <Typography align="center" variant="caption">{player.nickname}</Typography>
+        <CardContent
+          sx={{ height: 5, display: "flex", justifyContent: "center" }}
+        >
+          <Typography align="center" variant="caption">
+            {player.nickname}
+          </Typography>
         </CardContent>
       </CardActionArea>
     </Card>

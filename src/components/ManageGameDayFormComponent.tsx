@@ -88,6 +88,8 @@ export default function ManageGameDayFormComponent({
       goals: number;
       assists: number;
       score: number;
+      yellowCards: number;
+      redCards: number;
     };
   };
 
@@ -98,6 +100,8 @@ export default function ManageGameDayFormComponent({
         goals: stats.goals,
         assists: stats.assists,
         score: stats.score,
+        yellowCards: stats.yellowCards,
+        redCards: stats.redCards,
       })),
       (stats) => stats.player._id
     );
@@ -108,6 +112,8 @@ export default function ManageGameDayFormComponent({
         goals: 0,
         assists: 0,
         score: 0.0,
+        yellowCards: 0,
+        redCards: 0,
       })),
       (stats) => stats.player._id
     );
@@ -245,6 +251,8 @@ export default function ManageGameDayFormComponent({
                               <TableCell>G</TableCell>
                               <TableCell>A</TableCell>
                               <TableCell>N</TableCell>
+                              <TableCell>CA</TableCell>
+                              <TableCell>CV</TableCell>
                             </TableRow>
                           </TableHead>
                           <TableBody>
@@ -308,6 +316,44 @@ export default function ManageGameDayFormComponent({
                                         variant="standard"
                                       ></TextField>
                                     </TableCell>
+                                    <TableCell>
+                                      <TextField
+                                        inputProps={{
+                                          inputMode: "numeric",
+                                          step: 1,
+                                        }}
+                                        type="number"
+                                        required
+                                        value={
+                                          playersStats[player._id].yellowCards
+                                        }
+                                        onChange={(event) => {
+                                          playersStats[player._id].yellowCards =
+                                            parseInt(event.target.value) ?? 0;
+                                          serPlayerStats({ ...playersStats });
+                                        }}
+                                        variant="standard"
+                                      ></TextField>
+                                    </TableCell>
+                                    <TableCell>
+                                      <TextField
+                                        inputProps={{
+                                          inputMode: "numeric",
+                                          step: 1,
+                                        }}
+                                        type="number"
+                                        required
+                                        value={
+                                          playersStats[player._id].redCards
+                                        }
+                                        onChange={(event) => {
+                                          playersStats[player._id].redCards =
+                                            parseInt(event.target.value) ?? 0;
+                                          serPlayerStats({ ...playersStats });
+                                        }}
+                                        variant="standard"
+                                      ></TextField>
+                                    </TableCell>
                                   </TableRow>
                                 );
                               })}
@@ -336,6 +382,8 @@ export default function ManageGameDayFormComponent({
                     <TableCell>Gols</TableCell>
                     <TableCell>Assistências</TableCell>
                     <TableCell>Notas</TableCell>
+                    <TableCell>CA</TableCell>
+                    <TableCell>CV</TableCell>
                     <TableCell>Time</TableCell>
                   </TableRow>
                 </TableHead>
@@ -391,6 +439,40 @@ export default function ManageGameDayFormComponent({
                               onChange={(event) => {
                                 playersStats[goalkeeper._id].score =
                                   parseFloat(event.target.value) ?? 0;
+                                serPlayerStats({ ...playersStats });
+                              }}
+                              variant="standard"
+                            ></TextField>
+                          </TableCell>
+                          <TableCell>
+                            <TextField
+                              inputProps={{
+                                inputMode: "numeric",
+                                step: 1,
+                              }}
+                              type="number"
+                              required
+                              value={playersStats[goalkeeper._id].yellowCards}
+                              onChange={(event) => {
+                                playersStats[goalkeeper._id].yellowCards =
+                                  parseInt(event.target.value) ?? 0;
+                                serPlayerStats({ ...playersStats });
+                              }}
+                              variant="standard"
+                            ></TextField>
+                          </TableCell>
+                          <TableCell>
+                            <TextField
+                              inputProps={{
+                                inputMode: "numeric",
+                                step: 1,
+                              }}
+                              type="number"
+                              required
+                              value={playersStats[goalkeeper._id].redCards}
+                              onChange={(event) => {
+                                playersStats[goalkeeper._id].redCards =
+                                  parseInt(event.target.value) ?? 0;
                                 serPlayerStats({ ...playersStats });
                               }}
                               variant="standard"

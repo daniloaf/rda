@@ -31,7 +31,7 @@ export default function PlayersPage({
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const players = await PlayerServices.getPlayers({ active: true });
+  const players = await PlayerServices.getPlayers({});
 
   return {
     props: {

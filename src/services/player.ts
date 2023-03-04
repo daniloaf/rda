@@ -9,11 +9,11 @@ export const getPlayerById = async (playerId: string) => {
 };
 
 export const getPlayers = async (query: FilterQuery<IPlayer>) => {
-  return Player.find(query);
+  return Player.find(query).sort({ active: -1, nickname: 1 });
 };
 
 export const getPlayerStats = async (playerId: string) => {
-  const series = (await Serie.find({ "teams.players": playerId })
+  const series = (await Serie.find({ "gameDays.playersStats.player": playerId })
     .populate(["gameDays.playersStats.player"])
     .sort({
       year: 1,

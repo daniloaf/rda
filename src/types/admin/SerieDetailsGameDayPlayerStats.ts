@@ -5,4 +5,6 @@ export default interface SerieDetailsGameDayPlayerStats {
   goals: number;
   assists: number;
   score: number;
+  yellowCards: number;
+  redCards: number;
 }

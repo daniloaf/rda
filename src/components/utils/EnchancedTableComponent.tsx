@@ -31,7 +31,7 @@ function getComparator<T>(
 }
 
 interface EnhancedTableProps<T> {
-  columns: Array<{ field: keyof T; label: string }>;
+  columns: Array<{ field: keyof T; label: React.ReactElement | string }>;
   onRequestSort: (property: keyof T) => void;
   order: Order;
   orderBy: keyof T;
@@ -77,7 +77,7 @@ export default function EnhancedTableComponent<T>({
   defaultOrderBy,
   defaultOrder,
 }: {
-  columns: Array<{ field: keyof T; label: string }>;
+  columns: Array<{ field: keyof T; label: React.ReactElement | string }>;
   data: Array<T>;
   limit?: number;
   defaultOrderBy?: keyof T;

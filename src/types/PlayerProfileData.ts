@@ -5,4 +5,5 @@ export default interface PlayerProfileData {
   fullName: string;
   birthdate: string;
   position: string;
+  active: boolean;
 }

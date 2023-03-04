@@ -57,6 +57,8 @@ export const getCurrentSerieStats = async () => {
       assists: number;
       totalScore: number;
       numScores: number;
+      yellowCards: number;
+      redCards: number;
     };
   } = {};
 
@@ -92,6 +94,8 @@ export const getCurrentSerieStats = async () => {
           assists: 0,
           totalScore: 0,
           numScores: 0,
+          yellowCards: 0,
+          redCards: 0,
         };
       }
 
@@ -99,6 +103,8 @@ export const getCurrentSerieStats = async () => {
       currentPlayersStats[playerId].assists += stats.assists;
       currentPlayersStats[playerId].totalScore += stats.score;
       currentPlayersStats[playerId].numScores++;
+      currentPlayersStats[playerId].yellowCards += stats.yellowCards;
+      currentPlayersStats[playerId].redCards += stats.redCards;
     }
   }
 
