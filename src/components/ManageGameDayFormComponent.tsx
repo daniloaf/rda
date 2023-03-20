@@ -271,8 +271,9 @@ export default function ManageGameDayFormComponent({
                                       <TextField
                                         inputProps={{
                                           inputMode: "numeric",
-                                          pattern: "[0-9]*",
+                                          step: 1,
                                         }}
+                                        type="number"
                                         required
                                         value={playersStats[player._id].goals}
                                         onChange={(event) => {
@@ -287,8 +288,9 @@ export default function ManageGameDayFormComponent({
                                       <TextField
                                         inputProps={{
                                           inputMode: "numeric",
-                                          pattern: "[0-9]*",
+                                          step: 1,
                                         }}
+                                        type="number"
                                         required
                                         value={playersStats[player._id].assists}
                                         onChange={(event) => {
@@ -301,11 +303,6 @@ export default function ManageGameDayFormComponent({
                                     </TableCell>
                                     <TableCell>
                                       <TextField
-                                        inputProps={{
-                                          inputMode: "numeric",
-                                          step: 0.01,
-                                        }}
-                                        type="number"
                                         required
                                         value={playersStats[player._id].score}
                                         onChange={(event) => {
@@ -399,6 +396,7 @@ export default function ManageGameDayFormComponent({
                               inputProps={{
                                 inputMode: "numeric",
                                 pattern: "[0-9]*",
+                                step: 1,
                               }}
                               required
                               value={playersStats[goalkeeper._id].goals}
@@ -415,6 +413,7 @@ export default function ManageGameDayFormComponent({
                               inputProps={{
                                 inputMode: "numeric",
                                 pattern: "[0-9]*",
+                                step: 1,
                               }}
                               required
                               value={playersStats[goalkeeper._id].assists}
@@ -431,7 +430,6 @@ export default function ManageGameDayFormComponent({
                               inputProps={{
                                 inputMode: "numeric",
                                 // pattern: "[0-9\.]*",
-                                step: 0.01,
                               }}
                               type="number"
                               required

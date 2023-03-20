@@ -10,7 +10,7 @@ export const getCurrentSerieStats = async () => {
       "gameDays.matches.teamB.team",
     ])
     .sort({
-      startDate: -1,
+      year: -1, month: -1,
     });
 
   if (!latestSerie) {

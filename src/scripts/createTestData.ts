@@ -274,8 +274,6 @@ const createSeries = async (players: Array<any>) => {
 
   const seriesData = [
     {
-      startDate: new Date("2022-10-07"),
-      endDate: new Date("2022-10-28"),
       month: 10,
       year: 2022,
       teams: octoberTeams,
@@ -567,8 +565,6 @@ const createSeries = async (players: Array<any>) => {
       ],
     },
     {
-      startDate: new Date("2022-11-03"),
-      endDate: new Date("2022-11-17"),
       month: 11,
       year: 2022,
       teams: novemberTeams,
@@ -789,7 +785,6 @@ const createSeries = async (players: Array<any>) => {
       ],
     },
     {
-      startDate: new Date("2023-02-02"),
       month: 2,
       year: 2023,
     },

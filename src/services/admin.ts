@@ -29,7 +29,7 @@ export const setPlayerPicture = async (playerId: string, picture: any) => {
 export const getSeriesSummaryByYear = async () => {
   const series = await Serie.find({}, ["_id", "month", "year", "gameDays"])
     .populate(["teams.players"])
-    .sort({ startDate: -1 });
+    .sort({ year: -1, month: -1 });
   const seriesByYear = _(series)
     .map((serie) => serie.toJSON({ virtuals: true }))
     .groupBy("year")
