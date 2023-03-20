@@ -86,7 +86,7 @@ export const getPlayerStats = async (playerId: string) => {
 
   return Object.values(playerStats).map((stats) => ({
     ...stats,
-    score: stats.totalScore / stats.numScores,
+    score: (stats.totalScore / (stats.numScores || 1)).toFixed(2),
   }));
 };
 
@@ -161,7 +161,7 @@ export const getPlayerYearStats = async (playerId: string, year: number) => {
   return {
     playerYearStats: Object.values(playerYearStats).map((stats) => ({
       ...stats,
-      score: stats.totalScore / stats.numScores,
+      score: (stats.totalScore / (stats.numScores || 1)).toFixed(2),
     })),
   };
 };

@@ -3,7 +3,7 @@ export default interface PlayerYearStats {
   year: number;
   goals: number;
   assists: number;
-  score: number;
+  score: number|string;
   attendance: number;
   yellowCards: number;
   redCards: number;

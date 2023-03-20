@@ -101,20 +101,20 @@ export const getCurrentSerieStats = async () => {
 
       currentPlayersStats[playerId].goals += stats.goals;
       currentPlayersStats[playerId].assists += stats.assists;
-      currentPlayersStats[playerId].totalScore += stats.score;
+      currentPlayersStats[playerId].totalScore += stats.score ?? 0;
       currentPlayersStats[playerId].numScores++;
       currentPlayersStats[playerId].yellowCards += stats.yellowCards;
       currentPlayersStats[playerId].redCards += stats.redCards;
     }
   }
-
+  
   return {
     currentTeamRanking: Object.values(currentTeamStats).sort(
       (a, b) => b.score - a.score
     ),
     currentPlayersStats: Object.values(currentPlayersStats).map((stats) => ({
       ...stats,
-      score: stats.totalScore / stats.numScores,
+      score: (stats.totalScore / (stats.numScores || 1)).toFixed(2),
     })),
     month: latestSerie.month,
   };
