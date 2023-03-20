@@ -87,7 +87,7 @@ export default function ManageGameDayFormComponent({
       player: ActivePlayerData;
       goals: number;
       assists: number;
-      score: number;
+      score: number|string;
       yellowCards: number;
       redCards: number;
     };
@@ -307,7 +307,7 @@ export default function ManageGameDayFormComponent({
                                         value={playersStats[player._id].score}
                                         onChange={(event) => {
                                           playersStats[player._id].score =
-                                            parseFloat(event.target.value) ?? 0;
+                                            event.target.value ?? 0;
                                           serPlayerStats({ ...playersStats });
                                         }}
                                         variant="standard"
@@ -436,7 +436,7 @@ export default function ManageGameDayFormComponent({
                               value={playersStats[goalkeeper._id].score}
                               onChange={(event) => {
                                 playersStats[goalkeeper._id].score =
-                                  parseFloat(event.target.value) ?? 0;
+                                  event.target.value ?? 0;
                                 serPlayerStats({ ...playersStats });
                               }}
                               variant="standard"
