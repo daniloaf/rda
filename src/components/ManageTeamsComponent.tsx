@@ -3,6 +3,7 @@ import {
   Button,
   FormControl,
   Grid,
+  MenuItem,
   Paper,
   TextField,
   Typography,
@@ -62,6 +63,7 @@ export default function ManageTeamsComponent({
       _id?: string;
       color?: string;
       players: typeof players;
+      captain?: string;
     };
   }>({
     availablePlayers: {
@@ -98,6 +100,7 @@ export default function ManageTeamsComponent({
           _id: team._id,
           color: team.color,
           players: team.players.map((p) => p._id),
+          captain: team.captain
         };
       });
 
@@ -178,6 +181,25 @@ export default function ManageTeamsComponent({
                         </Stack>
                       )}
                     </Droppable>
+                    <TextField
+                      label="Capitão"
+                      value={team.captain}
+                      select
+                      onChange={(event) => {
+                        team.captain = event.target.value;
+                        setCurrentTeams({ ...currentTeams });
+                      }}
+                      fullWidth
+                      required
+                    >
+                      {team.players?.map((player) => {
+                        return (
+                          <MenuItem key={player._id} value={player._id}>
+                            {player.nickname}
+                          </MenuItem>
+                        );
+                      })}
+                    </TextField>
                   </Grid>
                 );
               })}

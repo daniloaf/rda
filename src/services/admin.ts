@@ -51,7 +51,7 @@ export const setSerieTeams = async (serieId: string, teams: Array<ITeam>) => {
   const newTeams = await Promise.all(
     teams.map(async (team) => {
       if (team._id) {
-        return Team.findByIdAndUpdate(team._id, new Team(team));
+        return Team.findByIdAndUpdate(team._id, new Team(team), { new: true });
       } else {
         return Team.create(team);
       }

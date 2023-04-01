@@ -5,6 +5,7 @@ import Player from "./player";
 export interface ITeam extends IBaseSchema {
   color: string;
   players: Array<string>;
+  captain: string;
 }
 
 const TeamSchema = new mongoose.Schema<ITeam>({
@@ -19,6 +20,10 @@ const TeamSchema = new mongoose.Schema<ITeam>({
       ref: Player,
     },
   ],
+  captain: {
+    type: String,
+    ref: Player,
+  },
 });
 
 const Team = mongoose.models.Team || mongoose.model<ITeam>("Team", TeamSchema);
