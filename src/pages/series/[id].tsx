@@ -22,11 +22,6 @@ export default function SerieDetailsPage({
   teamRanking: TeamRankingData[];
   playersStats: GameDayPlayerStats[];
 }) {
-  console.log({
-    serie,
-    teamRanking,
-    playersStats,
-  });
   return (
     <Stack spacing={1}>
       <Typography variant="h5">

@@ -79,7 +79,7 @@ export const getSeriesSummaries = async () => {
     const topScorers = Object.values(currentPlayersStats).sort((a, b) => b.goals - a.goals);
     const topAssistants = Object.values(currentPlayersStats).sort((a, b) => b.assists - a.assists);
     const topCards = Object.values(currentPlayersStats).sort(
-      (a, b) => a.yellowCards + b.redCards - (a.yellowCards + a.redCards)
+      (a, b) => b.yellowCards + b.redCards - (a.yellowCards + a.redCards)
     );
 
     return {
@@ -89,12 +89,12 @@ export const getSeriesSummaries = async () => {
       champion,
       topScorers: topScorers.filter((p) => p.goals > 0 && p.goals === topScorers[0].goals),
       topAssistants: topAssistants.filter(
-        (p) => p.assists > 0 && p.assists === topScorers[0].assists
+        (p) => p.assists > 0 && p.assists === topAssistants[0].assists
       ),
       topCards: topCards.filter(
         (p) =>
           p.yellowCards + p.redCards > 0 &&
-          p.yellowCards + p.redCards === topCards[0].yellowCards + topCards[0].redCards
+          (p.yellowCards + p.redCards) === (topCards[0].yellowCards + topCards[0].redCards)
       ),
     };
   });
