@@ -112,7 +112,9 @@ export default function Home({
                   .map((month) => {
                     return (
                       <Stack key={month} spacing={1}>
-                        <Typography variant="h6">{getMonthName(month, 'LLLL')}</Typography>
+                        <Typography variant="h6">
+                          {getMonthName(parseInt(month), 'LLLL')}
+                        </Typography>
                         {_(groupedData[year][month])
                           .orderBy(['year', 'month', 'date'], ['desc', 'desc', 'desc'])
                           .map((gameDay) => {
