@@ -8,8 +8,8 @@ export default function SideBarComponent({
   currentTeamRanking,
   currentPlayersStats,
 }: {
-  currentTeamRanking: Array<TeamRankingData>;
-  currentPlayersStats: Array<GameDayPlayerStats>;
+  currentTeamRanking: TeamRankingData[];
+  currentPlayersStats: GameDayPlayerStats[];
 }) {
   return (
     <Stack spacing={1} component={Paper} variant="outlined">

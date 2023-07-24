@@ -10,7 +10,8 @@
   "prettier": {
     "printWidth": 100,
     "singleQuote": true,
-    "trailingComma": "es5"
+    "trailingComma": "es5",
+    "tabWidth": 2
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.259.0",
