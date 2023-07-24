@@ -1,6 +1,7 @@
-import _ from "lodash";
-import { parseJSON } from "date-fns";
-import { Button } from "@mui/material";
+import _ from 'lodash';
+import { parseJSON } from 'date-fns';
+import { Button, IconButton } from '@mui/material';
+import RemoveIcon from '@mui/icons-material/Remove';
 import {
   FormControl,
   Grid,
@@ -16,20 +17,22 @@ import {
   TableRow,
   TextField,
   Typography,
-} from "@mui/material";
-import { DatePicker } from "@mui/x-date-pickers";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+} from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import axios from "axios";
-import { useRouter } from "next/router";
-import { ChangeEvent, FormEventHandler, useState } from "react";
-import SerieDetailsGameDayData from "../types/admin/SerieDetailsGameDayData";
-import SerieDetailsTeamData from "../types/admin/SerieDetailsTeamData";
-import GameDayPlayersComponent from "./GameDayPlayersComponent";
-import SerieDetailsMatchTeamData from "../types/admin/SerieDetailsMatchTeamData";
-import SerieDetailsMatchData from "../types/admin/SerieDetailsMatchData";
-import ActivePlayerData from "../types/admin/ActivePlayerData";
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import axios from 'axios';
+import { useRouter } from 'next/router';
+import { ChangeEvent, FormEventHandler, useState } from 'react';
+import SerieDetailsGameDayData, {
+  TeamPunishmentData,
+} from '../types/admin/SerieDetailsGameDayData';
+import SerieDetailsTeamData from '../types/admin/SerieDetailsTeamData';
+import GameDayPlayersComponent from './GameDayPlayersComponent';
+import SerieDetailsMatchTeamData from '../types/admin/SerieDetailsMatchTeamData';
+import SerieDetailsMatchData from '../types/admin/SerieDetailsMatchData';
+import ActivePlayerData from '../types/admin/ActivePlayerData';
 
 export default function ManageGameDayFormComponent({
   gameDay,
@@ -51,7 +54,7 @@ export default function ManageGameDayFormComponent({
 
   const teamGoalkeeperMenuItems = () => {
     return matchPlayers.presentPlayers
-      .filter((player) => player.position === "Goleiro")
+      .filter((player) => player.position === 'Goleiro')
       .map((goalkeeper) => (
         <MenuItem key={goalkeeper._id} value={goalkeeper._id}>
           {goalkeeper.nickname}
@@ -70,16 +73,19 @@ export default function ManageGameDayFormComponent({
         .fill(null)
         .map(() => ({
           teamA: {
-            team: "",
+            team: '',
             goals: 0,
             goalkeeper: undefined,
           },
           teamB: {
-            team: "",
+            team: '',
             goals: 0,
             goalkeeper: undefined,
           },
         }))
+  );
+  const [teamPunishments, setTeamPunishments] = useState<Array<TeamPunishmentData>>(
+    gameDay?.teamPunishments ?? []
   );
 
   let initialPlayersStats: {
@@ -87,7 +93,7 @@ export default function ManageGameDayFormComponent({
       player: ActivePlayerData;
       goals: number;
       assists: number;
-      score: number|string;
+      score: number | string;
       yellowCards: number;
       redCards: number;
     };
@@ -122,12 +128,8 @@ export default function ManageGameDayFormComponent({
   const [playersStats, serPlayerStats] = useState(initialPlayersStats);
 
   const [matchPlayers, setMatchPlayers] = useState({
-    presentPlayers: players.filter(
-      (player) => !!initialPlayersStats[player._id]
-    ),
-    missingPlayers: players.filter(
-      (player) => !initialPlayersStats[player._id]
-    ),
+    presentPlayers: players.filter((player) => !!initialPlayersStats[player._id]),
+    missingPlayers: players.filter((player) => !initialPlayersStats[player._id]),
   });
 
   const handlePlayersChange = (data: any) => {
@@ -144,19 +146,14 @@ export default function ManageGameDayFormComponent({
       date: date,
       matches: matches,
       playersStats: Object.values(playersStats),
+      teamPunishments: teamPunishments,
     };
 
     let response;
     if (!gameDay) {
-      response = await axios.post(
-        `/api/admin/series/${serieId}/gameDays`,
-        data
-      );
+      response = await axios.post(`/api/admin/series/${serieId}/gameDays`, data);
     } else {
-      response = await axios.put(
-        `/api/admin/series/${serieId}/gameDays/${gameDay?._id}`,
-        data
-      );
+      response = await axios.put(`/api/admin/series/${serieId}/gameDays/${gameDay?._id}`, data);
     }
 
     if (response.status === 200) {
@@ -165,33 +162,29 @@ export default function ManageGameDayFormComponent({
   };
 
   const handleTeamChange =
-    (team: SerieDetailsMatchTeamData) =>
-    (event: React.ChangeEvent<HTMLInputElement>) => {
+    (team: SerieDetailsMatchTeamData) => (event: React.ChangeEvent<HTMLInputElement>) => {
       team.team = event.target.value;
       setMatches([...matches]);
     };
 
   const handleTeamGoalsChange =
-    (team: SerieDetailsMatchTeamData) =>
-    (event: ChangeEvent<HTMLInputElement>) => {
+    (team: SerieDetailsMatchTeamData) => (event: ChangeEvent<HTMLInputElement>) => {
       team.goals = parseInt(event.target.value);
       setMatches([...matches]);
     };
 
   const handleGoalkeeperTeamChange =
-    (goalkeeper: ActivePlayerData) =>
-    (event: React.ChangeEvent<HTMLInputElement>) => {
+    (goalkeeper: ActivePlayerData) => (event: React.ChangeEvent<HTMLInputElement>) => {
       const teamSide = event.target.value;
       matches.forEach((match) => {
-        if (teamSide === "teamA") match.teamA.goalkeeper = goalkeeper;
-        else if (teamSide === "teamB") match.teamB.goalkeeper = goalkeeper;
+        if (teamSide === 'teamA') match.teamA.goalkeeper = goalkeeper;
+        else if (teamSide === 'teamB') match.teamB.goalkeeper = goalkeeper;
       });
       setMatches([...matches]);
     };
 
   const handleTeamGoalkeeperChange =
-    (team: SerieDetailsMatchTeamData) =>
-    (event: React.ChangeEvent<HTMLInputElement>) => {
+    (team: SerieDetailsMatchTeamData) => (event: React.ChangeEvent<HTMLInputElement>) => {
       const goalkeeperId = event.target.value;
       team.goalkeeper = playersStats[goalkeeperId]?.player;
       setMatches([...matches]);
@@ -210,9 +203,7 @@ export default function ManageGameDayFormComponent({
                 onChange={(newValue) => {
                   setDate(newValue);
                 }}
-                renderInput={(params) => (
-                  <TextField fullWidth required {...params} />
-                )}
+                renderInput={(params) => <TextField fullWidth required {...params} />}
               />
             </LocalizationProvider>
           </Grid>
@@ -231,7 +222,7 @@ export default function ManageGameDayFormComponent({
 
           <Grid item xs={12}>
             <Typography variant="h5" align="center">
-              Gols e Assistências
+              Estatísticas
             </Typography>
           </Grid>
           <Grid item xs={12}>
@@ -259,9 +250,7 @@ export default function ManageGameDayFormComponent({
                             {team.players
                               .filter(
                                 (player) =>
-                                  !!matchPlayers.presentPlayers.find(
-                                    (p) => p._id === player._id
-                                  )
+                                  !!matchPlayers.presentPlayers.find((p) => p._id === player._id)
                               )
                               .map((player) => {
                                 return (
@@ -270,7 +259,7 @@ export default function ManageGameDayFormComponent({
                                     <TableCell>
                                       <TextField
                                         inputProps={{
-                                          inputMode: "numeric",
+                                          inputMode: 'numeric',
                                           step: 1,
                                         }}
                                         type="number"
@@ -287,7 +276,7 @@ export default function ManageGameDayFormComponent({
                                     <TableCell>
                                       <TextField
                                         inputProps={{
-                                          inputMode: "numeric",
+                                          inputMode: 'numeric',
                                           step: 1,
                                         }}
                                         type="number"
@@ -306,8 +295,7 @@ export default function ManageGameDayFormComponent({
                                         required
                                         value={playersStats[player._id].score}
                                         onChange={(event) => {
-                                          playersStats[player._id].score =
-                                            event.target.value ?? 0;
+                                          playersStats[player._id].score = event.target.value ?? 0;
                                           serPlayerStats({ ...playersStats });
                                         }}
                                         variant="standard"
@@ -316,14 +304,12 @@ export default function ManageGameDayFormComponent({
                                     <TableCell>
                                       <TextField
                                         inputProps={{
-                                          inputMode: "numeric",
+                                          inputMode: 'numeric',
                                           step: 1,
                                         }}
                                         type="number"
                                         required
-                                        value={
-                                          playersStats[player._id].yellowCards
-                                        }
+                                        value={playersStats[player._id].yellowCards}
                                         onChange={(event) => {
                                           playersStats[player._id].yellowCards =
                                             parseInt(event.target.value) ?? 0;
@@ -335,14 +321,12 @@ export default function ManageGameDayFormComponent({
                                     <TableCell>
                                       <TextField
                                         inputProps={{
-                                          inputMode: "numeric",
+                                          inputMode: 'numeric',
                                           step: 1,
                                         }}
                                         type="number"
                                         required
-                                        value={
-                                          playersStats[player._id].redCards
-                                        }
+                                        value={playersStats[player._id].redCards}
                                         onChange={(event) => {
                                           playersStats[player._id].redCards =
                                             parseInt(event.target.value) ?? 0;
@@ -386,7 +370,7 @@ export default function ManageGameDayFormComponent({
                 </TableHead>
                 <TableBody>
                   {matchPlayers.presentPlayers
-                    .filter((player) => player.position === "Goleiro")
+                    .filter((player) => player.position === 'Goleiro')
                     .map((goalkeeper) => {
                       return (
                         <TableRow key={goalkeeper._id}>
@@ -394,8 +378,8 @@ export default function ManageGameDayFormComponent({
                           <TableCell>
                             <TextField
                               inputProps={{
-                                inputMode: "numeric",
-                                pattern: "[0-9]*",
+                                inputMode: 'numeric',
+                                pattern: '[0-9]*',
                                 step: 1,
                               }}
                               required
@@ -411,8 +395,8 @@ export default function ManageGameDayFormComponent({
                           <TableCell>
                             <TextField
                               inputProps={{
-                                inputMode: "numeric",
-                                pattern: "[0-9]*",
+                                inputMode: 'numeric',
+                                pattern: '[0-9]*',
                                 step: 1,
                               }}
                               required
@@ -428,15 +412,14 @@ export default function ManageGameDayFormComponent({
                           <TableCell>
                             <TextField
                               inputProps={{
-                                inputMode: "numeric",
+                                inputMode: 'numeric',
                                 // pattern: "[0-9\.]*",
                               }}
                               type="number"
                               required
                               value={playersStats[goalkeeper._id].score}
                               onChange={(event) => {
-                                playersStats[goalkeeper._id].score =
-                                  event.target.value ?? 0;
+                                playersStats[goalkeeper._id].score = event.target.value ?? 0;
                                 serPlayerStats({ ...playersStats });
                               }}
                               variant="standard"
@@ -445,7 +428,7 @@ export default function ManageGameDayFormComponent({
                           <TableCell>
                             <TextField
                               inputProps={{
-                                inputMode: "numeric",
+                                inputMode: 'numeric',
                                 step: 1,
                               }}
                               type="number"
@@ -462,7 +445,7 @@ export default function ManageGameDayFormComponent({
                           <TableCell>
                             <TextField
                               inputProps={{
-                                inputMode: "numeric",
+                                inputMode: 'numeric',
                                 step: 1,
                               }}
                               type="number"
@@ -499,111 +482,256 @@ export default function ManageGameDayFormComponent({
             <Typography variant="h5" align="center">
               Partidas
             </Typography>
+            <MarchesForm
+              matches={matches}
+              handleTeamGoalkeeperChange={handleTeamGoalkeeperChange}
+              teamGoalkeeperMenuItems={teamGoalkeeperMenuItems}
+              handleTeamChange={handleTeamChange}
+              teamMenuItems={teamMenuItems}
+              handleTeamGoalsChange={handleTeamGoalsChange}
+            />
           </Grid>
           <Grid item xs={12}>
-            <Stack spacing={1}>
-              {matches.map((match, index) => {
-                return (
-                  <Paper key={index} variant="outlined">
-                    <FormControl>
-                      <Grid
-                        container
-                        padding={1}
-                        spacing={1}
-                        direction="row"
-                        justifyContent="center"
-                        alignItems="center"
-                      >
-                        <Grid item>
-                          <Typography>Partida {index + 1}</Typography>
-                        </Grid>
-                        <Grid item>
-                          <TextField
-                            label="Goleiro"
-                            sx={{ width: 200 }}
-                            value={match.teamA.goalkeeper?._id || ""}
-                            onChange={handleTeamGoalkeeperChange(match.teamA)}
-                            select
-                          >
-                            <MenuItem value={""}>Convidado</MenuItem>
-                            {teamGoalkeeperMenuItems()}
-                          </TextField>
-                        </Grid>
-                        <Grid item>
-                          <TextField
-                            required
-                            label="Time"
-                            sx={{ width: 200 }}
-                            value={match.teamA.team}
-                            onChange={handleTeamChange(match.teamA)}
-                            select
-                          >
-                            {teamMenuItems()}
-                          </TextField>
-                        </Grid>
-                        <Grid item>
-                          <TextField
-                            inputProps={{
-                              inputMode: "numeric",
-                              pattern: "[0-9]*",
-                            }}
-                            value={match.teamA.goals}
-                            onChange={handleTeamGoalsChange(match.teamA)}
-                            sx={{ width: 50 }}
-                            required
-                          ></TextField>
-                        </Grid>
-                        <Grid item>
-                          <Typography variant="body1" align="center">
-                            X
-                          </Typography>
-                        </Grid>
-                        <Grid item>
-                          <TextField
-                            inputProps={{
-                              inputMode: "numeric",
-                              pattern: "[0-9]*",
-                            }}
-                            value={match.teamB.goals}
-                            onChange={handleTeamGoalsChange(match.teamB)}
-                            sx={{ width: 50 }}
-                            required
-                          ></TextField>
-                        </Grid>
-                        <Grid item>
-                          <TextField
-                            label="Time"
-                            required
-                            sx={{ width: 200 }}
-                            value={match.teamB.team}
-                            onChange={handleTeamChange(match.teamB)}
-                            select
-                          >
-                            {teamMenuItems()}
-                          </TextField>
-                        </Grid>
-                        <Grid item>
-                          <TextField
-                            label="Goleiro"
-                            sx={{ width: 200 }}
-                            value={match.teamB.goalkeeper?._id || ""}
-                            onChange={handleTeamGoalkeeperChange(match.teamB)}
-                            select
-                          >
-                            <MenuItem value={""}>Convidado</MenuItem>
-                            {teamGoalkeeperMenuItems()}
-                          </TextField>
-                        </Grid>
-                      </Grid>
-                    </FormControl>
-                  </Paper>
-                );
-              })}
-            </Stack>
+            <Typography variant="h5" align="center">
+              Punições
+            </Typography>
+            <TeamPunishmentsForm
+              teamPunishments={teamPunishments}
+              teamMenuItems={teamMenuItems}
+              setTeamPunishments={setTeamPunishments}
+            />
           </Grid>
         </Grid>
         <Button type="submit">Salvar</Button>
       </FormControl>
     </form>
+  );
+}
+
+function MarchesForm({
+  matches,
+  handleTeamGoalkeeperChange,
+  teamGoalkeeperMenuItems,
+  handleTeamChange,
+  teamMenuItems,
+  handleTeamGoalsChange,
+}: {
+  matches: SerieDetailsMatchData[];
+  handleTeamGoalkeeperChange: (
+    team: SerieDetailsMatchTeamData
+  ) => (event: React.ChangeEvent<HTMLInputElement>) => void;
+  teamGoalkeeperMenuItems: () => JSX.Element[];
+  handleTeamChange: (
+    team: SerieDetailsMatchTeamData
+  ) => (event: React.ChangeEvent<HTMLInputElement>) => void;
+  teamMenuItems: () => JSX.Element[];
+  handleTeamGoalsChange: (
+    team: SerieDetailsMatchTeamData
+  ) => (event: ChangeEvent<HTMLInputElement>) => void;
+}) {
+  return (
+    <Grid item xs={12}>
+      <Stack spacing={1}>
+        {matches.map((match, index) => {
+          return (
+            <Paper key={index} variant="outlined">
+              <FormControl>
+                <Grid
+                  container
+                  padding={1}
+                  spacing={1}
+                  direction="row"
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  <Grid item>
+                    <Typography>Partida {index + 1}</Typography>
+                  </Grid>
+                  <Grid item>
+                    <TextField
+                      label="Goleiro"
+                      sx={{ width: 200 }}
+                      value={match.teamA.goalkeeper?._id || ''}
+                      onChange={handleTeamGoalkeeperChange(match.teamA)}
+                      select
+                    >
+                      <MenuItem value={''}>Convidado</MenuItem>
+                      {teamGoalkeeperMenuItems()}
+                    </TextField>
+                  </Grid>
+                  <Grid item>
+                    <TextField
+                      required
+                      label="Time"
+                      sx={{ width: 200 }}
+                      value={match.teamA.team}
+                      onChange={handleTeamChange(match.teamA)}
+                      select
+                    >
+                      {teamMenuItems()}
+                    </TextField>
+                  </Grid>
+                  <Grid item>
+                    <TextField
+                      inputProps={{
+                        inputMode: 'numeric',
+                        pattern: '[0-9]*',
+                      }}
+                      value={match.teamA.goals}
+                      onChange={handleTeamGoalsChange(match.teamA)}
+                      sx={{ width: 50 }}
+                      required
+                    ></TextField>
+                  </Grid>
+                  <Grid item>
+                    <Typography variant="body1" align="center">
+                      X
+                    </Typography>
+                  </Grid>
+                  <Grid item>
+                    <TextField
+                      inputProps={{
+                        inputMode: 'numeric',
+                        pattern: '[0-9]*',
+                      }}
+                      value={match.teamB.goals}
+                      onChange={handleTeamGoalsChange(match.teamB)}
+                      sx={{ width: 50 }}
+                      required
+                    ></TextField>
+                  </Grid>
+                  <Grid item>
+                    <TextField
+                      label="Time"
+                      required
+                      sx={{ width: 200 }}
+                      value={match.teamB.team}
+                      onChange={handleTeamChange(match.teamB)}
+                      select
+                    >
+                      {teamMenuItems()}
+                    </TextField>
+                  </Grid>
+                  <Grid item>
+                    <TextField
+                      label="Goleiro"
+                      sx={{ width: 200 }}
+                      value={match.teamB.goalkeeper?._id || ''}
+                      onChange={handleTeamGoalkeeperChange(match.teamB)}
+                      select
+                    >
+                      <MenuItem value={''}>Convidado</MenuItem>
+                      {teamGoalkeeperMenuItems()}
+                    </TextField>
+                  </Grid>
+                </Grid>
+              </FormControl>
+            </Paper>
+          );
+        })}
+      </Stack>
+    </Grid>
+  );
+}
+
+function TeamPunishmentsForm({
+  teamPunishments,
+  teamMenuItems,
+  setTeamPunishments,
+}: {
+  teamPunishments: TeamPunishmentData[];
+  teamMenuItems: () => JSX.Element[];
+  setTeamPunishments: (punishments: TeamPunishmentData[]) => void;
+}) {
+  const handleTeamChange =
+    (punishment: TeamPunishmentData) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      punishment.team = event.target.value;
+      setTeamPunishments([...teamPunishments]);
+    };
+
+  const handleAddPunishment = () => {
+    setTeamPunishments([...teamPunishments, { team: '', points: 0, reason: '' }]);
+  };
+
+  const handleScoreChange =
+    (punishment: TeamPunishmentData) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      punishment.points = parseInt(event.target.value);
+      setTeamPunishments([...teamPunishments]);
+    };
+
+  const handleReasonChange =
+    (punishment: TeamPunishmentData) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      punishment.reason = event.target.value;
+      setTeamPunishments([...teamPunishments]);
+    };
+
+  const handleRemovePunishment = (index: number) => () => {
+    teamPunishments.splice(index, 1);
+    setTeamPunishments([...teamPunishments]);
+  };
+
+  return (
+    <Stack spacing={1}>
+      {teamPunishments?.map((punishment, index) => {
+        return (
+          <Paper key={index} variant="outlined">
+            <Grid item key={index}>
+              <FormControl>
+                <Grid
+                  container
+                  padding={1}
+                  spacing={1}
+                  direction="row"
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  <Grid item>
+                    <TextField
+                      required
+                      label="Time"
+                      sx={{ width: 200 }}
+                      value={punishment.team}
+                      onChange={handleTeamChange(punishment)}
+                      select
+                    >
+                      {teamMenuItems()}
+                    </TextField>
+                  </Grid>
+                  <Grid item>
+                    <TextField
+                      inputProps={{
+                        inputMode: 'numeric',
+                        step: 1,
+                      }}
+                      type="number"
+                      value={punishment.points}
+                      onChange={handleScoreChange(punishment)}
+                      sx={{ width: 100 }}
+                      label="Pontos"
+                      required
+                    ></TextField>
+                  </Grid>
+                  <Grid item>
+                    <TextField
+                      value={punishment.reason}
+                      onChange={handleReasonChange(punishment)}
+                      label="Motivo"
+                      required
+                      fullWidth
+                    ></TextField>
+                  </Grid>
+                  <Grid item>
+                    <IconButton color="primary" onClick={handleRemovePunishment(index)}>
+                      <RemoveIcon />
+                    </IconButton>
+                  </Grid>
+                </Grid>
+              </FormControl>
+            </Grid>
+          </Paper>
+        );
+      })}
+      <Button onClick={handleAddPunishment}>Adicionar</Button>
+    </Stack>
   );
 }

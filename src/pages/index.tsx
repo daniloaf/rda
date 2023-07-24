@@ -1,21 +1,21 @@
-import _ from "lodash";
-import { Collapse, Grid, IconButton, Paper, Typography } from "@mui/material";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import { GetServerSideProps } from "next";
-import GameDayPlayerStatsComponent from "../components/GameDayPlayerStatsComponent";
-import TeamRankingTableComponent from "../components/TeamRankingTableComponent";
-import * as GameDayServices from "../services/gameDay";
-import DateComponent from "../components/DateComponent";
-import MatchesListComponent from "../components/MatchesListComponent";
-import { useState } from "react";
-import { Stack } from "@mui/system";
-import getMonthName from "../utils/getMonthName";
-import useRequestMutation from "../utils/userRequestMutation";
-import GameDaySummaryData from "../types/GameDaySummaryData";
-import TeamRankingData from "../types/TeamRankingData";
-import GameDayPlayerStats from "../types/GameDayPlayerStats";
-import GameDayMatchData from "../types/GameDayMatchData";
+import _ from 'lodash';
+import { Collapse, Divider, Grid, IconButton, Paper, Typography } from '@mui/material';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { GetServerSideProps } from 'next';
+import GameDayPlayerStatsComponent from '../components/GameDayPlayerStatsComponent';
+import TeamRankingTableComponent from '../components/TeamRankingTableComponent';
+import * as GameDayServices from '../services/gameDay';
+import DateComponent from '../components/DateComponent';
+import MatchesListComponent from '../components/MatchesListComponent';
+import { useState } from 'react';
+import { Stack } from '@mui/system';
+import getMonthName from '../utils/getMonthName';
+import useRequestMutation from '../utils/userRequestMutation';
+import GameDaySummaryData from '../types/GameDaySummaryData';
+import TeamRankingData from '../types/TeamRankingData';
+import GameDayPlayerStats from '../types/GameDayPlayerStats';
+import GameDayMatchData from '../types/GameDayMatchData';
 
 const GameDayComponent = ({ gameDay }: { gameDay: GameDaySummaryData }) => {
   const [open, setOpen] = useState(false);
@@ -64,10 +64,7 @@ const GameDayComponent = ({ gameDay }: { gameDay: GameDaySummaryData }) => {
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TeamRankingTableComponent
-                title="Classificação"
-                ranking={data?.teamRanking}
-              />
+              <TeamRankingTableComponent title="Classificação" ranking={data?.teamRanking} />
               <br />
               <MatchesListComponent matches={data?.gameDayMatches} />
             </Grid>
@@ -88,18 +85,46 @@ export default function Home({
     month: number;
   }>;
 }) {
+  const groupedData = {} as any;
+
   _(previousGameDays)
-    .entries()
-    .orderBy((d) => d[0], "desc").map;
+    .orderBy(['year', 'month', 'date'], ['desc', 'desc', 'desc'])
+    .forEach((gameDay) => {
+      if (!groupedData[gameDay.year]) groupedData[gameDay.year] = {};
+      if (!groupedData[gameDay.year][gameDay.month]) groupedData[gameDay.year][gameDay.month] = [];
+      groupedData[gameDay.year][gameDay.month].push(gameDay);
+    });
+
   return (
     <>
       <Stack padding={1} spacing={1}>
-        {_(previousGameDays)
-          .orderBy(["year", "month", "date"], ["desc", "desc", "desc"])
-          .map((gameDay) => {
-            return <GameDayComponent key={gameDay._id} gameDay={gameDay} />;
-          })
-          .value()}
+        {_.keys(groupedData)
+          .sort()
+          .reverse()
+          .map((year) => {
+            return (
+              <Stack key={year} spacing={1} padding={1} component={Paper}>
+                <Typography variant="h5">{year}</Typography>
+                <Divider />
+                {_.keys(groupedData[year])
+                  .sort()
+                  .reverse()
+                  .map((month) => {
+                    return (
+                      <Stack key={month} spacing={1}>
+                        <Typography variant="h6">{getMonthName(month, 'LLLL')}</Typography>
+                        {_(groupedData[year][month])
+                          .orderBy(['year', 'month', 'date'], ['desc', 'desc', 'desc'])
+                          .map((gameDay) => {
+                            return <GameDayComponent key={gameDay._id} gameDay={gameDay} />;
+                          })
+                          .value()}
+                      </Stack>
+                    );
+                  })}
+              </Stack>
+            );
+          })}
       </Stack>
     </>
   );

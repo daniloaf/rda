@@ -35,7 +35,7 @@ const ManageContentDialog = ({
     <Dialog
       open={open}
       onClose={handleClose}
-      maxWidth="lg"
+      maxWidth="xl"
       sx={{ width: "100%" }}
     >
       <DialogTitle>{title}</DialogTitle>

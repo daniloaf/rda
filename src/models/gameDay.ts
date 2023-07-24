@@ -12,11 +12,19 @@ interface IPlayerStats {
   redCards: number;
 }
 
+interface IPunishment {
+  team: string;
+  points: number;
+  reason: string;
+}
+
 export interface IGameDay extends IBaseSchema {
   date: Date;
   matches: Array<IMatch>;
   playersStats: Array<IPlayerStats>;
+  teamPunishments: Array<IPunishment>;
 }
+
 
 const GameDaySchema = new mongoose.Schema<IGameDay>({
   ...BaseSchema.obj,
@@ -56,6 +64,24 @@ const GameDaySchema = new mongoose.Schema<IGameDay>({
       },
     },
   ],
+  teamPunishments: [  
+    {
+      _id: false,
+      team: {
+        type: String,
+        ref: "Team",
+        required: true,
+      },
+      points: {
+        type: Number,
+        required: true,
+      },
+      reason: {
+        type: String,
+        required: true,
+      },
+    }
+  ]
 });
 
 const GameDay =

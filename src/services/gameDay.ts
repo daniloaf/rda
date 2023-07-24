@@ -1,17 +1,16 @@
-import { IGameDay } from "../models/gameDay";
-import Serie, { ISerie } from "../models/serie";
-import { ITeam } from "../models/team";
-import GameDaySummaryData from "../types/GameDaySummaryData";
+import { IGameDay } from '../models/gameDay';
+import Serie, { ISerie } from '../models/serie';
+import { ITeam } from '../models/team';
+import GameDaySummaryData from '../types/GameDaySummaryData';
+import { calculateMatchScores, TeamStats } from '../utils/stats';
 
 export const getGameDayRankings = async (gameDayId?: string) => {
-  const gameDayQuery = gameDayId
-    ? { "gameDays._id": gameDayId }
-    : { gameDays: { $ne: [] } };
+  const gameDayQuery = gameDayId ? { 'gameDays._id': gameDayId } : { gameDays: { $ne: [] } };
   const serie = await Serie.findOne(gameDayQuery)
     .populate([
-      "gameDays.playersStats.player",
-      "gameDays.matches.teamA.team",
-      "gameDays.matches.teamB.team",
+      'gameDays.playersStats.player',
+      'gameDays.matches.teamA.team',
+      'gameDays.matches.teamB.team',
     ])
     .sort({
       startDate: -1,
@@ -27,15 +26,7 @@ export const getGameDayRankings = async (gameDayId?: string) => {
   }
   const gameDay = serie.gameDays.find((gd: IGameDay) => gd._id === gameDayId);
 
-  const teamsStats: {
-    [index: string]: {
-      color: string;
-      wins: number;
-      draws: number;
-      losses: number;
-      score: number;
-    };
-  } = {};
+  const teamsStats: { [index: string]: TeamStats } = {};
 
   const playersTeams: {
     [index: string]: ITeam;
@@ -47,40 +38,10 @@ export const getGameDayRankings = async (gameDayId?: string) => {
   }
 
   for (const match of gameDay.matches) {
-    const { teamA, teamB } = match;
-    if (!teamsStats[teamA.team._id])
-      teamsStats[teamA.team._id] = {
-        color: teamA.team.color,
-        wins: 0,
-        draws: 0,
-        losses: 0,
-        score: 0,
-      };
-    if (!teamsStats[teamB.team._id])
-      teamsStats[teamB.team._id] = {
-        color: teamB.team.color,
-        wins: 0,
-        draws: 0,
-        losses: 0,
-        score: 0,
-      };
-
-    const goalsDiff = match.teamA.goals - match.teamB.goals;
-    if (goalsDiff > 0) {
-      teamsStats[teamA.team._id].wins += 1;
-      teamsStats[teamA.team._id].score += 3;
-      teamsStats[teamB.team._id].losses += 1;
-    } else if (goalsDiff < 0) {
-      teamsStats[teamB.team._id].wins += 1;
-      teamsStats[teamB.team._id].score += 3;
-      teamsStats[teamA.team._id].losses += 1;
-    } else {
-      teamsStats[teamA.team._id].draws += 1;
-      teamsStats[teamA.team._id].score += 1;
-      teamsStats[teamB.team._id].draws += 1;
-      teamsStats[teamB.team._id].score += 1;
-    }
+    calculateMatchScores(match, teamsStats);
   }
+
+  calculateGameDayPunishments(gameDay, teamsStats);
 
   const playersStats = gameDay.playersStats.map((stats: any) => ({
     playerId: stats.player._id,
@@ -99,9 +60,7 @@ export const getGameDayRankings = async (gameDayId?: string) => {
   }));
 
   return {
-    teamRanking: Object.values(teamsStats).sort(
-      (a, b) => b.score - a.score
-    ),
+    teamRanking: Object.values(teamsStats).sort((a, b) => b.score - a.score),
     gameDayPlayerStats: playersStats,
     gameDate: gameDay.date.toISOString(),
     gameDayMatches: gameDayMatches,
@@ -112,7 +71,7 @@ export const getPreviousGameDaysSummary = async () => {
   const series = (await Serie.find().sort({
     year: -1,
     month: -1,
-    "gameDays.date": -1,
+    'gameDays.date': -1,
   })) as Array<ISerie>;
 
   const gameDays = series.reduce((gameDays, serie) => {
@@ -130,4 +89,13 @@ export const getPreviousGameDaysSummary = async () => {
   }, [] as Array<GameDaySummaryData>);
 
   return gameDays;
+};
+
+export const calculateGameDayPunishments = (
+  gameDay: any,
+  currentTeamStats: { [index: string]: TeamStats }
+) => {
+  for (const punishment of gameDay.teamPunishments) {
+    currentTeamStats[punishment.team].score -= punishment.points;
+  }
 };
