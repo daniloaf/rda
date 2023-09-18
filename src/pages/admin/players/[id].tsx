@@ -56,7 +56,7 @@ export default function AdminPlayerProfilePage({ player }: { player: PlayerProfi
       <FormControl>
         <Grid container spacing={1}>
           <Grid item>
-            <PlayerCardComponent player={playerData} width={150} height={200} href={undefined} />
+            <PlayerCardComponent player={playerData} width={150} height={200} href={""} />
           </Grid>
           <Grid item xs={10}>
             <Stack spacing={1}>
