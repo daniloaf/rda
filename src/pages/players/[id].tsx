@@ -10,12 +10,6 @@ import PlayerDataComponent from "../../components/PlayerDataComponent";
 import PlayerProfileData from "../../types/PlayerProfileData";
 import * as PlayerServices from "../../services/player";
 
-// const playerData = {
-//   fullName: "Danilo Araújo de Freitas",
-//   position: "F",
-//   birthdate: new Date("1989-05-19").toISOString(),
-// };
-
 export default function PlayerProfilePage({
   player,
   playerYearStats,
@@ -45,7 +39,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const playerId = context.query.id as string;
   const player = await PlayerServices.getPlayerById(playerId);
   const playerStats = await PlayerServices.getPlayerStats(playerId);
-  
+
   return {
     props: {
       player: JSON.parse(JSON.stringify(player)),

@@ -12,11 +12,13 @@ export default function PlayerCardComponent({
   width = 150,
   height = 200,
   linkEndabled = false,
+  href,
 }: {
   player: PlayerCardData;
   width?: number;
   height?: number;
   linkEndabled?: boolean;
+  href: string;
 }) {
   return (
     <Card
@@ -30,7 +32,7 @@ export default function PlayerCardComponent({
       <CardActionArea
         disabled={!linkEndabled}
         LinkComponent={Link}
-        href={`/players/${player._id}`}
+        href={href}
       >
         <CardMedia
           component="img"

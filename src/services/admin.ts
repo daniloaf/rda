@@ -9,6 +9,10 @@ export const addPlayer = async (player: IPlayer) => {
   return await PlayerServices.createPlayer(player);
 };
 
+export const updatePlayer = async (playerId: string, data: IPlayer) => {
+  return await PlayerServices.updatePlayer(playerId, data);
+}
+
 export const setPlayerPicture = async (playerId: string, picture: any) => {
   // const player = await PlayerServices.getPlayerById(playerId)
   // if (!player) {

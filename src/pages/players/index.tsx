@@ -1,11 +1,9 @@
-import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { GetServerSideProps } from "next";
 import PlayerCardComponent from "../../components/PlayerCardComponent";
 import { PlayerCardData } from "../../types/PlayerCardData";
 
 import * as PlayerServices from "../../services/player";
-import { Paper } from "@mui/material";
 
 export default function PlayersPage({
   players,
@@ -22,6 +20,7 @@ export default function PlayersPage({
               width={75}
               height={80}
               linkEndabled={true}
+              href={`/players/${player._id}`}
             ></PlayerCardComponent>
           </Grid>
         );
