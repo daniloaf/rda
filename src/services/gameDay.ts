@@ -26,6 +26,10 @@ export const getGameDayRankings = async (gameDayId?: string) => {
   }
   const gameDay = serie.gameDays.find((gd: IGameDay) => gd._id === gameDayId);
 
+  if (!gameDay) {
+    return;
+  }
+
   const teamsStats: { [index: string]: TeamStats } = {};
 
   const playersTeams: {

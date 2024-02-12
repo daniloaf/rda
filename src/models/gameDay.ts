@@ -3,7 +3,8 @@ import BaseSchema, { IBaseSchema } from "./baseSchema";
 import MatchSchema, { IMatch } from "./match";
 import Player from "./player";
 
-interface IPlayerStats {
+export interface IPlayerStats {
+  _id: string;
   player: string;
   goals: number;
   assists: number;
@@ -64,7 +65,7 @@ const GameDaySchema = new mongoose.Schema<IGameDay>({
       },
     },
   ],
-  teamPunishments: [  
+  teamPunishments: [
     {
       _id: false,
       team: {

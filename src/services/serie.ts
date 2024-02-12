@@ -1,3 +1,4 @@
+import { IPlayerStats } from '../models/gameDay';
 import Serie from '../models/serie';
 import { ITeam } from '../models/team';
 import { calculateMatchScores, calculatePlayerStats, PlayerStats, TeamStats } from '../utils/stats';
@@ -68,7 +69,7 @@ export const getSeriesSummaries = async () => {
       }
 
       for (const stats of gameDay.playersStats) {
-        const playerId = stats.player._id;
+        const playerId = (stats.player as unknown as IPlayerStats)._id;
         calculatePlayerStats(playerId, stats, playersTeams[playerId]?.color, currentPlayersStats);
       }
 
@@ -105,7 +106,7 @@ export const getSerieDetails = async (serieId: string) => {
     'teams.players',
     'gameDays.playersStats.player',
   ]);
-  return serie.toJSON({ virtuals: true });
+  return serie?.toJSON({ virtuals: true });
 };
 
 export const getSerieStats = async (serieId: string) => {

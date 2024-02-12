@@ -1,9 +1,9 @@
-import _ from "lodash";
-import * as PlayerServices from "../services/player";
-import Player, { IPlayer } from "../models/player";
-import Serie from "../models/serie";
-import Team, { ITeam } from "../models/team";
-import GameDay, { IGameDay } from "../models/gameDay";
+import _ from 'lodash';
+import * as PlayerServices from '../services/player';
+import Player, { IPlayer } from '../models/player';
+import Serie from '../models/serie';
+import Team, { ITeam } from '../models/team';
+import GameDay, { IGameDay } from '../models/gameDay';
 
 export const addPlayer = async (player: IPlayer) => {
   return await PlayerServices.createPlayer(player);
@@ -11,7 +11,7 @@ export const addPlayer = async (player: IPlayer) => {
 
 export const updatePlayer = async (playerId: string, data: IPlayer) => {
   return await PlayerServices.updatePlayer(playerId, data);
-}
+};
 
 export const setPlayerPicture = async (playerId: string, picture: any) => {
   // const player = await PlayerServices.getPlayerById(playerId)
@@ -31,19 +31,22 @@ export const setPlayerPicture = async (playerId: string, picture: any) => {
 };
 
 export const getSeriesSummaryByYear = async () => {
-  const series = await Serie.find({}, ["_id", "month", "year", "gameDays"])
-    .populate(["teams.players"])
+  const series = await Serie.find({}, ['_id', 'month', 'year', 'gameDays'])
+    .populate(['teams.players'])
     .sort({ year: -1, month: -1 });
   const seriesByYear = _(series)
     .map((serie) => serie.toJSON({ virtuals: true }))
-    .groupBy("year")
+    .groupBy('year')
     .value();
   return seriesByYear;
 };
 
 export const getSerieDetails = async (serieId: string) => {
-  const serie = await Serie.findById(serieId).populate(["teams.players", "gameDays.playersStats.player"]);
-  return serie.toJSON({ virtuals: true });
+  const serie = await Serie.findById(serieId).populate([
+    'teams.players',
+    'gameDays.playersStats.player',
+  ]);
+  return serie?.toJSON({ virtuals: true });
 };
 
 export const getActivePlayers = async () => {
@@ -52,6 +55,8 @@ export const getActivePlayers = async () => {
 
 export const setSerieTeams = async (serieId: string, teams: Array<ITeam>) => {
   const serie = await Serie.findById(serieId);
+  if (!serie) return;
+
   const newTeams = await Promise.all(
     teams.map(async (team) => {
       if (team._id) {
@@ -61,7 +66,8 @@ export const setSerieTeams = async (serieId: string, teams: Array<ITeam>) => {
       }
     })
   );
-  serie.teams = newTeams;
+
+  serie.teams = newTeams as any;
   await serie.save();
   return serie.toJSON({ virtuals: true });
 };
@@ -69,6 +75,7 @@ export const setSerieTeams = async (serieId: string, teams: Array<ITeam>) => {
 export const addGameDay = async (serieId: string, gameDay: IGameDay) => {
   try {
     const serie = await Serie.findById(serieId);
+    if (!serie) return;
     serie.gameDays.push(gameDay);
     await serie.save();
     return serie.toJSON({ virtuals: true });
@@ -77,35 +84,25 @@ export const addGameDay = async (serieId: string, gameDay: IGameDay) => {
   }
 };
 
-export const updateGameDay = async (
-  serieId: string,
-  gameDayId: string,
-  gameDay: IGameDay
-) => {
+export const updateGameDay = async (serieId: string, gameDayId: string, gameDay: IGameDay) => {
   const serie = await Serie.findById(serieId);
+  if (!serie) return;
+
   let gameDays: Array<IGameDay> = serie.gameDays;
-  const gameDayIndex = gameDays.findIndex(
-    (gd: IGameDay) => gd._id === gameDayId
-  );
+  const gameDayIndex = gameDays.findIndex((gd: IGameDay) => gd._id === gameDayId);
   gameDays[gameDayIndex] = new GameDay(gameDay);
-  gameDays = _.sortBy(gameDays, ["date"]);
+  gameDays = _.sortBy(gameDays, ['date']);
   serie.gameDays = gameDays;
   await serie.save();
   return serie.toJSON({ virtuals: true });
 };
 
-export const addSerie = async ({
-  month,
-  year,
-}: {
-  month: number;
-  year: number;
-}) => {
+export const addSerie = async ({ month, year }: { month: number; year: number }) => {
   const serieExists = await Serie.exists({ month, year });
   if (serieExists)
     throw {
       status: 409,
-      message: "Série já existe",
+      message: 'Série já existe',
     };
   const serie = await Serie.create({ month, year });
   return serie.toJSON({ virtuals: true });
