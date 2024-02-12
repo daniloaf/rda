@@ -25,14 +25,13 @@ export default function GameDayPlayerStatsComponent({
           { field: "nickname", label: abbreviate ? "A" : "Atleta" },
           { field: "goals", label: abbreviate ? "G" : "Gols" },
           { field: "assists", label: abbreviate ? "A" : "Assitências" },
-          { field: "score", label: <StarIcon style={{ fill: "#fccf03" }} /> },
           { field: "yellowCards", label: <StyleTwoToneIcon style={{ fill: "#f5d742" }} /> },
           { field: "redCards", label: <StyleTwoToneIcon style={{ fill: "#fc1919" }} /> },
           { field: "teamColor", label: abbreviate ? "T" : "Time" },
         ]}
         data={playersStats}
         limit={limit}
-        defaultOrderBy="score"
+        defaultOrderBy="goals"
         defaultOrder="desc"
       />
     </Paper>

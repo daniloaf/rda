@@ -82,7 +82,7 @@ export const getPreviousGameDaysSummary = async () => {
         _id: gd._id,
         date: gd.date.toJSON(),
         year: serie.year,
-        month: serie.month,
+        month: String(serie.month).padStart(2, '0')
       }))
     );
     return gameDays;

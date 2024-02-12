@@ -5,7 +5,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "createTestData": "ts-node --project ./node.tsconfig.json src/scripts/createTestData.ts"
+    "createTestData": "ts-node --project ./node.tsconfig.json src/scripts/createTestData.ts",
+    "generateStatistics": "ts-node --project ./node.tsconfig.json src/scripts/generateStatistics.ts"
   },
   "prettier": {
     "printWidth": 100,
@@ -40,7 +41,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.191",
+    "@types/lodash": "^4.14.202",
     "@types/node": "^18.11.18",
     "@types/react": "18.0.27",
     "@types/react-beautiful-dnd": "^13.1.3",

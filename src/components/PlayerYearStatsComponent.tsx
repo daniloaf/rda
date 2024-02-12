@@ -31,7 +31,6 @@ const YearRow = ({ stats }: { stats: PlayerYearStats }) => {
         <TableCell>{stats.attendance}</TableCell>
         <TableCell>{stats.goals}</TableCell>
         <TableCell>{stats.assists}</TableCell>
-        <TableCell>{stats.score}</TableCell>
         <TableCell>{stats.yellowCards}</TableCell>
         <TableCell>{stats.redCards}</TableCell>
         <TableCell>{stats.wins}</TableCell>
@@ -90,7 +89,6 @@ const MonthRows = ({ year, open }: { year: number; open: boolean }) => {
               <MonthCell open={open}>{stat.attendance}</MonthCell>
               <MonthCell open={open}>{stat.goals}</MonthCell>
               <MonthCell open={open}>{stat.assists}</MonthCell>
-              <MonthCell open={open}>{stat.score}</MonthCell>
               <MonthCell open={open}>{stat.yellowCards}</MonthCell>
               <MonthCell open={open}>{stat.redCards}</MonthCell>
               <MonthCell open={open}>{stat.wins}</MonthCell>
@@ -118,7 +116,6 @@ export default function PlayerYearStatsComponent({
             <TableCell>Presenças</TableCell>
             <TableCell>Gols</TableCell>
             <TableCell>Assistências</TableCell>
-            <TableCell>Nota</TableCell>
             <TableCell>
               <StyleTwoToneIcon style={{ fill: "#f5d742" }} />
             </TableCell>

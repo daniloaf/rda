@@ -43,6 +43,6 @@ SerieSchema.virtual("endDate").get(function () {
 });
 
 const Serie =
-  mongoose.models.Serie || mongoose.model<ISerie>("Serie", SerieSchema);
+  mongoose.models.Serie as mongoose.Model<ISerie> || mongoose.model<ISerie>("Serie", SerieSchema);
 
 export default Serie;

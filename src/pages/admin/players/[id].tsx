@@ -26,7 +26,6 @@ export default function AdminPlayerProfilePage({ player }: { player: PlayerProfi
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    console.log({ name, value });
     setPlayerData({
       ...playerData,
       [name]: value,
@@ -45,7 +44,6 @@ export default function AdminPlayerProfilePage({ player }: { player: PlayerProfi
     } else {
       const response = await axios.put(`/api/admin/players/${player._id}`, playerData);
       if (response.status === 200) {
-        console.log(response.data)
         setPlayerData(response.data);
       }
     }

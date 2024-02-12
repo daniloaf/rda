@@ -93,7 +93,6 @@ export default function ManageGameDayFormComponent({
       player: ActivePlayerData;
       goals: number;
       assists: number;
-      score: number | string;
       yellowCards: number;
       redCards: number;
     };
@@ -105,7 +104,6 @@ export default function ManageGameDayFormComponent({
         player: stats.player,
         goals: stats.goals,
         assists: stats.assists,
-        score: stats.score,
         yellowCards: stats.yellowCards,
         redCards: stats.redCards,
       })),
@@ -117,7 +115,6 @@ export default function ManageGameDayFormComponent({
         player: player,
         goals: 0,
         assists: 0,
-        score: 0.0,
         yellowCards: 0,
         redCards: 0,
       })),
@@ -135,6 +132,17 @@ export default function ManageGameDayFormComponent({
   const handlePlayersChange = (data: any) => {
     for (const missingPlayer of data.missingPlayers) {
       delete playersStats[missingPlayer._id];
+    }
+    for (const presentPlayer of data.presentPlayers) {
+      if (!playersStats[presentPlayer._id]) {
+        playersStats[presentPlayer._id] = {
+          player: presentPlayer,
+          goals: 0,
+          assists: 0,
+          yellowCards: 0,
+          redCards: 0,
+        };
+      }
     }
     setMatchPlayers(data);
   };
@@ -241,7 +249,6 @@ export default function ManageGameDayFormComponent({
                               <TableCell>Atleta</TableCell>
                               <TableCell>G</TableCell>
                               <TableCell>A</TableCell>
-                              <TableCell>N</TableCell>
                               <TableCell>CA</TableCell>
                               <TableCell>CV</TableCell>
                             </TableRow>
@@ -285,17 +292,6 @@ export default function ManageGameDayFormComponent({
                                         onChange={(event) => {
                                           playersStats[player._id].assists =
                                             parseInt(event.target.value) ?? 0;
-                                          serPlayerStats({ ...playersStats });
-                                        }}
-                                        variant="standard"
-                                      ></TextField>
-                                    </TableCell>
-                                    <TableCell>
-                                      <TextField
-                                        required
-                                        value={playersStats[player._id].score}
-                                        onChange={(event) => {
-                                          playersStats[player._id].score = event.target.value ?? 0;
                                           serPlayerStats({ ...playersStats });
                                         }}
                                         variant="standard"
@@ -362,7 +358,6 @@ export default function ManageGameDayFormComponent({
                     <TableCell>Goleiro</TableCell>
                     <TableCell>Gols</TableCell>
                     <TableCell>Assistências</TableCell>
-                    <TableCell>Notas</TableCell>
                     <TableCell>CA</TableCell>
                     <TableCell>CV</TableCell>
                     <TableCell>Time</TableCell>
@@ -404,22 +399,6 @@ export default function ManageGameDayFormComponent({
                               onChange={(event) => {
                                 playersStats[goalkeeper._id].assists =
                                   parseInt(event.target.value) ?? 0;
-                                serPlayerStats({ ...playersStats });
-                              }}
-                              variant="standard"
-                            ></TextField>
-                          </TableCell>
-                          <TableCell>
-                            <TextField
-                              inputProps={{
-                                inputMode: 'numeric',
-                                // pattern: "[0-9\.]*",
-                              }}
-                              type="number"
-                              required
-                              value={playersStats[goalkeeper._id].score}
-                              onChange={(event) => {
-                                playersStats[goalkeeper._id].score = event.target.value ?? 0;
                                 serPlayerStats({ ...playersStats });
                               }}
                               variant="standard"
