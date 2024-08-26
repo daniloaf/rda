@@ -1,12 +1,12 @@
-import Grid from '@mui/material/Grid';
-import Fab from '@mui/material/Fab';
-import { GetServerSideProps } from 'next';
-import PlayerCardComponent from '../../../components/PlayerCardComponent';
-import { PlayerCardData } from '../../../types/PlayerCardData';
-import AddIcon from '@mui/icons-material/Add';
+import Grid from '@mui/material/Grid'
+import Fab from '@mui/material/Fab'
+import { GetServerSideProps } from 'next'
+import PlayerCardComponent from '../../../components/PlayerCardComponent'
+import { PlayerCardData } from '../../../types/PlayerCardData'
+import AddIcon from '@mui/icons-material/Add'
 
-import * as PlayerServices from '../../../services/player';
-import Link from 'next/link';
+import * as PlayerServices from '../../../services/player'
+import Link from 'next/link'
 
 export default function AdminPlayersPage({ players }: { players: Array<PlayerCardData> }) {
   return (
@@ -23,7 +23,7 @@ export default function AdminPlayersPage({ players }: { players: Array<PlayerCar
                 href={`/admin/players/${player._id}`}
               ></PlayerCardComponent>
             </Grid>
-          );
+          )
         })}
       </Grid>
       <Grid container justifyContent="flex-end">
@@ -32,15 +32,15 @@ export default function AdminPlayersPage({ players }: { players: Array<PlayerCar
         </Fab>
       </Grid>
     </>
-  );
+  )
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const players = await PlayerServices.getPlayers({});
+  const players = await PlayerServices.getPlayers({})
 
   return {
     props: {
       players: JSON.parse(JSON.stringify(players)),
     },
-  };
-};
+  }
+}

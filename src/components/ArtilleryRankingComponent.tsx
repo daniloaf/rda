@@ -1,31 +1,31 @@
-import TableContainer from '@mui/material/TableContainer';
-import Table from '@mui/material/Table';
-import TableHead from '@mui/material/TableHead';
-import TableBody from '@mui/material/TableBody';
-import TableRow from '@mui/material/TableRow';
-import TableCell from '@mui/material/TableCell';
-import Typography from '@mui/material/Typography';
-import { Paper } from '@mui/material';
+import TableContainer from '@mui/material/TableContainer'
+import Table from '@mui/material/Table'
+import TableHead from '@mui/material/TableHead'
+import TableBody from '@mui/material/TableBody'
+import TableRow from '@mui/material/TableRow'
+import TableCell from '@mui/material/TableCell'
+import Typography from '@mui/material/Typography'
+import { Paper } from '@mui/material'
 // import { Paper } from "@mui/material";
 
 const teamName = (color: string) => {
-  let team;
+  let team
   switch (color) {
     case 'blue':
-      team = 'Azul';
-      break;
+      team = 'Azul'
+      break
     case 'orange':
-      team = 'Laranja';
-      break;
+      team = 'Laranja'
+      break
     case 'white':
-      team = 'Branco';
-      break;
+      team = 'Branco'
+      break
     default:
-      team = 'Sem cor';
-      break;
+      team = 'Sem cor'
+      break
   }
-  return team;
-};
+  return team
+}
 
 export default function ArtilleryRankingComponent({ month }: { month?: number }) {
   const ranking = [
@@ -44,7 +44,7 @@ export default function ArtilleryRankingComponent({ month }: { month?: number })
       team: 'Branco',
       goals: 2,
     },
-  ];
+  ]
 
   return (
     <Paper sx={{ padding: 1 }}>
@@ -70,5 +70,5 @@ export default function ArtilleryRankingComponent({ month }: { month?: number })
         </Table>
       </TableContainer>
     </Paper>
-  );
+  )
 }

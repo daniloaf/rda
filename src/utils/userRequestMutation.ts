@@ -1,5 +1,5 @@
-import useSWRMutation from 'swr/mutation';
-import axios from 'axios';
+import useSWRMutation from 'swr/mutation'
+import axios from 'axios'
 
 export default function useRequestMutation<TData>(
   request: any,
@@ -17,5 +17,5 @@ export default function useRequestMutation<TData>(
         data: initialData,
       },
     }
-  );
+  )
 }

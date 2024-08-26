@@ -1,17 +1,17 @@
-import mongoose from '../services/mongoose';
-import BaseSchema, { IBaseSchema } from './baseSchema';
-import Player from './player';
-import Team, { ITeam } from './team';
+import mongoose from '../services/mongoose'
+import BaseSchema, { IBaseSchema } from './baseSchema'
+import Player from './player'
+import Team, { ITeam } from './team'
 
 interface IMatchTeam {
-  team: string | ITeam;
-  goals: number;
-  goalkeeper?: string;
+  team: string | ITeam
+  goals: number
+  goalkeeper?: string
 }
 
 export interface IMatch extends IBaseSchema {
-  teamA: IMatchTeam;
-  teamB: IMatchTeam;
+  teamA: IMatchTeam
+  teamB: IMatchTeam
 }
 
 const MatchSchema = new mongoose.Schema<IMatch>({
@@ -46,8 +46,8 @@ const MatchSchema = new mongoose.Schema<IMatch>({
       ref: Player,
     },
   },
-});
+})
 
-const Match = mongoose.models.Match || mongoose.model<IMatch>('Match', MatchSchema);
+const Match = mongoose.models.Match || mongoose.model<IMatch>('Match', MatchSchema)
 
-export default Match;
+export default Match

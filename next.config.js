@@ -4,4 +4,4 @@ module.exports = {
     defaultLocale: 'pt-BR',
   },
   output: 'standalone',
-};
+}

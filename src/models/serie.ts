@@ -1,15 +1,15 @@
-import mongoose from '../services/mongoose';
-import BaseSchema, { IBaseSchema } from './baseSchema';
-import GameDay, { IGameDay } from './gameDay';
-import Team, { ITeam } from './team';
+import mongoose from '../services/mongoose'
+import BaseSchema, { IBaseSchema } from './baseSchema'
+import GameDay, { IGameDay } from './gameDay'
+import Team, { ITeam } from './team'
 
 export interface ISerie extends IBaseSchema {
-  startDate?: Date;
-  endDate?: Date;
-  month: number;
-  year: number;
-  teams: Array<ITeam>;
-  gameDays: Array<IGameDay>;
+  startDate?: Date
+  endDate?: Date
+  month: number
+  year: number
+  teams: Array<ITeam>
+  gameDays: Array<IGameDay>
 }
 
 const SerieSchema = new mongoose.Schema<ISerie>({
@@ -32,17 +32,17 @@ const SerieSchema = new mongoose.Schema<ISerie>({
       type: GameDay.schema,
     },
   ],
-});
+})
 
 SerieSchema.virtual('startDate').get(function () {
-  return this.gameDays?.[0]?.date;
-});
+  return this.gameDays?.[0]?.date
+})
 
 SerieSchema.virtual('endDate').get(function () {
-  return this.gameDays?.[this.gameDays.length - 1]?.date;
-});
+  return this.gameDays?.[this.gameDays.length - 1]?.date
+})
 
 const Serie =
-  (mongoose.models.Serie as mongoose.Model<ISerie>) || mongoose.model<ISerie>('Serie', SerieSchema);
+  (mongoose.models.Serie as mongoose.Model<ISerie>) || mongoose.model<ISerie>('Serie', SerieSchema)
 
-export default Serie;
+export default Serie

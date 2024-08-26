@@ -1,6 +1,6 @@
-import { Button, Grid } from '@mui/material';
-import { GetServerSideProps } from 'next';
-import Link from 'next/link';
+import { Button, Grid } from '@mui/material'
+import { GetServerSideProps } from 'next'
+import Link from 'next/link'
 
 export default function AdminPage() {
   return (
@@ -12,5 +12,5 @@ export default function AdminPage() {
         Atletas
       </Button>
     </Grid>
-  );
+  )
 }

@@ -1,13 +1,13 @@
 export default interface PlayerMonthStatsData {
-  year: number;
-  month: number;
-  goals: number;
-  assists: number;
-  score: number | string;
-  attendance: number;
-  yellowCards: number;
-  redCards: number;
-  wins: number;
-  draws: number;
-  losses: number;
+  year: number
+  month: number
+  goals: number
+  assists: number
+  score: number | string
+  attendance: number
+  yellowCards: number
+  redCards: number
+  wins: number
+  draws: number
+  losses: number
 }

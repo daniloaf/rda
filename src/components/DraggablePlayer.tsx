@@ -1,13 +1,13 @@
-import { Paper } from '@mui/material';
-import { Draggable } from 'react-beautiful-dnd';
-import ActivePlayerData from '../types/admin/ActivePlayerData';
+import { Paper } from '@mui/material'
+import { Draggable } from 'react-beautiful-dnd'
+import ActivePlayerData from '../types/admin/ActivePlayerData'
 
 export default function DraggablePlayer({
   index,
   player,
 }: {
-  index: number;
-  player: ActivePlayerData;
+  index: number
+  player: ActivePlayerData
 }) {
   return (
     <Draggable draggableId={player._id} index={index}>
@@ -23,5 +23,5 @@ export default function DraggablePlayer({
         </Paper>
       )}
     </Draggable>
-  );
+  )
 }

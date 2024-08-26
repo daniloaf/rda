@@ -1,11 +1,11 @@
-import * as _ from 'lodash';
-import * as dotenv from 'dotenv';
+import * as _ from 'lodash'
+import * as dotenv from 'dotenv'
 
-dotenv.config({ path: '.env.local' });
+dotenv.config({ path: '.env.local' })
 
-import Player, { IPlayer } from '../models/player';
-import Serie, { ISerie } from '../models/serie';
-import Team from '../models/team';
+import Player, { IPlayer } from '../models/player'
+import Serie, { ISerie } from '../models/serie'
+import Team from '../models/team'
 
 const createPlayers = async () => {
   const playersData = [
@@ -232,15 +232,15 @@ const createPlayers = async () => {
       picture: 'https://i.stack.imgur.com/gMbrL.jpg',
       active: false,
     },
-  ];
+  ]
 
-  let players = [];
+  let players = []
   for (let playerData of playersData) {
-    players.push(await new Player(playerData).save());
+    players.push(await new Player(playerData).save())
   }
 
-  return players;
-};
+  return players
+}
 
 const createSeries = async (players: Array<any>) => {
   const octoberTeams = [
@@ -256,7 +256,7 @@ const createSeries = async (players: Array<any>) => {
       color: 'Branco',
       players: players.slice(0, 8).map((p) => p._id),
     }).save(),
-  ];
+  ]
   const novemberTeams = [
     await new Team({
       color: 'Azul',
@@ -270,7 +270,7 @@ const createSeries = async (players: Array<any>) => {
       color: 'Branco',
       players: players.slice(16).map((p) => p._id),
     }).save(),
-  ];
+  ]
 
   const seriesData = [
     {
@@ -788,22 +788,22 @@ const createSeries = async (players: Array<any>) => {
       month: 2,
       year: 2023,
     },
-  ];
+  ]
 
-  let series = [];
+  let series = []
   for (let serie of seriesData) {
-    series.push(await new Serie(serie).save());
+    series.push(await new Serie(serie).save())
   }
-  return series;
-};
+  return series
+}
 
 const importSeries = async () => {
-  const players = await Player.find({});
+  const players = await Player.find({})
   // const playerByNickname = players.reduce((acc, player) => {
   //   acc[player.nickname] = player
   //   return acc
   // }, {})
-  const playerByNickname = _.keyBy(players, 'nickname');
+  const playerByNickname = _.keyBy(players, 'nickname')
   const goals = [
     {
       'Arthur Freire': 0,
@@ -1689,7 +1689,7 @@ const importSeries = async () => {
       Joeu: 2,
       Pinhu: 1,
     },
-  ] as Array<{ [nickname: string]: number }>;
+  ] as Array<{ [nickname: string]: number }>
 
   const assists = [
     {
@@ -2576,7 +2576,7 @@ const importSeries = async () => {
       Joeu: 0,
       Pinhu: 1,
     },
-  ] as Array<{ [nickname: string]: number }>;
+  ] as Array<{ [nickname: string]: number }>
 
   const series = [
     {
@@ -2669,43 +2669,43 @@ const importSeries = async () => {
         { playersStats: [], matches: [], date: new Date('2022-11-17') },
       ],
     },
-  ] as Array<ISerie>;
+  ] as Array<ISerie>
 
-  let gameDayIndex = 0;
+  let gameDayIndex = 0
   for (const serie of series) {
     for (const gameDay of serie.gameDays) {
-      const goalData = goals[gameDayIndex];
-      const assistData = assists[gameDayIndex];
+      const goalData = goals[gameDayIndex]
+      const assistData = assists[gameDayIndex]
       gameDay.playersStats = Object.keys(goalData).map((nickname) => {
-        const player = playerByNickname[nickname];
+        const player = playerByNickname[nickname]
 
-        if (nickname === 'Gordão') console.log(gameDayIndex, goalData[nickname]);
+        if (nickname === 'Gordão') console.log(gameDayIndex, goalData[nickname])
 
-        if (!player) throw `Player ${nickname} not found!`;
+        if (!player) throw `Player ${nickname} not found!`
 
         return {
           player: player._id,
           goals: goalData[nickname],
           assists: assistData[nickname],
-        };
-      });
-      gameDayIndex++;
+        }
+      })
+      gameDayIndex++
     }
-    await new Serie(serie).save();
+    await new Serie(serie).save()
   }
-};
+}
 
 const main = async () => {
   // const players = await createPlayers();
   // console.log(`Created ${players.length} players`);
   // const series = await createSeries(players);
   // console.log(`Created ${series.length} series`);
-  await importSeries();
-};
+  await importSeries()
+}
 
 main()
   .then(() => process.exit())
   .catch((err) => {
-    console.error(err);
-    process.exit(1);
-  });
+    console.error(err)
+    process.exit(1)
+  })

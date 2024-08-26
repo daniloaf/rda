@@ -1,107 +1,107 @@
-import _ from 'lodash';
-import { Button, FormControl, Grid, MenuItem, Paper, TextField, Typography } from '@mui/material';
-import { Stack } from '@mui/system';
-import { FormEventHandler, useState } from 'react';
-import ActivePlayerData from '../types/admin/ActivePlayerData';
+import _ from 'lodash'
+import { Button, FormControl, Grid, MenuItem, Paper, TextField, Typography } from '@mui/material'
+import { Stack } from '@mui/system'
+import { FormEventHandler, useState } from 'react'
+import ActivePlayerData from '../types/admin/ActivePlayerData'
 
-import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
-import DraggablePlayer from './DraggablePlayer';
-import axios from 'axios';
-import { useRouter } from 'next/router';
-import SerieDetailsTeamData from '../types/admin/SerieDetailsTeamData';
+import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd'
+import DraggablePlayer from './DraggablePlayer'
+import axios from 'axios'
+import { useRouter } from 'next/router'
+import SerieDetailsTeamData from '../types/admin/SerieDetailsTeamData'
 
 export default function ManageTeamsComponent({
   players,
   serieId,
   teams,
 }: {
-  players: Array<ActivePlayerData>;
-  serieId: string;
-  teams?: Array<SerieDetailsTeamData>;
+  players: Array<ActivePlayerData>
+  serieId: string
+  teams?: Array<SerieDetailsTeamData>
 }) {
-  const router = useRouter();
+  const router = useRouter()
 
-  const playersById = _.keyBy(players, '_id');
+  const playersById = _.keyBy(players, '_id')
 
   const initialTeams: {
     [index: string]: {
-      _id?: string;
-      color?: string;
-      players: typeof players;
-    };
-  } = {};
+      _id?: string
+      color?: string
+      players: typeof players
+    }
+  } = {}
 
   if (teams && teams.length) {
     for (const index in teams) {
-      initialTeams[`team${index}`] = teams[index];
+      initialTeams[`team${index}`] = teams[index]
       teams[index].players.forEach((player) => {
         // Player is not available
-        delete playersById[player._id];
-      });
+        delete playersById[player._id]
+      })
     }
   } else {
-    const defaultColors = ['Branco', 'Azul', 'Laranja'];
+    const defaultColors = ['Branco', 'Azul', 'Laranja']
     for (const index in defaultColors) {
-      const color = defaultColors[index];
+      const color = defaultColors[index]
       initialTeams[`team${index}`] = {
         color: color,
         players: [],
-      };
+      }
     }
   }
 
   const [currentTeams, setCurrentTeams] = useState<{
     [index: string]: {
-      _id?: string;
-      color?: string;
-      players: typeof players;
-      captain?: string;
-    };
+      _id?: string
+      color?: string
+      players: typeof players
+      captain?: string
+    }
   }>({
     availablePlayers: {
       color: undefined,
       players: Object.values(playersById),
     },
     ...initialTeams,
-  });
+  })
 
   const handleDragEnd = (result: DropResult) => {
-    if (!result.destination) return;
+    if (!result.destination) return
 
-    const sourcePlayers = currentTeams[result.source.droppableId];
-    const destinationPlayers = currentTeams[result.destination.droppableId];
-    const sourceIndex = result.source.index;
-    const destinationIndex = result.destination.index;
-    const player = sourcePlayers.players[sourceIndex];
+    const sourcePlayers = currentTeams[result.source.droppableId]
+    const destinationPlayers = currentTeams[result.destination.droppableId]
+    const sourceIndex = result.source.index
+    const destinationIndex = result.destination.index
+    const player = sourcePlayers.players[sourceIndex]
 
-    sourcePlayers.players.splice(sourceIndex, 1);
-    destinationPlayers.players.splice(destinationIndex, 0, player);
+    sourcePlayers.players.splice(sourceIndex, 1)
+    destinationPlayers.players.splice(destinationIndex, 0, player)
 
-    setCurrentTeams({ ...currentTeams });
-  };
+    setCurrentTeams({ ...currentTeams })
+  }
 
   const handleSubmit: FormEventHandler = async (event) => {
-    event.preventDefault();
+    event.preventDefault()
 
     const data = Object.keys(currentTeams)
       .filter((key) => currentTeams[key].color !== undefined)
       .map((key) => {
-        const team = currentTeams[key];
+        const team = currentTeams[key]
 
         return {
           _id: team._id,
           color: team.color,
           players: team.players.map((p) => p._id),
           captain: team.captain,
-        };
-      });
+        }
+      })
 
-    const response = await axios.put(`/api/admin/series/${serieId}/teams`, data);
+    const response = await axios.put(`/api/admin/series/${serieId}/teams`, data)
 
     if (response.status === 200) {
-      router.reload();
+      router.reload()
     }
-  };
+  }
 
   return (
     <form onSubmit={handleSubmit}>
@@ -135,7 +135,7 @@ export default function ManageTeamsComponent({
             </Typography>
             <Grid container spacing={1}>
               {Object.entries(currentTeams).map(([key, team]) => {
-                if (team?.color === undefined) return <></>;
+                if (team?.color === undefined) return <></>
 
                 return (
                   <Grid key={key} item xs={4}>
@@ -143,8 +143,8 @@ export default function ManageTeamsComponent({
                       label="Time"
                       value={team.color}
                       onChange={(event) => {
-                        team.color = event.target.value;
-                        setCurrentTeams({ ...currentTeams });
+                        team.color = event.target.value
+                        setCurrentTeams({ ...currentTeams })
                       }}
                       fullWidth
                       required
@@ -169,8 +169,8 @@ export default function ManageTeamsComponent({
                       value={team.captain}
                       select
                       onChange={(event) => {
-                        team.captain = event.target.value;
-                        setCurrentTeams({ ...currentTeams });
+                        team.captain = event.target.value
+                        setCurrentTeams({ ...currentTeams })
                       }}
                       fullWidth
                       required
@@ -180,11 +180,11 @@ export default function ManageTeamsComponent({
                           <MenuItem key={player._id} value={player._id}>
                             {player.nickname}
                           </MenuItem>
-                        );
+                        )
                       })}
                     </TextField>
                   </Grid>
-                );
+                )
               })}
             </Grid>
           </Stack>
@@ -192,5 +192,5 @@ export default function ManageTeamsComponent({
         <Button type="submit">Salvar</Button>
       </FormControl>
     </form>
-  );
+  )
 }

@@ -1,8 +1,8 @@
-import { IPlayerStats } from '../models/gameDay';
-import Serie from '../models/serie';
-import { ITeam } from '../models/team';
-import { calculateMatchScores, calculatePlayerStats, PlayerStats, TeamStats } from '../utils/stats';
-import { calculateGameDayPunishments } from './gameDay';
+import { IPlayerStats } from '../models/gameDay'
+import Serie from '../models/serie'
+import { ITeam } from '../models/team'
+import { calculateMatchScores, calculatePlayerStats, PlayerStats, TeamStats } from '../utils/stats'
+import { calculateGameDayPunishments } from './gameDay'
 
 export const getCurrentSerieStats = async () => {
   const latestSerie = await Serie.findOne()
@@ -14,23 +14,23 @@ export const getCurrentSerieStats = async () => {
     .sort({
       year: -1,
       month: -1,
-    });
+    })
 
   if (!latestSerie) {
     return {
       currentTeamRanking: [],
       currentPlayersStats: [],
       month: null,
-    };
+    }
   }
 
-  const data = calculateSerieStats(latestSerie);
+  const data = calculateSerieStats(latestSerie)
   return {
     currentTeamRanking: data.teamRanking,
     currentPlayersStats: data.playersStats,
     month: data.month,
-  };
-};
+  }
+}
 
 export const getSeriesSummaries = async () => {
   const series = await Serie.find()
@@ -42,11 +42,11 @@ export const getSeriesSummaries = async () => {
     .sort({
       year: -1,
       month: -1,
-    });
+    })
 
   return series.map((serie) => {
-    const currentTeamStats: { [index: string]: TeamStats } = {};
-    const playersTeams: { [index: string]: ITeam } = {};
+    const currentTeamStats: { [index: string]: TeamStats } = {}
+    const playersTeams: { [index: string]: ITeam } = {}
 
     for (const team of serie?.teams) {
       currentTeamStats[team._id] = {
@@ -55,33 +55,33 @@ export const getSeriesSummaries = async () => {
         draws: 0,
         losses: 0,
         score: 0,
-      };
+      }
       for (const playerId of team.players) {
-        playersTeams[playerId] = team;
+        playersTeams[playerId] = team
       }
     }
 
-    const currentPlayersStats: { [index: string]: PlayerStats } = {};
+    const currentPlayersStats: { [index: string]: PlayerStats } = {}
 
     for (const gameDay of serie?.gameDays) {
       for (const match of gameDay.matches) {
-        calculateMatchScores(match, currentTeamStats);
+        calculateMatchScores(match, currentTeamStats)
       }
 
       for (const stats of gameDay.playersStats) {
-        const playerId = (stats.player as unknown as IPlayerStats)._id;
-        calculatePlayerStats(playerId, stats, playersTeams[playerId]?.color, currentPlayersStats);
+        const playerId = (stats.player as unknown as IPlayerStats)._id
+        calculatePlayerStats(playerId, stats, playersTeams[playerId]?.color, currentPlayersStats)
       }
 
-      calculateGameDayPunishments(gameDay, currentTeamStats);
+      calculateGameDayPunishments(gameDay, currentTeamStats)
     }
 
-    const champion = Object.values(currentTeamStats).sort((a, b) => b.score - a.score)[0];
-    const topScorers = Object.values(currentPlayersStats).sort((a, b) => b.goals - a.goals);
-    const topAssistants = Object.values(currentPlayersStats).sort((a, b) => b.assists - a.assists);
+    const champion = Object.values(currentTeamStats).sort((a, b) => b.score - a.score)[0]
+    const topScorers = Object.values(currentPlayersStats).sort((a, b) => b.goals - a.goals)
+    const topAssistants = Object.values(currentPlayersStats).sort((a, b) => b.assists - a.assists)
     const topCards = Object.values(currentPlayersStats).sort(
       (a, b) => b.yellowCards + b.redCards - (a.yellowCards + a.redCards)
-    );
+    )
 
     return {
       _id: serie._id,
@@ -97,17 +97,17 @@ export const getSeriesSummaries = async () => {
           p.yellowCards + p.redCards > 0 &&
           p.yellowCards + p.redCards === topCards[0].yellowCards + topCards[0].redCards
       ),
-    };
-  });
-};
+    }
+  })
+}
 
 export const getSerieDetails = async (serieId: string) => {
   const serie = await Serie.findById(serieId).populate([
     'teams.players',
     'gameDays.playersStats.player',
-  ]);
-  return serie?.toJSON({ virtuals: true });
-};
+  ])
+  return serie?.toJSON({ virtuals: true })
+}
 
 export const getSerieStats = async (serieId: string) => {
   const serie = await Serie.findById(serieId)
@@ -119,22 +119,22 @@ export const getSerieStats = async (serieId: string) => {
     .sort({
       year: -1,
       month: -1,
-    });
+    })
 
   if (!serie) {
     return {
       teamRanking: [],
       playersStats: [],
       month: null,
-    };
+    }
   }
 
-  return calculateSerieStats(serie);
-};
+  return calculateSerieStats(serie)
+}
 
 function calculateSerieStats(latestSerie: any) {
-  const currentTeamStats: { [index: string]: TeamStats } = {};
-  const playersTeams: { [index: string]: ITeam } = {};
+  const currentTeamStats: { [index: string]: TeamStats } = {}
+  const playersTeams: { [index: string]: ITeam } = {}
 
   for (const team of latestSerie?.teams) {
     currentTeamStats[team._id] = {
@@ -143,25 +143,25 @@ function calculateSerieStats(latestSerie: any) {
       draws: 0,
       losses: 0,
       score: 0,
-    };
+    }
     for (const playerId of team.players) {
-      playersTeams[playerId] = team;
+      playersTeams[playerId] = team
     }
   }
 
-  const currentPlayersStats: { [index: string]: PlayerStats } = {};
+  const currentPlayersStats: { [index: string]: PlayerStats } = {}
 
   for (const gameDay of latestSerie?.gameDays) {
     for (const match of gameDay.matches) {
-      calculateMatchScores(match, currentTeamStats);
+      calculateMatchScores(match, currentTeamStats)
     }
 
     for (const stats of gameDay.playersStats) {
-      const playerId = stats.player._id;
-      calculatePlayerStats(playerId, stats, playersTeams[playerId]?.color, currentPlayersStats);
+      const playerId = stats.player._id
+      calculatePlayerStats(playerId, stats, playersTeams[playerId]?.color, currentPlayersStats)
     }
 
-    calculateGameDayPunishments(gameDay, currentTeamStats);
+    calculateGameDayPunishments(gameDay, currentTeamStats)
   }
 
   return {
@@ -171,5 +171,5 @@ function calculateSerieStats(latestSerie: any) {
       score: (stats.totalScore / (stats.numScores || 1)).toFixed(2),
     })),
     month: latestSerie.month,
-  };
+  }
 }

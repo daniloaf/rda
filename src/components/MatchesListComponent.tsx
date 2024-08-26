@@ -1,5 +1,5 @@
-import { Grid, Paper, Typography } from '@mui/material';
-import GameDayMatchData from '../types/GameDayMatchData';
+import { Grid, Paper, Typography } from '@mui/material'
+import GameDayMatchData from '../types/GameDayMatchData'
 
 const MatchDetailsComponent = ({ match }: { match: GameDayMatchData }) => {
   return (
@@ -39,8 +39,8 @@ const MatchDetailsComponent = ({ match }: { match: GameDayMatchData }) => {
         </Typography>
       </Grid>
     </Grid>
-  );
-};
+  )
+}
 
 export default function MatchesListComponent({ matches }: { matches: Array<GameDayMatchData> }) {
   return (
@@ -52,5 +52,5 @@ export default function MatchesListComponent({ matches }: { matches: Array<GameD
         <MatchDetailsComponent key={i} match={match} />
       ))}
     </Paper>
-  );
+  )
 }

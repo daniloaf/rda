@@ -1,20 +1,20 @@
-import { Button, Card, CardActionArea, Grid, Paper, Typography } from '@mui/material';
-import { Stack } from '@mui/system';
-import { GetServerSideProps } from 'next';
-import Link from 'next/link';
-import { useState } from 'react';
-import AddSerieFormComponent from '../../../components/AddSerieFormComponent';
-import DateComponent from '../../../components/DateComponent';
-import * as AdminServices from '../../../services/admin';
-import SerieSummaryByYearData from '../../../types/admin/SerieSummaryByYearData';
-import getMonthName from '../../../utils/getMonthName';
+import { Button, Card, CardActionArea, Grid, Paper, Typography } from '@mui/material'
+import { Stack } from '@mui/system'
+import { GetServerSideProps } from 'next'
+import Link from 'next/link'
+import { useState } from 'react'
+import AddSerieFormComponent from '../../../components/AddSerieFormComponent'
+import DateComponent from '../../../components/DateComponent'
+import * as AdminServices from '../../../services/admin'
+import SerieSummaryByYearData from '../../../types/admin/SerieSummaryByYearData'
+import getMonthName from '../../../utils/getMonthName'
 
 export default function AdminSeriesPage({
   seriesByYear,
 }: {
-  seriesByYear: SerieSummaryByYearData;
+  seriesByYear: SerieSummaryByYearData
 }) {
-  const [addSerieOpen, setAddSerieOpen] = useState(false);
+  const [addSerieOpen, setAddSerieOpen] = useState(false)
 
   return (
     <>
@@ -27,7 +27,7 @@ export default function AdminSeriesPage({
         {Object.keys(seriesByYear)
           .sort((a, b) => parseInt(b) - parseInt(a))
           .map((year) => {
-            const series = seriesByYear[year];
+            const series = seriesByYear[year]
             return (
               <Stack key={year} spacing={1}>
                 <Typography>{year}</Typography>
@@ -61,23 +61,23 @@ export default function AdminSeriesPage({
                         </Grid>
                       </CardActionArea>
                     </Card>
-                  );
+                  )
                 })}
               </Stack>
-            );
+            )
           })}
       </Stack>
       <AddSerieFormComponent open={addSerieOpen} handleClose={() => setAddSerieOpen(false)} />
     </>
-  );
+  )
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const seriesByYear = await AdminServices.getSeriesSummaryByYear();
+  const seriesByYear = await AdminServices.getSeriesSummaryByYear()
 
   return {
     props: {
       seriesByYear: JSON.parse(JSON.stringify(seriesByYear)),
     },
-  };
-};
+  }
+}

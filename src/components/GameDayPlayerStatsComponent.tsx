@@ -1,8 +1,8 @@
-import GameDayPlayerStats from '../types/GameDayPlayerStats';
-import EnhancedTableComponent from './utils/EnchancedTableComponent';
-import StyleTwoToneIcon from '@mui/icons-material/StyleTwoTone';
-import StarIcon from '@mui/icons-material/Star';
-import { Paper, Typography } from '@mui/material';
+import GameDayPlayerStats from '../types/GameDayPlayerStats'
+import EnhancedTableComponent from './utils/EnchancedTableComponent'
+import StyleTwoToneIcon from '@mui/icons-material/StyleTwoTone'
+import StarIcon from '@mui/icons-material/Star'
+import { Paper, Typography } from '@mui/material'
 
 export default function GameDayPlayerStatsComponent({
   title,
@@ -10,10 +10,10 @@ export default function GameDayPlayerStatsComponent({
   abbreviate = false,
   limit,
 }: {
-  title: string;
-  playersStats: Array<GameDayPlayerStats>;
-  abbreviate?: boolean;
-  limit?: number;
+  title: string
+  playersStats: Array<GameDayPlayerStats>
+  abbreviate?: boolean
+  limit?: number
 }) {
   return (
     <Paper sx={{ padding: 1 }} elevation={2}>
@@ -35,5 +35,5 @@ export default function GameDayPlayerStatsComponent({
         defaultOrder="desc"
       />
     </Paper>
-  );
+  )
 }

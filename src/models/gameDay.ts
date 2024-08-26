@@ -1,29 +1,29 @@
-import mongoose from '../services/mongoose';
-import BaseSchema, { IBaseSchema } from './baseSchema';
-import MatchSchema, { IMatch } from './match';
-import Player from './player';
+import mongoose from '../services/mongoose'
+import BaseSchema, { IBaseSchema } from './baseSchema'
+import MatchSchema, { IMatch } from './match'
+import Player from './player'
 
 export interface IPlayerStats {
-  _id: string;
-  player: string;
-  goals: number;
-  assists: number;
-  score?: number;
-  yellowCards: number;
-  redCards: number;
+  _id: string
+  player: string
+  goals: number
+  assists: number
+  score?: number
+  yellowCards: number
+  redCards: number
 }
 
 interface IPunishment {
-  team: string;
-  points: number;
-  reason: string;
+  team: string
+  points: number
+  reason: string
 }
 
 export interface IGameDay extends IBaseSchema {
-  date: Date;
-  matches: Array<IMatch>;
-  playersStats: Array<IPlayerStats>;
-  teamPunishments: Array<IPunishment>;
+  date: Date
+  matches: Array<IMatch>
+  playersStats: Array<IPlayerStats>
+  teamPunishments: Array<IPunishment>
 }
 
 const GameDaySchema = new mongoose.Schema<IGameDay>({
@@ -82,8 +82,8 @@ const GameDaySchema = new mongoose.Schema<IGameDay>({
       },
     },
   ],
-});
+})
 
-const GameDay = mongoose.models.GameDay || mongoose.model<IGameDay>('GameDay', GameDaySchema);
+const GameDay = mongoose.models.GameDay || mongoose.model<IGameDay>('GameDay', GameDaySchema)
 
-export default GameDay;
+export default GameDay

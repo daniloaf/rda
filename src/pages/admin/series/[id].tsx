@@ -1,15 +1,15 @@
-import { Button, Dialog, DialogContent, DialogTitle, Grid, Paper, Typography } from '@mui/material';
-import { Stack } from '@mui/system';
-import { GetServerSideProps, GetServerSidePropsContext } from 'next';
-import DateComponent from '../../../components/DateComponent';
-import * as AdminServices from '../../../services/admin';
-import getMonthName from '../../../utils/getMonthName';
-import SerieDetailsData from '../../../types/admin/SerieDetailsData';
-import { ReactElement, useState } from 'react';
-import ManageGameDayFormComponent from '../../../components/ManageGameDayFormComponent';
-import ManageTeamsComponent from '../../../components/ManageTeamsComponent';
-import ActivePlayerData from '../../../types/admin/ActivePlayerData';
-import SerieDetailsGameDayData from '../../../types/admin/SerieDetailsGameDayData';
+import { Button, Dialog, DialogContent, DialogTitle, Grid, Paper, Typography } from '@mui/material'
+import { Stack } from '@mui/system'
+import { GetServerSideProps, GetServerSidePropsContext } from 'next'
+import DateComponent from '../../../components/DateComponent'
+import * as AdminServices from '../../../services/admin'
+import getMonthName from '../../../utils/getMonthName'
+import SerieDetailsData from '../../../types/admin/SerieDetailsData'
+import { ReactElement, useState } from 'react'
+import ManageGameDayFormComponent from '../../../components/ManageGameDayFormComponent'
+import ManageTeamsComponent from '../../../components/ManageTeamsComponent'
+import ActivePlayerData from '../../../types/admin/ActivePlayerData'
+import SerieDetailsGameDayData from '../../../types/admin/SerieDetailsGameDayData'
 
 const ManageContentDialog = ({
   title,
@@ -17,51 +17,51 @@ const ManageContentDialog = ({
   handleClose,
   children,
 }: {
-  title: string;
-  open: boolean;
-  handleClose: () => void;
-  handleSave: () => void;
-  children: ReactElement | null;
+  title: string
+  open: boolean
+  handleClose: () => void
+  handleSave: () => void
+  children: ReactElement | null
 }) => {
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="xl" sx={{ width: '100%' }}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>{children}</DialogContent>
     </Dialog>
-  );
-};
+  )
+}
 
 export default function AdminSerieDetailsPage({
   serie,
   activePlayers,
 }: {
-  serie: SerieDetailsData;
-  activePlayers: Array<ActivePlayerData>;
+  serie: SerieDetailsData
+  activePlayers: Array<ActivePlayerData>
 }) {
-  const [manageGameDayDialogOpen, setManageGameDayOpen] = useState(false);
-  const [manageTeamsDialogOpen, setManageTeamsOpen] = useState(false);
+  const [manageGameDayDialogOpen, setManageGameDayOpen] = useState(false)
+  const [manageTeamsDialogOpen, setManageTeamsOpen] = useState(false)
   const handleManageTeamsOnClick = () => {
-    setManageTeamsOpen(true);
-  };
+    setManageTeamsOpen(true)
+  }
 
   const handleManageTeamsDialogClose = () => {
-    setManageTeamsOpen(false);
-  };
+    setManageTeamsOpen(false)
+  }
 
   const handleManageTeamsSave = async () => {
-    handleManageTeamsDialogClose();
-  };
+    handleManageTeamsDialogClose()
+  }
 
   const handleManageGameDayOnClick = () => {
-    setManageGameDayOpen(true);
-  };
+    setManageGameDayOpen(true)
+  }
 
   const handleManageGameDayDialogClose = () => {
-    setEditGameDay(undefined);
-    setManageGameDayOpen(false);
-  };
+    setEditGameDay(undefined)
+    setManageGameDayOpen(false)
+  }
 
-  const [editGameDay, setEditGameDay] = useState<SerieDetailsGameDayData>();
+  const [editGameDay, setEditGameDay] = useState<SerieDetailsGameDayData>()
 
   return (
     <>
@@ -97,7 +97,7 @@ export default function AdminSerieDetailsPage({
                     ))}
                   </Paper>
                 </Grid>
-              );
+              )
             })}
           </Grid>
           <Button onClick={handleManageTeamsOnClick}>Alterar Times</Button>
@@ -112,14 +112,14 @@ export default function AdminSerieDetailsPage({
                 <Button
                   fullWidth
                   onClick={() => {
-                    setEditGameDay(gameDay);
-                    handleManageGameDayOnClick();
+                    setEditGameDay(gameDay)
+                    handleManageGameDayOnClick()
                   }}
                 >
                   <DateComponent dateString={gameDay.date} />
                 </Button>
               </Paper>
-            );
+            )
           })}
           <Button onClick={handleManageGameDayOnClick}>Adicionar Racha</Button>
         </Stack>
@@ -146,20 +146,20 @@ export default function AdminSerieDetailsPage({
         />
       </ManageContentDialog>
     </>
-  );
+  )
 }
 
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  const id = context.query.id as string;
-  const serie = await AdminServices.getSerieDetails(id);
-  const activePlayers = await AdminServices.getActivePlayers();
+  const id = context.query.id as string
+  const serie = await AdminServices.getSerieDetails(id)
+  const activePlayers = await AdminServices.getActivePlayers()
 
   return {
     props: {
       serie: JSON.parse(JSON.stringify(serie)),
       activePlayers: JSON.parse(JSON.stringify(activePlayers)),
     },
-  };
-};
+  }
+}

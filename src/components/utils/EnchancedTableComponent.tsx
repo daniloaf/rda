@@ -1,44 +1,44 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import TableSortLabel from '@mui/material/TableSortLabel';
-import { visuallyHidden } from '@mui/utils';
+import * as React from 'react'
+import Box from '@mui/material/Box'
+import Table from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableContainer from '@mui/material/TableContainer'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import TableSortLabel from '@mui/material/TableSortLabel'
+import { visuallyHidden } from '@mui/utils'
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
-    return -1;
+    return -1
   }
   if (b[orderBy] > a[orderBy]) {
-    return 1;
+    return 1
   }
-  return 0;
+  return 0
 }
 
-type Order = 'asc' | 'desc';
+type Order = 'asc' | 'desc'
 
 function getComparator<T>(order: Order, orderBy: keyof T): (a: T, b: T) => number {
   return order === 'desc'
     ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
+    : (a, b) => -descendingComparator(a, b, orderBy)
 }
 
 interface EnhancedTableProps<T> {
-  columns: Array<{ field: keyof T; label: React.ReactElement | string }>;
-  onRequestSort: (property: keyof T) => void;
-  order: Order;
-  orderBy: keyof T;
+  columns: Array<{ field: keyof T; label: React.ReactElement | string }>
+  onRequestSort: (property: keyof T) => void
+  order: Order
+  orderBy: keyof T
 }
 
 function EnhancedTableHead<T>(props: EnhancedTableProps<T>) {
-  const { columns, order, orderBy, onRequestSort } = props;
+  const { columns, order, orderBy, onRequestSort } = props
   const createSortHandler = (property: keyof T) => () => {
-    onRequestSort(property);
-  };
+    onRequestSort(property)
+  }
 
   return (
     <TableHead>
@@ -64,7 +64,7 @@ function EnhancedTableHead<T>(props: EnhancedTableProps<T>) {
         ))}
       </TableRow>
     </TableHead>
-  );
+  )
 }
 
 export default function EnhancedTableComponent<T>({
@@ -74,20 +74,20 @@ export default function EnhancedTableComponent<T>({
   defaultOrderBy,
   defaultOrder,
 }: {
-  columns: Array<{ field: keyof T; label: React.ReactElement | string }>;
-  data: Array<T>;
-  limit?: number;
-  defaultOrderBy?: keyof T;
-  defaultOrder?: Order;
+  columns: Array<{ field: keyof T; label: React.ReactElement | string }>
+  data: Array<T>
+  limit?: number
+  defaultOrderBy?: keyof T
+  defaultOrder?: Order
 }) {
-  const [order, setOrder] = React.useState<Order>(defaultOrder ?? 'asc');
-  const [orderBy, setOrderBy] = React.useState<keyof T>(defaultOrderBy ?? columns[0].field);
+  const [order, setOrder] = React.useState<Order>(defaultOrder ?? 'asc')
+  const [orderBy, setOrderBy] = React.useState<keyof T>(defaultOrderBy ?? columns[0].field)
 
   const handleRequestSort = (property: keyof T) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(property);
-  };
+    const isAsc = orderBy === property && order === 'asc'
+    setOrder(isAsc ? 'desc' : 'asc')
+    setOrderBy(property)
+  }
 
   return (
     <TableContainer>
@@ -106,13 +106,13 @@ export default function EnhancedTableComponent<T>({
               return (
                 <TableRow tabIndex={-1} key={index}>
                   {columns.map((colum, index) => {
-                    return <TableCell key={index}>{row[colum.field] as string}</TableCell>;
+                    return <TableCell key={index}>{row[colum.field] as string}</TableCell>
                   })}
                 </TableRow>
-              );
+              )
             })}
         </TableBody>
       </Table>
     </TableContainer>
-  );
+  )
 }

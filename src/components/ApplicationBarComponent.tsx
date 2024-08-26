@@ -1,7 +1,7 @@
-import Button from '@mui/material/Button';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Link from 'next/link';
+import Button from '@mui/material/Button'
+import AppBar from '@mui/material/AppBar'
+import Toolbar from '@mui/material/Toolbar'
+import Link from 'next/link'
 
 export default function ApplicationBarComponent() {
   return (
@@ -18,5 +18,5 @@ export default function ApplicationBarComponent() {
         </Button>
       </Toolbar>
     </AppBar>
-  );
+  )
 }

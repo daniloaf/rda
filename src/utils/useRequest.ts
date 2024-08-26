@@ -1,5 +1,5 @@
-import useSWR from 'swr';
-import axios from 'axios';
+import useSWR from 'swr'
+import axios from 'axios'
 
 export default function useRequest(request: any, { initialData, ...config }: any = {}) {
   return useSWR(
@@ -14,5 +14,5 @@ export default function useRequest(request: any, { initialData, ...config }: any
         data: initialData,
       },
     }
-  );
+  )
 }

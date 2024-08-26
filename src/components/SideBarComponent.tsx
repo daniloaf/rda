@@ -1,15 +1,15 @@
-import { Paper, Stack, Typography } from '@mui/material';
-import GameDayPlayerStats from '../types/GameDayPlayerStats';
-import TeamRankingData from '../types/TeamRankingData';
-import GameDayPlayerStatsComponent from './GameDayPlayerStatsComponent';
-import TeamRankingTableComponent from './TeamRankingTableComponent';
+import { Paper, Stack, Typography } from '@mui/material'
+import GameDayPlayerStats from '../types/GameDayPlayerStats'
+import TeamRankingData from '../types/TeamRankingData'
+import GameDayPlayerStatsComponent from './GameDayPlayerStatsComponent'
+import TeamRankingTableComponent from './TeamRankingTableComponent'
 
 export default function SideBarComponent({
   currentTeamRanking,
   currentPlayersStats,
 }: {
-  currentTeamRanking: TeamRankingData[];
-  currentPlayersStats: GameDayPlayerStats[];
+  currentTeamRanking: TeamRankingData[]
+  currentPlayersStats: GameDayPlayerStats[]
 }) {
   return (
     <Stack spacing={1} component={Paper} variant="outlined">
@@ -24,5 +24,5 @@ export default function SideBarComponent({
         limit={5}
       />
     </Stack>
-  );
+  )
 }

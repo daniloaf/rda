@@ -1,31 +1,31 @@
-import { Grid, Paper, Typography } from '@mui/material';
-import { useState } from 'react';
-import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
-import SerieDetailsPlayerData from '../types/admin/SerieDetailsPlayerData';
-import DraggablePlayer from './DraggablePlayer';
+import { Grid, Paper, Typography } from '@mui/material'
+import { useState } from 'react'
+import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd'
+import SerieDetailsPlayerData from '../types/admin/SerieDetailsPlayerData'
+import DraggablePlayer from './DraggablePlayer'
 
 export default function GameDayPlayersComponent({
   initialPresentPlayers,
   initialMissingPlayers,
   handleDataChange,
 }: {
-  initialPresentPlayers: Array<SerieDetailsPlayerData>;
-  initialMissingPlayers: Array<SerieDetailsPlayerData>;
-  handleDataChange: (data: any) => void;
+  initialPresentPlayers: Array<SerieDetailsPlayerData>
+  initialMissingPlayers: Array<SerieDetailsPlayerData>
+  handleDataChange: (data: any) => void
 }) {
   const [presentPlayers, setPresentPlayers] = useState(
     initialPresentPlayers.sort((p1, p2) => p1.nickname.localeCompare(p2.nickname))
-  );
+  )
 
   const [missingPlayers, setMissingPlayers] = useState<typeof initialPresentPlayers>(
     initialMissingPlayers.sort((p1, p2) => p1.nickname.localeCompare(p2.nickname))
-  );
+  )
 
   const droppablePlayers: {
     [index: string]: {
-      players: typeof initialPresentPlayers;
-      setPlayers: typeof setPresentPlayers;
-    };
+      players: typeof initialPresentPlayers
+      setPlayers: typeof setPresentPlayers
+    }
   } = {
     presentPlayers: {
       players: initialPresentPlayers,
@@ -35,27 +35,27 @@ export default function GameDayPlayersComponent({
       players: initialMissingPlayers,
       setPlayers: setMissingPlayers,
     },
-  };
+  }
 
   const handleDragEnd = (result: DropResult) => {
-    if (!result.destination) return;
+    if (!result.destination) return
 
-    const sourcePlayers = droppablePlayers[result.source.droppableId];
-    const destinationPlayers = droppablePlayers[result.destination.droppableId];
-    const sourceIndex = result.source.index;
-    const destinationIndex = result.destination.index;
-    const player = sourcePlayers.players[sourceIndex];
+    const sourcePlayers = droppablePlayers[result.source.droppableId]
+    const destinationPlayers = droppablePlayers[result.destination.droppableId]
+    const sourceIndex = result.source.index
+    const destinationIndex = result.destination.index
+    const player = sourcePlayers.players[sourceIndex]
 
-    sourcePlayers.players.splice(sourceIndex, 1);
-    destinationPlayers.players.splice(destinationIndex, 0, player);
-    sourcePlayers.setPlayers(sourcePlayers.players);
-    destinationPlayers.setPlayers(destinationPlayers.players);
+    sourcePlayers.players.splice(sourceIndex, 1)
+    destinationPlayers.players.splice(destinationIndex, 0, player)
+    sourcePlayers.setPlayers(sourcePlayers.players)
+    destinationPlayers.setPlayers(destinationPlayers.players)
 
     handleDataChange({
       presentPlayers: initialPresentPlayers,
       missingPlayers: initialMissingPlayers,
-    });
-  };
+    })
+  }
 
   return (
     <>
@@ -89,7 +89,7 @@ export default function GameDayPlayersComponent({
                       <Grid key={player._id} item xs={4}>
                         <DraggablePlayer player={player} index={index} />
                       </Grid>
-                    );
+                    )
                   })}
                 </Grid>
               )}
@@ -113,7 +113,7 @@ export default function GameDayPlayersComponent({
                       <Grid key={player._id} item xs={3}>
                         <DraggablePlayer player={player} index={index} />
                       </Grid>
-                    );
+                    )
                   })}
                 </Grid>
               )}
@@ -122,5 +122,5 @@ export default function GameDayPlayersComponent({
         </Grid>
       </DragDropContext>
     </>
-  );
+  )
 }

@@ -1,5 +1,5 @@
-import { ptBR } from 'date-fns/locale';
-import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale'
+import { format } from 'date-fns'
 import {
   Button,
   Dialog,
@@ -9,37 +9,39 @@ import {
   MenuItem,
   Select,
   TextField,
-} from '@mui/material';
-import { FormEventHandler, useState } from 'react';
-import axios from 'axios';
-import { useRouter } from 'next/router';
+} from '@mui/material'
+import { FormEventHandler, useState } from 'react'
+import axios from 'axios'
+import { useRouter } from 'next/router'
+import { useForm } from 'react-hook-form'
 
 export default function AddSerieFormComponent({
   open = false,
   handleClose,
 }: {
-  open: boolean;
-  handleClose: () => void;
+  open: boolean
+  handleClose: () => void
 }) {
-  const router = useRouter();
-  const currentDate = new Date();
-  const [month, setMonth] = useState((currentDate.getMonth() + 1).toString());
-  const [year, setYear] = useState(currentDate.getFullYear());
+  const {} = useForm()
+  const router = useRouter()
+  const currentDate = new Date()
+  const [month, setMonth] = useState((currentDate.getMonth() + 1).toString())
+  const [year, setYear] = useState(currentDate.getFullYear())
 
   const handleSubmit: FormEventHandler = async (event) => {
-    event.preventDefault();
+    event.preventDefault()
 
     const data = {
       month: parseInt(month),
       year: year,
-    };
+    }
 
-    const response = await axios.post(`/api/admin/series`, data);
+    const response = await axios.post(`/api/admin/series`, data)
 
     if (response.status === 200) {
-      router.push(`/admin/series/${response.data._id}`);
+      router.push(`/admin/series/${response.data._id}`)
     }
-  };
+  }
 
   return (
     <Dialog open={open} onClose={handleClose} onSubmit={handleSubmit}>
@@ -76,5 +78,5 @@ export default function AddSerieFormComponent({
         </form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

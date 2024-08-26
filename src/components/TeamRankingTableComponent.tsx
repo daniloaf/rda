@@ -1,14 +1,14 @@
-import Typography from '@mui/material/Typography';
-import { Paper } from '@mui/material';
-import TeamRankingData from '../types/TeamRankingData';
-import EnhancedTableComponent from './utils/EnchancedTableComponent';
+import Typography from '@mui/material/Typography'
+import { Paper } from '@mui/material'
+import TeamRankingData from '../types/TeamRankingData'
+import EnhancedTableComponent from './utils/EnchancedTableComponent'
 
 export default function TeamRankingTableComponent({
   title,
   ranking,
 }: {
-  title: string;
-  ranking: Array<TeamRankingData>;
+  title: string
+  ranking: Array<TeamRankingData>
 }) {
   return (
     <Paper sx={{ padding: 1 }} elevation={2}>
@@ -28,5 +28,5 @@ export default function TeamRankingTableComponent({
         defaultOrder="desc"
       />
     </Paper>
-  );
+  )
 }

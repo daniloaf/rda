@@ -1,7 +1,7 @@
-import _ from 'lodash';
-import { parseJSON } from 'date-fns';
-import { Button, IconButton } from '@mui/material';
-import RemoveIcon from '@mui/icons-material/Remove';
+import _ from 'lodash'
+import { parseJSON } from 'date-fns'
+import { Button, IconButton } from '@mui/material'
+import RemoveIcon from '@mui/icons-material/Remove'
 import {
   FormControl,
   Grid,
@@ -17,22 +17,20 @@ import {
   TableRow,
   TextField,
   Typography,
-} from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+} from '@mui/material'
+import { DatePicker } from '@mui/x-date-pickers'
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import axios from 'axios';
-import { useRouter } from 'next/router';
-import { ChangeEvent, FormEventHandler, useState } from 'react';
-import SerieDetailsGameDayData, {
-  TeamPunishmentData,
-} from '../types/admin/SerieDetailsGameDayData';
-import SerieDetailsTeamData from '../types/admin/SerieDetailsTeamData';
-import GameDayPlayersComponent from './GameDayPlayersComponent';
-import SerieDetailsMatchTeamData from '../types/admin/SerieDetailsMatchTeamData';
-import SerieDetailsMatchData from '../types/admin/SerieDetailsMatchData';
-import ActivePlayerData from '../types/admin/ActivePlayerData';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import axios from 'axios'
+import { useRouter } from 'next/router'
+import { ChangeEvent, FormEventHandler, useState } from 'react'
+import SerieDetailsGameDayData, { TeamPunishmentData } from '../types/admin/SerieDetailsGameDayData'
+import SerieDetailsTeamData from '../types/admin/SerieDetailsTeamData'
+import GameDayPlayersComponent from './GameDayPlayersComponent'
+import SerieDetailsMatchTeamData from '../types/admin/SerieDetailsMatchTeamData'
+import SerieDetailsMatchData from '../types/admin/SerieDetailsMatchData'
+import ActivePlayerData from '../types/admin/ActivePlayerData'
 
 export default function ManageGameDayFormComponent({
   gameDay,
@@ -40,17 +38,17 @@ export default function ManageGameDayFormComponent({
   serieId,
   players,
 }: {
-  gameDay?: SerieDetailsGameDayData;
-  teams: Array<SerieDetailsTeamData>;
-  players: Array<ActivePlayerData>;
-  serieId: string;
+  gameDay?: SerieDetailsGameDayData
+  teams: Array<SerieDetailsTeamData>
+  players: Array<ActivePlayerData>
+  serieId: string
 }) {
   const teamMenuItems = () =>
     teams.map((team) => (
       <MenuItem key={team._id} value={team._id}>
         {team.color}
       </MenuItem>
-    ));
+    ))
 
   const teamGoalkeeperMenuItems = () => {
     return matchPlayers.presentPlayers
@@ -59,14 +57,14 @@ export default function ManageGameDayFormComponent({
         <MenuItem key={goalkeeper._id} value={goalkeeper._id}>
           {goalkeeper.nickname}
         </MenuItem>
-      ));
-  };
+      ))
+  }
 
-  const router = useRouter();
+  const router = useRouter()
 
   const [date, setDate] = useState<Date | null>(
     gameDay?.date ? parseJSON(gameDay.date) : new Date()
-  );
+  )
   const [matches, setMatches] = useState<Array<SerieDetailsMatchData>>(
     gameDay?.matches ??
       Array(6)
@@ -83,20 +81,20 @@ export default function ManageGameDayFormComponent({
             goalkeeper: undefined,
           },
         }))
-  );
+  )
   const [teamPunishments, setTeamPunishments] = useState<Array<TeamPunishmentData>>(
     gameDay?.teamPunishments ?? []
-  );
+  )
 
   let initialPlayersStats: {
     [index: string]: {
-      player: ActivePlayerData;
-      goals: number;
-      assists: number;
-      yellowCards: number;
-      redCards: number;
-    };
-  };
+      player: ActivePlayerData
+      goals: number
+      assists: number
+      yellowCards: number
+      redCards: number
+    }
+  }
 
   if (gameDay?.playersStats) {
     initialPlayersStats = _.keyBy(
@@ -108,7 +106,7 @@ export default function ManageGameDayFormComponent({
         redCards: stats.redCards,
       })),
       (stats) => stats.player._id
-    );
+    )
   } else {
     initialPlayersStats = _.keyBy(
       players.map((player) => ({
@@ -119,19 +117,19 @@ export default function ManageGameDayFormComponent({
         redCards: 0,
       })),
       (stats) => stats.player._id
-    );
+    )
   }
 
-  const [playersStats, serPlayerStats] = useState(initialPlayersStats);
+  const [playersStats, serPlayerStats] = useState(initialPlayersStats)
 
   const [matchPlayers, setMatchPlayers] = useState({
     presentPlayers: players.filter((player) => !!initialPlayersStats[player._id]),
     missingPlayers: players.filter((player) => !initialPlayersStats[player._id]),
-  });
+  })
 
   const handlePlayersChange = (data: any) => {
     for (const missingPlayer of data.missingPlayers) {
-      delete playersStats[missingPlayer._id];
+      delete playersStats[missingPlayer._id]
     }
     for (const presentPlayer of data.presentPlayers) {
       if (!playersStats[presentPlayer._id]) {
@@ -141,62 +139,62 @@ export default function ManageGameDayFormComponent({
           assists: 0,
           yellowCards: 0,
           redCards: 0,
-        };
+        }
       }
     }
-    setMatchPlayers(data);
-  };
+    setMatchPlayers(data)
+  }
 
   const handleSubmit: FormEventHandler = async (event) => {
-    event.preventDefault();
+    event.preventDefault()
 
     const data = {
       date: date,
       matches: matches,
       playersStats: Object.values(playersStats),
       teamPunishments: teamPunishments,
-    };
+    }
 
-    let response;
+    let response
     if (!gameDay) {
-      response = await axios.post(`/api/admin/series/${serieId}/gameDays`, data);
+      response = await axios.post(`/api/admin/series/${serieId}/gameDays`, data)
     } else {
-      response = await axios.put(`/api/admin/series/${serieId}/gameDays/${gameDay?._id}`, data);
+      response = await axios.put(`/api/admin/series/${serieId}/gameDays/${gameDay?._id}`, data)
     }
 
     if (response.status === 200) {
-      router.reload();
+      router.reload()
     }
-  };
+  }
 
   const handleTeamChange =
     (team: SerieDetailsMatchTeamData) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      team.team = event.target.value;
-      setMatches([...matches]);
-    };
+      team.team = event.target.value
+      setMatches([...matches])
+    }
 
   const handleTeamGoalsChange =
     (team: SerieDetailsMatchTeamData) => (event: ChangeEvent<HTMLInputElement>) => {
-      team.goals = parseInt(event.target.value);
-      setMatches([...matches]);
-    };
+      team.goals = parseInt(event.target.value)
+      setMatches([...matches])
+    }
 
   const handleGoalkeeperTeamChange =
     (goalkeeper: ActivePlayerData) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      const teamSide = event.target.value;
+      const teamSide = event.target.value
       matches.forEach((match) => {
-        if (teamSide === 'teamA') match.teamA.goalkeeper = goalkeeper;
-        else if (teamSide === 'teamB') match.teamB.goalkeeper = goalkeeper;
-      });
-      setMatches([...matches]);
-    };
+        if (teamSide === 'teamA') match.teamA.goalkeeper = goalkeeper
+        else if (teamSide === 'teamB') match.teamB.goalkeeper = goalkeeper
+      })
+      setMatches([...matches])
+    }
 
   const handleTeamGoalkeeperChange =
     (team: SerieDetailsMatchTeamData) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      const goalkeeperId = event.target.value;
-      team.goalkeeper = playersStats[goalkeeperId]?.player;
-      setMatches([...matches]);
-    };
+      const goalkeeperId = event.target.value
+      team.goalkeeper = playersStats[goalkeeperId]?.player
+      setMatches([...matches])
+    }
 
   return (
     <form onSubmit={handleSubmit}>
@@ -209,7 +207,7 @@ export default function ManageGameDayFormComponent({
                 value={date}
                 inputFormat="dd/MM/yyyy"
                 onChange={(newValue) => {
-                  setDate(newValue);
+                  setDate(newValue)
                 }}
                 renderInput={(params) => <TextField fullWidth required {...params} />}
               />
@@ -274,8 +272,8 @@ export default function ManageGameDayFormComponent({
                                         value={playersStats[player._id].goals}
                                         onChange={(event) => {
                                           playersStats[player._id].goals =
-                                            parseInt(event.target.value) ?? 0;
-                                          serPlayerStats({ ...playersStats });
+                                            parseInt(event.target.value) ?? 0
+                                          serPlayerStats({ ...playersStats })
                                         }}
                                         variant="standard"
                                       ></TextField>
@@ -291,8 +289,8 @@ export default function ManageGameDayFormComponent({
                                         value={playersStats[player._id].assists}
                                         onChange={(event) => {
                                           playersStats[player._id].assists =
-                                            parseInt(event.target.value) ?? 0;
-                                          serPlayerStats({ ...playersStats });
+                                            parseInt(event.target.value) ?? 0
+                                          serPlayerStats({ ...playersStats })
                                         }}
                                         variant="standard"
                                       ></TextField>
@@ -308,8 +306,8 @@ export default function ManageGameDayFormComponent({
                                         value={playersStats[player._id].yellowCards}
                                         onChange={(event) => {
                                           playersStats[player._id].yellowCards =
-                                            parseInt(event.target.value) ?? 0;
-                                          serPlayerStats({ ...playersStats });
+                                            parseInt(event.target.value) ?? 0
+                                          serPlayerStats({ ...playersStats })
                                         }}
                                         variant="standard"
                                       ></TextField>
@@ -325,21 +323,21 @@ export default function ManageGameDayFormComponent({
                                         value={playersStats[player._id].redCards}
                                         onChange={(event) => {
                                           playersStats[player._id].redCards =
-                                            parseInt(event.target.value) ?? 0;
-                                          serPlayerStats({ ...playersStats });
+                                            parseInt(event.target.value) ?? 0
+                                          serPlayerStats({ ...playersStats })
                                         }}
                                         variant="standard"
                                       ></TextField>
                                     </TableCell>
                                   </TableRow>
-                                );
+                                )
                               })}
                           </TableBody>
                         </Table>
                       </TableContainer>
                     </Paper>
                   </Grid>
-                );
+                )
               })}
             </Grid>
           </Grid>
@@ -381,8 +379,8 @@ export default function ManageGameDayFormComponent({
                               value={playersStats[goalkeeper._id].goals}
                               onChange={(event) => {
                                 playersStats[goalkeeper._id].goals =
-                                  parseInt(event.target.value) ?? 0;
-                                serPlayerStats({ ...playersStats });
+                                  parseInt(event.target.value) ?? 0
+                                serPlayerStats({ ...playersStats })
                               }}
                               variant="standard"
                             ></TextField>
@@ -398,8 +396,8 @@ export default function ManageGameDayFormComponent({
                               value={playersStats[goalkeeper._id].assists}
                               onChange={(event) => {
                                 playersStats[goalkeeper._id].assists =
-                                  parseInt(event.target.value) ?? 0;
-                                serPlayerStats({ ...playersStats });
+                                  parseInt(event.target.value) ?? 0
+                                serPlayerStats({ ...playersStats })
                               }}
                               variant="standard"
                             ></TextField>
@@ -415,8 +413,8 @@ export default function ManageGameDayFormComponent({
                               value={playersStats[goalkeeper._id].yellowCards}
                               onChange={(event) => {
                                 playersStats[goalkeeper._id].yellowCards =
-                                  parseInt(event.target.value) ?? 0;
-                                serPlayerStats({ ...playersStats });
+                                  parseInt(event.target.value) ?? 0
+                                serPlayerStats({ ...playersStats })
                               }}
                               variant="standard"
                             ></TextField>
@@ -432,8 +430,8 @@ export default function ManageGameDayFormComponent({
                               value={playersStats[goalkeeper._id].redCards}
                               onChange={(event) => {
                                 playersStats[goalkeeper._id].redCards =
-                                  parseInt(event.target.value) ?? 0;
-                                serPlayerStats({ ...playersStats });
+                                  parseInt(event.target.value) ?? 0
+                                serPlayerStats({ ...playersStats })
                               }}
                               variant="standard"
                             ></TextField>
@@ -450,7 +448,7 @@ export default function ManageGameDayFormComponent({
                             </TextField>
                           </TableCell>
                         </TableRow>
-                      );
+                      )
                     })}
                 </TableBody>
               </Table>
@@ -484,7 +482,7 @@ export default function ManageGameDayFormComponent({
         <Button type="submit">Salvar</Button>
       </FormControl>
     </form>
-  );
+  )
 }
 
 function MarchesForm({
@@ -495,18 +493,18 @@ function MarchesForm({
   teamMenuItems,
   handleTeamGoalsChange,
 }: {
-  matches: SerieDetailsMatchData[];
+  matches: SerieDetailsMatchData[]
   handleTeamGoalkeeperChange: (
     team: SerieDetailsMatchTeamData
-  ) => (event: React.ChangeEvent<HTMLInputElement>) => void;
-  teamGoalkeeperMenuItems: () => JSX.Element[];
+  ) => (event: React.ChangeEvent<HTMLInputElement>) => void
+  teamGoalkeeperMenuItems: () => JSX.Element[]
   handleTeamChange: (
     team: SerieDetailsMatchTeamData
-  ) => (event: React.ChangeEvent<HTMLInputElement>) => void;
-  teamMenuItems: () => JSX.Element[];
+  ) => (event: React.ChangeEvent<HTMLInputElement>) => void
+  teamMenuItems: () => JSX.Element[]
   handleTeamGoalsChange: (
     team: SerieDetailsMatchTeamData
-  ) => (event: ChangeEvent<HTMLInputElement>) => void;
+  ) => (event: ChangeEvent<HTMLInputElement>) => void
 }) {
   return (
     <Grid item xs={12}>
@@ -606,11 +604,11 @@ function MarchesForm({
                 </Grid>
               </FormControl>
             </Paper>
-          );
+          )
         })}
       </Stack>
     </Grid>
-  );
+  )
 }
 
 function TeamPunishmentsForm({
@@ -618,36 +616,36 @@ function TeamPunishmentsForm({
   teamMenuItems,
   setTeamPunishments,
 }: {
-  teamPunishments: TeamPunishmentData[];
-  teamMenuItems: () => JSX.Element[];
-  setTeamPunishments: (punishments: TeamPunishmentData[]) => void;
+  teamPunishments: TeamPunishmentData[]
+  teamMenuItems: () => JSX.Element[]
+  setTeamPunishments: (punishments: TeamPunishmentData[]) => void
 }) {
   const handleTeamChange =
     (punishment: TeamPunishmentData) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      punishment.team = event.target.value;
-      setTeamPunishments([...teamPunishments]);
-    };
+      punishment.team = event.target.value
+      setTeamPunishments([...teamPunishments])
+    }
 
   const handleAddPunishment = () => {
-    setTeamPunishments([...teamPunishments, { team: '', points: 0, reason: '' }]);
-  };
+    setTeamPunishments([...teamPunishments, { team: '', points: 0, reason: '' }])
+  }
 
   const handleScoreChange =
     (punishment: TeamPunishmentData) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      punishment.points = parseInt(event.target.value);
-      setTeamPunishments([...teamPunishments]);
-    };
+      punishment.points = parseInt(event.target.value)
+      setTeamPunishments([...teamPunishments])
+    }
 
   const handleReasonChange =
     (punishment: TeamPunishmentData) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      punishment.reason = event.target.value;
-      setTeamPunishments([...teamPunishments]);
-    };
+      punishment.reason = event.target.value
+      setTeamPunishments([...teamPunishments])
+    }
 
   const handleRemovePunishment = (index: number) => () => {
-    teamPunishments.splice(index, 1);
-    setTeamPunishments([...teamPunishments]);
-  };
+    teamPunishments.splice(index, 1)
+    setTeamPunishments([...teamPunishments])
+  }
 
   return (
     <Stack spacing={1}>
@@ -708,9 +706,9 @@ function TeamPunishmentsForm({
               </FormControl>
             </Grid>
           </Paper>
-        );
+        )
       })}
       <Button onClick={handleAddPunishment}>Adicionar</Button>
     </Stack>
-  );
+  )
 }

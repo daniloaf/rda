@@ -1,26 +1,26 @@
-import { GetServerSideProps, GetServerSidePropsContext } from 'next';
-import { Stack } from '@mui/system';
-import * as SerieServices from '../../services/serie';
-import { SerieDetailsData } from '../../types/series';
-import Typography from '@mui/material/Typography';
-import getMonthName from '../../utils/getMonthName';
-import DateComponent from '../../components/DateComponent';
-import Paper from '@mui/material/Paper';
-import Grid from '@mui/material/Grid';
-import GameDayComponent from '../../components/GameDayComponent';
-import TeamRankingData from '../../types/TeamRankingData';
-import GameDayPlayerStats from '../../types/GameDayPlayerStats';
-import TeamRankingTableComponent from '../../components/TeamRankingTableComponent';
-import GameDayPlayerStatsComponent from '../../components/GameDayPlayerStatsComponent';
+import { GetServerSideProps, GetServerSidePropsContext } from 'next'
+import { Stack } from '@mui/system'
+import * as SerieServices from '../../services/serie'
+import { SerieDetailsData } from '../../types/series'
+import Typography from '@mui/material/Typography'
+import getMonthName from '../../utils/getMonthName'
+import DateComponent from '../../components/DateComponent'
+import Paper from '@mui/material/Paper'
+import Grid from '@mui/material/Grid'
+import GameDayComponent from '../../components/GameDayComponent'
+import TeamRankingData from '../../types/TeamRankingData'
+import GameDayPlayerStats from '../../types/GameDayPlayerStats'
+import TeamRankingTableComponent from '../../components/TeamRankingTableComponent'
+import GameDayPlayerStatsComponent from '../../components/GameDayPlayerStatsComponent'
 
 export default function SerieDetailsPage({
   serie,
   teamRanking,
   playersStats,
 }: {
-  serie: SerieDetailsData;
-  teamRanking: TeamRankingData[];
-  playersStats: GameDayPlayerStats[];
+  serie: SerieDetailsData
+  teamRanking: TeamRankingData[]
+  playersStats: GameDayPlayerStats[]
 }) {
   return (
     <Stack spacing={1}>
@@ -55,7 +55,7 @@ export default function SerieDetailsPage({
                   ))}
                 </Paper>
               </Grid>
-            );
+            )
           })}
         </Grid>
         <TeamRankingTableComponent title="Classificação" ranking={teamRanking} />
@@ -64,19 +64,19 @@ export default function SerieDetailsPage({
           Rachas
         </Typography>
         {serie.gameDays.map((gameDay) => {
-          return <GameDayComponent key={gameDay._id} gameDay={gameDay} />;
+          return <GameDayComponent key={gameDay._id} gameDay={gameDay} />
         })}
       </Stack>
     </Stack>
-  );
+  )
 }
 
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  const id = context.query.id as string;
-  const serieDetails = await SerieServices.getSerieDetails(id);
-  const { teamRanking, playersStats } = await SerieServices.getSerieStats(id);
+  const id = context.query.id as string
+  const serieDetails = await SerieServices.getSerieDetails(id)
+  const { teamRanking, playersStats } = await SerieServices.getSerieStats(id)
 
   return {
     props: {
@@ -84,5 +84,5 @@ export const getServerSideProps: GetServerSideProps = async (
       teamRanking: JSON.parse(JSON.stringify(teamRanking)),
       playersStats: JSON.parse(JSON.stringify(playersStats)),
     },
-  };
-};
+  }
+}

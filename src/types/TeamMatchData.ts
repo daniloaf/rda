@@ -1,4 +1,4 @@
 export default interface TeamMatchData {
-  color: string;
-  goals: number;
+  color: string
+  goals: number
 }

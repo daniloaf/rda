@@ -1,13 +1,13 @@
-import mongoose from '../services/mongoose';
-import BaseSchema, { IBaseSchema } from './baseSchema';
+import mongoose from '../services/mongoose'
+import BaseSchema, { IBaseSchema } from './baseSchema'
 
 export interface IPlayer extends IBaseSchema {
-  fullName: string;
-  nickname: string;
-  position: string;
-  birthdate: Date;
-  picture: string;
-  active: boolean;
+  fullName: string
+  nickname: string
+  position: string
+  birthdate: Date
+  picture: string
+  active: boolean
 }
 
 const PlayerSchema = new mongoose.Schema<IPlayer>({
@@ -36,10 +36,10 @@ const PlayerSchema = new mongoose.Schema<IPlayer>({
     required: true,
     default: true,
   },
-});
+})
 
 const Player =
   (mongoose.models.Player as mongoose.Model<IPlayer>) ||
-  mongoose.model<IPlayer>('Player', PlayerSchema);
+  mongoose.model<IPlayer>('Player', PlayerSchema)
 
-export default Player;
+export default Player
