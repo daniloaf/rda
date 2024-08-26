@@ -1,19 +1,21 @@
 import { ptBR } from 'date-fns/locale'
 import { format } from 'date-fns'
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  FormControl,
-  MenuItem,
-  Select,
-  TextField,
-} from '@mui/material'
+import { Button, Dialog, DialogContent, DialogTitle, FormControl, MenuItem, Select, TextField } from '@mui/material'
 import { FormEventHandler, useState } from 'react'
 import axios from 'axios'
 import { useRouter } from 'next/router'
-import { useForm } from 'react-hook-form'
+import { SubmitHandler, useForm } from 'react-hook-form'
+import * as yup from 'yup'
+import { useMutation } from '@tanstack/react-query'
+
+const addSerieFormSchema = yup
+  .object({
+    month: yup.number().integer().required(),
+    year: yup.number().integer().required(),
+  })
+  .required()
+
+type AddSerieForm = yup.InferType<typeof addSerieFormSchema>
 
 export default function AddSerieFormComponent({
   open = false,
@@ -22,39 +24,32 @@ export default function AddSerieFormComponent({
   open: boolean
   handleClose: () => void
 }) {
-  const {} = useForm()
+  const { register, handleSubmit, watch } = useForm<AddSerieForm>()
   const router = useRouter()
-  const currentDate = new Date()
-  const [month, setMonth] = useState((currentDate.getMonth() + 1).toString())
-  const [year, setYear] = useState(currentDate.getFullYear())
 
-  const handleSubmit: FormEventHandler = async (event) => {
-    event.preventDefault()
+  const { mutate: addSerie, isPending } = useMutation<{ _id: string }, unknown, AddSerieForm>({
+    mutationKey: ['addSerie'],
+    onMutate: async (data: AddSerieForm) => {
+      const response = await axios.post(`/api/admin/series`, data)
+      return response.data
+    },
+  })
 
-    const data = {
-      month: parseInt(month),
-      year: year,
-    }
-
-    const response = await axios.post(`/api/admin/series`, data)
-
-    if (response.status === 200) {
-      router.push(`/admin/series/${response.data._id}`)
-    }
+  const onSubmit: SubmitHandler<AddSerieForm> = async (data) => {
+    addSerie(data, {
+      onSuccess: (response) => {
+        router.push(`/admin/series/${response._id}`)
+      },
+    })
   }
 
   return (
-    <Dialog open={open} onClose={handleClose} onSubmit={handleSubmit}>
+    <Dialog open={open} onClose={handleClose} onSubmit={handleSubmit(onSubmit)}>
       <DialogTitle>Nova Série</DialogTitle>
       <DialogContent>
         <form>
           <FormControl>
-            <Select
-              required
-              value={month}
-              type="number"
-              onChange={(event) => setMonth(event.target.value as string)}
-            >
+            <Select required type='number' {...register('month')}>
               {Array(12)
                 .fill(null)
                 .map((_, index) => (
@@ -65,13 +60,8 @@ export default function AddSerieFormComponent({
                   </MenuItem>
                 ))}
             </Select>
-            <TextField
-              required
-              value={year}
-              type="number"
-              onChange={(event) => setYear(parseInt(event.target.value))}
-            ></TextField>
-            <Button type="submit" fullWidth>
+            <TextField required type='number' {...register('year')}></TextField>
+            <Button type='submit' fullWidth disabled={isPending}>
               Salvar
             </Button>
           </FormControl>
