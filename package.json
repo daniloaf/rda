@@ -8,13 +8,6 @@
     "createTestData": "ts-node --project ./node.tsconfig.json src/scripts/createTestData.ts",
     "generateStatistics": "ts-node --project ./node.tsconfig.json src/scripts/generateStatistics.ts"
   },
-  "prettier": {
-    "printWidth": 100,
-    "singleQuote": true,
-    "trailingComma": "es5",
-    "tabWidth": 2,
-    "semi": false
-  },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.259.0",
     "@date-io/date-fns": "^2.16.0",
@@ -50,6 +43,6 @@
     "eslint": "8.33.0",
     "eslint-config-next": "^14.2.6",
     "prettier": "3.3.3",
-    "typescript": "4.9.4"
+    "typescript": "^5.5.4"
   }
 }
