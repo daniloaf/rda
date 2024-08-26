@@ -1,6 +1,6 @@
-import { Paper } from "@mui/material";
-import { Draggable } from "react-beautiful-dnd";
-import ActivePlayerData from "../types/admin/ActivePlayerData";
+import { Paper } from '@mui/material';
+import { Draggable } from 'react-beautiful-dnd';
+import ActivePlayerData from '../types/admin/ActivePlayerData';
 
 export default function DraggablePlayer({
   index,

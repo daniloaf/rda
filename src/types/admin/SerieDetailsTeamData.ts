@@ -1,4 +1,4 @@
-import SerieDetailsPlayerData from "./SerieDetailsPlayerData";
+import SerieDetailsPlayerData from './SerieDetailsPlayerData';
 
 export default interface SerieDetailsTeamData {
   _id: string;

@@ -1,5 +1,5 @@
-import { Grid, Paper, Typography } from "@mui/material";
-import GameDayMatchData from "../types/GameDayMatchData";
+import { Grid, Paper, Typography } from '@mui/material';
+import GameDayMatchData from '../types/GameDayMatchData';
 
 const MatchDetailsComponent = ({ match }: { match: GameDayMatchData }) => {
   return (
@@ -14,29 +14,35 @@ const MatchDetailsComponent = ({ match }: { match: GameDayMatchData }) => {
       elevation={2}
     >
       <Grid item xs={2}>
-        <Typography variant="body1" align="center">{match.teamA.color.toUpperCase()}</Typography>
+        <Typography variant="body1" align="center">
+          {match.teamA.color.toUpperCase()}
+        </Typography>
       </Grid>
       <Grid item xs={2}>
-        <Typography variant="body1" align="center">{match.teamA.goals}</Typography>
+        <Typography variant="body1" align="center">
+          {match.teamA.goals}
+        </Typography>
       </Grid>
       <Grid item xs={2}>
-        <Typography variant="body1" align="center">X</Typography>
+        <Typography variant="body1" align="center">
+          X
+        </Typography>
       </Grid>
       <Grid item xs={2}>
-        <Typography variant="body1" align="center">{match.teamB.goals}</Typography>
+        <Typography variant="body1" align="center">
+          {match.teamB.goals}
+        </Typography>
       </Grid>
       <Grid item xs={2}>
-        <Typography variant="body1" align="center">{match.teamB.color.toUpperCase()}</Typography>
+        <Typography variant="body1" align="center">
+          {match.teamB.color.toUpperCase()}
+        </Typography>
       </Grid>
     </Grid>
   );
 };
 
-export default function MatchesListComponent({
-  matches,
-}: {
-  matches: Array<GameDayMatchData>;
-}) {
+export default function MatchesListComponent({ matches }: { matches: Array<GameDayMatchData> }) {
   return (
     <Paper sx={{ padding: 1 }} elevation={2}>
       <Typography variant="h6" align="center">

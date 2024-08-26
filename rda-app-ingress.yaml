@@ -8,20 +8,20 @@ spec:
   rules:
     - http:
         paths:
-        - pathType: Prefix
-          path: /
-          backend:
-            service:
-              name: rda-app
-              port:
-                number: 80
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: rda-app
+                port:
+                  number: 80
     - host: rda.offthread.org
       http:
         paths:
-        - pathType: Prefix
-          path: /
-          backend:
-            service:
-              name: rda-app
-              port:
-                number: 80
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: rda-app
+                port:
+                  number: 80

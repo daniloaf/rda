@@ -1,5 +1,5 @@
-import { PlayerStats, TeamStats } from "../utils/stats";
-import PlayerData from "./players";
+import { PlayerStats, TeamStats } from '../utils/stats';
+import PlayerData from './players';
 
 export interface TeamPunishmentData {
   team: string;
@@ -25,14 +25,13 @@ export interface SerieDetailsGameDayPlayerStats {
 export interface SerieDetailsMatchTeamData {
   team: string;
   goals: number;
-  goalkeeper?: PlayerData
+  goalkeeper?: PlayerData;
 }
 
 export interface SerieDetailsMatchData {
   teamA: SerieDetailsMatchTeamData;
   teamB: SerieDetailsMatchTeamData;
 }
-
 
 export interface SerieDetailsGameDayData {
   _id: string;
@@ -65,5 +64,5 @@ export interface SerieDetailsData {
   startDate: string;
   endDate?: string;
   teams: SerieDetailsTeamData[];
-  gameDays: SerieDetailsGameDayData[]
+  gameDays: SerieDetailsGameDayData[];
 }

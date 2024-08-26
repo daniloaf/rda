@@ -1,15 +1,15 @@
-import { parseISO, differenceInYears } from "date-fns";
-import TableContainer from "@mui/material/TableContainer";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableRow from "@mui/material/TableRow";
+import { parseISO, differenceInYears } from 'date-fns';
+import TableContainer from '@mui/material/TableContainer';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableRow from '@mui/material/TableRow';
 
-import { styled } from "@mui/system";
-import PlayerProfileData from "../types/PlayerProfileData";
+import { styled } from '@mui/system';
+import PlayerProfileData from '../types/PlayerProfileData';
 
 const CustomizedTableCell = styled(TableCell)(() => ({
-  border: "none",
+  border: 'none',
 }));
 
 // const getPlayerPosition = (data) => {
@@ -26,22 +26,16 @@ const getPlayerAge = (date: string) => {
   return differenceInYears(new Date(), parseISO(date)).toString();
 };
 
-export default function PlayerDataComponent({
-  player,
-}: {
-  player: PlayerProfileData;
-}) {
+export default function PlayerDataComponent({ player }: { player: PlayerProfileData }) {
   return (
-    <TableContainer sx={{ display: "inline-flex", marginTop: "10px" }}>
+    <TableContainer sx={{ display: 'inline-flex', marginTop: '10px' }}>
       <Table size="small">
         <TableBody>
           <TableRow>
             <CustomizedTableCell width={50} align="left">
               <b>Nome:</b>
             </CustomizedTableCell>
-            <CustomizedTableCell align="left">
-              {player.fullName}
-            </CustomizedTableCell>
+            <CustomizedTableCell align="left">{player.fullName}</CustomizedTableCell>
           </TableRow>
           <TableRow>
             <CustomizedTableCell align="left">
@@ -55,9 +49,7 @@ export default function PlayerDataComponent({
             <CustomizedTableCell align="left">
               <b>Posição:</b>
             </CustomizedTableCell>
-            <CustomizedTableCell align="left">
-              {player.position}
-            </CustomizedTableCell>
+            <CustomizedTableCell align="left">{player.position}</CustomizedTableCell>
           </TableRow>
         </TableBody>
       </Table>

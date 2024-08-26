@@ -1,8 +1,8 @@
-import { Paper, Stack, Typography } from "@mui/material";
-import GameDayPlayerStats from "../types/GameDayPlayerStats";
-import TeamRankingData from "../types/TeamRankingData";
-import GameDayPlayerStatsComponent from "./GameDayPlayerStatsComponent";
-import TeamRankingTableComponent from "./TeamRankingTableComponent";
+import { Paper, Stack, Typography } from '@mui/material';
+import GameDayPlayerStats from '../types/GameDayPlayerStats';
+import TeamRankingData from '../types/TeamRankingData';
+import GameDayPlayerStatsComponent from './GameDayPlayerStatsComponent';
+import TeamRankingTableComponent from './TeamRankingTableComponent';
 
 export default function SideBarComponent({
   currentTeamRanking,
@@ -16,12 +16,9 @@ export default function SideBarComponent({
       <Typography variant="h5" align="center">
         Série atual
       </Typography>
-      <TeamRankingTableComponent
-        title="Classificação"
-        ranking={currentTeamRanking}
-      />
+      <TeamRankingTableComponent title="Classificação" ranking={currentTeamRanking} />
       <GameDayPlayerStatsComponent
-        title={"Atletas"}
+        title={'Atletas'}
         playersStats={currentPlayersStats}
         abbreviate={true}
         limit={5}

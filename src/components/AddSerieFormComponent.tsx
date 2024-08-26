@@ -1,5 +1,5 @@
-import { ptBR } from "date-fns/locale";
-import { format } from "date-fns";
+import { ptBR } from 'date-fns/locale';
+import { format } from 'date-fns';
 import {
   Button,
   Dialog,
@@ -9,10 +9,10 @@ import {
   MenuItem,
   Select,
   TextField,
-} from "@mui/material";
-import { FormEventHandler, useState } from "react";
-import axios from "axios";
-import { useRouter } from "next/router";
+} from '@mui/material';
+import { FormEventHandler, useState } from 'react';
+import axios from 'axios';
+import { useRouter } from 'next/router';
 
 export default function AddSerieFormComponent({
   open = false,
@@ -57,7 +57,7 @@ export default function AddSerieFormComponent({
                 .fill(null)
                 .map((_, index) => (
                   <MenuItem key={index} value={index + 1}>
-                    {format(new Date(0, index + 1, 0), "LLLL", {
+                    {format(new Date(0, index + 1, 0), 'LLLL', {
                       locale: ptBR,
                     })}
                   </MenuItem>

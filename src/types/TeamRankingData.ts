@@ -1,5 +1,5 @@
 export default interface TeamRankingData {
-  color: "string";
+  color: 'string';
   score: number;
   wins: number;
   draws: number;

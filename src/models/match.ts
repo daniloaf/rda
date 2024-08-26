@@ -1,10 +1,10 @@
-import mongoose from "../services/mongoose";
-import BaseSchema, { IBaseSchema } from "./baseSchema";
-import Player from "./player";
-import Team, { ITeam } from "./team";
+import mongoose from '../services/mongoose';
+import BaseSchema, { IBaseSchema } from './baseSchema';
+import Player from './player';
+import Team, { ITeam } from './team';
 
 interface IMatchTeam {
-  team: string|ITeam;
+  team: string | ITeam;
   goals: number;
   goalkeeper?: string;
 }
@@ -48,7 +48,6 @@ const MatchSchema = new mongoose.Schema<IMatch>({
   },
 });
 
-const Match =
-  mongoose.models.Match || mongoose.model<IMatch>("Match", MatchSchema);
+const Match = mongoose.models.Match || mongoose.model<IMatch>('Match', MatchSchema);
 
 export default Match;

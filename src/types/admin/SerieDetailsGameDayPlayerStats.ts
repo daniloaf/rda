@@ -1,4 +1,4 @@
-import ActivePlayerData from "./ActivePlayerData";
+import ActivePlayerData from './ActivePlayerData';
 
 export default interface SerieDetailsGameDayPlayerStats {
   player: ActivePlayerData;

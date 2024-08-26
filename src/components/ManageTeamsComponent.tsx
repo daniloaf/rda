@@ -1,22 +1,14 @@
-import _ from "lodash";
-import {
-  Button,
-  FormControl,
-  Grid,
-  MenuItem,
-  Paper,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { Stack } from "@mui/system";
-import { FormEventHandler, useState } from "react";
-import ActivePlayerData from "../types/admin/ActivePlayerData";
+import _ from 'lodash';
+import { Button, FormControl, Grid, MenuItem, Paper, TextField, Typography } from '@mui/material';
+import { Stack } from '@mui/system';
+import { FormEventHandler, useState } from 'react';
+import ActivePlayerData from '../types/admin/ActivePlayerData';
 
-import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
-import DraggablePlayer from "./DraggablePlayer";
-import axios from "axios";
-import { useRouter } from "next/router";
-import SerieDetailsTeamData from "../types/admin/SerieDetailsTeamData";
+import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
+import DraggablePlayer from './DraggablePlayer';
+import axios from 'axios';
+import { useRouter } from 'next/router';
+import SerieDetailsTeamData from '../types/admin/SerieDetailsTeamData';
 
 export default function ManageTeamsComponent({
   players,
@@ -29,7 +21,7 @@ export default function ManageTeamsComponent({
 }) {
   const router = useRouter();
 
-  const playersById = _.keyBy(players, "_id");
+  const playersById = _.keyBy(players, '_id');
 
   const initialTeams: {
     [index: string]: {
@@ -48,7 +40,7 @@ export default function ManageTeamsComponent({
       });
     }
   } else {
-    const defaultColors = ["Branco", "Azul", "Laranja"];
+    const defaultColors = ['Branco', 'Azul', 'Laranja'];
     for (const index in defaultColors) {
       const color = defaultColors[index];
       initialTeams[`team${index}`] = {
@@ -100,14 +92,11 @@ export default function ManageTeamsComponent({
           _id: team._id,
           color: team.color,
           players: team.players.map((p) => p._id),
-          captain: team.captain
+          captain: team.captain,
         };
       });
 
-    const response = await axios.put(
-      `/api/admin/series/${serieId}/teams`,
-      data
-    );
+    const response = await axios.put(`/api/admin/series/${serieId}/teams`, data);
 
     if (response.status === 200) {
       router.reload();
@@ -132,13 +121,11 @@ export default function ManageTeamsComponent({
                     ref={provided.innerRef}
                     {...provided.droppableProps}
                   >
-                    {currentTeams.availablePlayers.players.map(
-                      (player, index) => (
-                        <Grid item key={player._id}>
-                          <DraggablePlayer player={player} index={index} />
-                        </Grid>
-                      )
-                    )}
+                    {currentTeams.availablePlayers.players.map((player, index) => (
+                      <Grid item key={player._id}>
+                        <DraggablePlayer player={player} index={index} />
+                      </Grid>
+                    ))}
                   </Grid>
                 )}
               </Droppable>
@@ -172,11 +159,7 @@ export default function ManageTeamsComponent({
                           component={Paper}
                         >
                           {team.players.map((player, index) => (
-                            <DraggablePlayer
-                              key={player._id}
-                              player={player}
-                              index={index}
-                            />
+                            <DraggablePlayer key={player._id} player={player} index={index} />
                           ))}
                         </Stack>
                       )}

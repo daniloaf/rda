@@ -1,14 +1,14 @@
-import Stack from "@mui/material/Stack";
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
+import Stack from '@mui/material/Stack';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
 
-import { GetServerSideProps } from "next";
-import PlayerCardComponent from "../../components/PlayerCardComponent";
-import PlayerYearStats from "../../types/PlayerYearStats";
-import PlayerYearStatsComponent from "../../components/PlayerYearStatsComponent";
-import PlayerDataComponent from "../../components/PlayerDataComponent";
-import PlayerProfileData from "../../types/PlayerProfileData";
-import * as PlayerServices from "../../services/player";
+import { GetServerSideProps } from 'next';
+import PlayerCardComponent from '../../components/PlayerCardComponent';
+import PlayerYearStats from '../../types/PlayerYearStats';
+import PlayerYearStatsComponent from '../../components/PlayerYearStatsComponent';
+import PlayerDataComponent from '../../components/PlayerDataComponent';
+import PlayerProfileData from '../../types/PlayerProfileData';
+import * as PlayerServices from '../../services/player';
 
 export default function PlayerProfilePage({
   player,
@@ -21,7 +21,13 @@ export default function PlayerProfilePage({
     <Stack sx={{ padding: 1 }} width="100%">
       <Grid container spacing={1}>
         <Grid item>
-          <PlayerCardComponent player={player} width={150} height={200} href={""} linkEndabled={false} />
+          <PlayerCardComponent
+            player={player}
+            width={150}
+            height={200}
+            href={''}
+            linkEndabled={false}
+          />
         </Grid>
         <Grid item xs={10}>
           <PlayerDataComponent player={player} />

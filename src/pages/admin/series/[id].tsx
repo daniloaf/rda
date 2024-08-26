@@ -1,23 +1,15 @@
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Grid,
-  Paper,
-  Typography,
-} from "@mui/material";
-import { Stack } from "@mui/system";
-import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import DateComponent from "../../../components/DateComponent";
-import * as AdminServices from "../../../services/admin";
-import getMonthName from "../../../utils/getMonthName";
-import SerieDetailsData from "../../../types/admin/SerieDetailsData";
-import { ReactElement, useState } from "react";
-import ManageGameDayFormComponent from "../../../components/ManageGameDayFormComponent";
-import ManageTeamsComponent from "../../../components/ManageTeamsComponent";
-import ActivePlayerData from "../../../types/admin/ActivePlayerData";
-import SerieDetailsGameDayData from "../../../types/admin/SerieDetailsGameDayData";
+import { Button, Dialog, DialogContent, DialogTitle, Grid, Paper, Typography } from '@mui/material';
+import { Stack } from '@mui/system';
+import { GetServerSideProps, GetServerSidePropsContext } from 'next';
+import DateComponent from '../../../components/DateComponent';
+import * as AdminServices from '../../../services/admin';
+import getMonthName from '../../../utils/getMonthName';
+import SerieDetailsData from '../../../types/admin/SerieDetailsData';
+import { ReactElement, useState } from 'react';
+import ManageGameDayFormComponent from '../../../components/ManageGameDayFormComponent';
+import ManageTeamsComponent from '../../../components/ManageTeamsComponent';
+import ActivePlayerData from '../../../types/admin/ActivePlayerData';
+import SerieDetailsGameDayData from '../../../types/admin/SerieDetailsGameDayData';
 
 const ManageContentDialog = ({
   title,
@@ -32,12 +24,7 @@ const ManageContentDialog = ({
   children: ReactElement | null;
 }) => {
   return (
-    <Dialog
-      open={open}
-      onClose={handleClose}
-      maxWidth="xl"
-      sx={{ width: "100%" }}
-    >
+    <Dialog open={open} onClose={handleClose} maxWidth="xl" sx={{ width: '100%' }}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>{children}</DialogContent>
     </Dialog>
@@ -80,7 +67,7 @@ export default function AdminSerieDetailsPage({
     <>
       <Stack spacing={1}>
         <Typography variant="h5">
-          Série {getMonthName(serie.month, "LLLL")}/{serie.year}
+          Série {getMonthName(serie.month, 'LLLL')}/{serie.year}
         </Typography>
         <Stack direction="row" spacing={1}>
           <Typography variant="body1">
@@ -102,9 +89,7 @@ export default function AdminSerieDetailsPage({
               return (
                 <Grid key={team._id} item xs={12} md={3}>
                   <Paper sx={{ padding: 1 }}>
-                    <Typography variant="subtitle2">
-                      Time {team.color}
-                    </Typography>
+                    <Typography variant="subtitle2">Time {team.color}</Typography>
                     {team.players.map((player) => (
                       <Typography variant="body1" key={player._id}>
                         {player.nickname}
@@ -145,11 +130,7 @@ export default function AdminSerieDetailsPage({
         handleClose={handleManageTeamsDialogClose}
         handleSave={handleManageTeamsSave}
       >
-        <ManageTeamsComponent
-          players={activePlayers}
-          serieId={serie._id}
-          teams={serie.teams}
-        />
+        <ManageTeamsComponent players={activePlayers} serieId={serie._id} teams={serie.teams} />
       </ManageContentDialog>
       <ManageContentDialog
         title="Adicionar Racha"

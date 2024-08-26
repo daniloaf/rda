@@ -4,8 +4,8 @@ metadata:
   name: rda-app
 spec:
   ports:
-  - port: 80
-    targetPort: 3000
+    - port: 80
+      targetPort: 3000
   selector:
     app: rda-app
 ---
@@ -23,19 +23,19 @@ spec:
         app: rda-app
     spec:
       containers:
-      - name: rda-app
-        image: daniloaf/rda-app:latest
-        imagePullPolicy: Always
-        env:
-          - name: NODE_ENV
-            valueFrom:
-              configMapKeyRef:
-                name: rda-config
-                key: NODE_ENV
-          - name: MONGODB_URI
-            valueFrom:
-              secretKeyRef:
-                name: rda-keys
-                key: MONGODB_URI
-        ports:
-        - containerPort: 3000
+        - name: rda-app
+          image: daniloaf/rda-app:latest
+          imagePullPolicy: Always
+          env:
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: rda-config
+                  key: NODE_ENV
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: rda-keys
+                  key: MONGODB_URI
+          ports:
+            - containerPort: 3000

@@ -3,7 +3,7 @@ export default interface GameDayPlayerStats {
   nickname: string;
   goals: number;
   assists: number;
-  score: number|string;
+  score: number | string;
   yellowCards: number;
   redCards: number;
   teamColor: string;

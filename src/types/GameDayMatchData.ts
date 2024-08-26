@@ -1,4 +1,4 @@
-import TeamMatchData from "./TeamMatchData";
+import TeamMatchData from './TeamMatchData';
 
 export default interface GameDayMatchData {
   teamA: TeamMatchData;

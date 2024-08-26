@@ -95,7 +95,7 @@ export const getSeriesSummaries = async () => {
       topCards: topCards.filter(
         (p) =>
           p.yellowCards + p.redCards > 0 &&
-          (p.yellowCards + p.redCards) === (topCards[0].yellowCards + topCards[0].redCards)
+          p.yellowCards + p.redCards === topCards[0].yellowCards + topCards[0].redCards
       ),
     };
   });

@@ -1,13 +1,13 @@
-import * as React from "react";
-import Box from "@mui/material/Box";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import TableSortLabel from "@mui/material/TableSortLabel";
-import { visuallyHidden } from "@mui/utils";
+import * as React from 'react';
+import Box from '@mui/material/Box';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import TableSortLabel from '@mui/material/TableSortLabel';
+import { visuallyHidden } from '@mui/utils';
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -19,13 +19,10 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   return 0;
 }
 
-type Order = "asc" | "desc";
+type Order = 'asc' | 'desc';
 
-function getComparator<T>(
-  order: Order,
-  orderBy: keyof T
-): (a: T, b: T) => number {
-  return order === "desc"
+function getComparator<T>(order: Order, orderBy: keyof T): (a: T, b: T) => number {
+  return order === 'desc'
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
@@ -53,13 +50,13 @@ function EnhancedTableHead<T>(props: EnhancedTableProps<T>) {
           >
             <TableSortLabel
               active={orderBy === column.field}
-              direction={orderBy === column.field ? order : "asc"}
+              direction={orderBy === column.field ? order : 'asc'}
               onClick={createSortHandler(column.field)}
             >
               {column.label}
               {orderBy === column.field ? (
                 <Box component="span" sx={visuallyHidden}>
-                  {order === "desc" ? "sorted descending" : "sorted ascending"}
+                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                 </Box>
               ) : null}
             </TableSortLabel>
@@ -83,14 +80,12 @@ export default function EnhancedTableComponent<T>({
   defaultOrderBy?: keyof T;
   defaultOrder?: Order;
 }) {
-  const [order, setOrder] = React.useState<Order>(defaultOrder ?? "asc");
-  const [orderBy, setOrderBy] = React.useState<keyof T>(
-    defaultOrderBy ?? columns[0].field
-  );
+  const [order, setOrder] = React.useState<Order>(defaultOrder ?? 'asc');
+  const [orderBy, setOrderBy] = React.useState<keyof T>(defaultOrderBy ?? columns[0].field);
 
   const handleRequestSort = (property: keyof T) => {
-    const isAsc = orderBy === property && order === "asc";
-    setOrder(isAsc ? "desc" : "asc");
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
 
@@ -111,11 +106,7 @@ export default function EnhancedTableComponent<T>({
               return (
                 <TableRow tabIndex={-1} key={index}>
                   {columns.map((colum, index) => {
-                    return (
-                      <TableCell key={index}>
-                        {row[colum.field] as string}
-                      </TableCell>
-                    );
+                    return <TableCell key={index}>{row[colum.field] as string}</TableCell>;
                   })}
                 </TableRow>
               );

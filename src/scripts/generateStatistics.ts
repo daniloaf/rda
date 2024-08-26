@@ -241,9 +241,7 @@ const sortPlayerStats = (playersStats: any, field: string, limit: number = 5) =>
     .value();
 };
 
-const generateMaxStats = (data: Awaited<ReturnType<typeof getData>>) => {
-
-}
+const generateMaxStats = (data: Awaited<ReturnType<typeof getData>>) => {};
 
 const main = async () => {
   const data = await getData();

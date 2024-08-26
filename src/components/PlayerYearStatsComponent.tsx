@@ -1,27 +1,27 @@
-import React, { ReactNode } from "react";
-import Table from "@mui/material/Table";
-import TableCell from "@mui/material/TableCell";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import TableContainer from "@mui/material/TableContainer";
-import TableBody from "@mui/material/TableBody";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import Collapse from "@mui/material/Collapse";
-import IconButton from "@mui/material/IconButton";
-import PlayerYearStats from "../types/PlayerYearStats";
-import PlayerMonthStatsData from "../types/PlayerMonthStatsData";
-import StyleTwoToneIcon from "@mui/icons-material/StyleTwoTone";
-import useRequest from "../utils/useRequest";
-import { useRouter } from "next/router";
-import getMonthName from "../utils/getMonthName";
+import React, { ReactNode } from 'react';
+import Table from '@mui/material/Table';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import TableContainer from '@mui/material/TableContainer';
+import TableBody from '@mui/material/TableBody';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import Collapse from '@mui/material/Collapse';
+import IconButton from '@mui/material/IconButton';
+import PlayerYearStats from '../types/PlayerYearStats';
+import PlayerMonthStatsData from '../types/PlayerMonthStatsData';
+import StyleTwoToneIcon from '@mui/icons-material/StyleTwoTone';
+import useRequest from '../utils/useRequest';
+import { useRouter } from 'next/router';
+import getMonthName from '../utils/getMonthName';
 
 const YearRow = ({ stats }: { stats: PlayerYearStats }) => {
   const [open, setOpen] = React.useState(false);
 
   return (
     <>
-      <TableRow sx={{ borderBottom: "unset" }}>
+      <TableRow sx={{ borderBottom: 'unset' }}>
         <TableCell>
           <IconButton size="small" onClick={() => setOpen(!open)}>
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
@@ -42,18 +42,9 @@ const YearRow = ({ stats }: { stats: PlayerYearStats }) => {
   );
 };
 
-const MonthCell = ({
-  open,
-  children,
-}: {
-  open: boolean;
-  children?: ReactNode;
-}) => {
+const MonthCell = ({ open, children }: { open: boolean; children?: ReactNode }) => {
   return (
-    <TableCell
-      style={{ paddingBottom: 0, paddingTop: 5, border: "none" }}
-      colSpan={1}
-    >
+    <TableCell style={{ paddingBottom: 0, paddingTop: 5, border: 'none' }} colSpan={1}>
       <Collapse in={open} timeout="auto" unmountOnExit>
         {children}
       </Collapse>
@@ -101,11 +92,7 @@ const MonthRows = ({ year, open }: { year: number; open: boolean }) => {
   );
 };
 
-export default function PlayerYearStatsComponent({
-  stats,
-}: {
-  stats: Array<PlayerYearStats>;
-}) {
+export default function PlayerYearStatsComponent({ stats }: { stats: Array<PlayerYearStats> }) {
   return (
     <TableContainer>
       <Table>
@@ -117,10 +104,10 @@ export default function PlayerYearStatsComponent({
             <TableCell>Gols</TableCell>
             <TableCell>Assistências</TableCell>
             <TableCell>
-              <StyleTwoToneIcon style={{ fill: "#f5d742" }} />
+              <StyleTwoToneIcon style={{ fill: '#f5d742' }} />
             </TableCell>
             <TableCell>
-              <StyleTwoToneIcon style={{ fill: "#fc1919" }} />
+              <StyleTwoToneIcon style={{ fill: '#fc1919' }} />
             </TableCell>
             <TableCell>Vitórias</TableCell>
             <TableCell>Empates</TableCell>

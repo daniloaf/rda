@@ -1,15 +1,11 @@
-import Grid from "@mui/material/Grid";
-import { GetServerSideProps } from "next";
-import PlayerCardComponent from "../../components/PlayerCardComponent";
-import { PlayerCardData } from "../../types/PlayerCardData";
+import Grid from '@mui/material/Grid';
+import { GetServerSideProps } from 'next';
+import PlayerCardComponent from '../../components/PlayerCardComponent';
+import { PlayerCardData } from '../../types/PlayerCardData';
 
-import * as PlayerServices from "../../services/player";
+import * as PlayerServices from '../../services/player';
 
-export default function PlayersPage({
-  players,
-}: {
-  players: Array<PlayerCardData>;
-}) {
+export default function PlayersPage({ players }: { players: Array<PlayerCardData> }) {
   return (
     <Grid container padding={1} spacing={1}>
       {players.map((player) => {

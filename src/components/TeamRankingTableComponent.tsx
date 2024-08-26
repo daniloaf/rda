@@ -1,7 +1,7 @@
-import Typography from "@mui/material/Typography";
-import { Paper } from "@mui/material";
-import TeamRankingData from "../types/TeamRankingData";
-import EnhancedTableComponent from "./utils/EnchancedTableComponent";
+import Typography from '@mui/material/Typography';
+import { Paper } from '@mui/material';
+import TeamRankingData from '../types/TeamRankingData';
+import EnhancedTableComponent from './utils/EnchancedTableComponent';
 
 export default function TeamRankingTableComponent({
   title,
@@ -17,11 +17,11 @@ export default function TeamRankingTableComponent({
       </Typography>
       <EnhancedTableComponent
         columns={[
-          { field: "color", label: "Time" },
-          { field: "score", label: "P" },
-          { field: "wins", label: "V" },
-          { field: "draws", label: "E" },
-          { field: "losses", label: "D" },
+          { field: 'color', label: 'Time' },
+          { field: 'score', label: 'P' },
+          { field: 'wins', label: 'V' },
+          { field: 'draws', label: 'E' },
+          { field: 'losses', label: 'D' },
         ]}
         data={ranking}
         defaultOrderBy="score"

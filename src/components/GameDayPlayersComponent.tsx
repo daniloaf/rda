@@ -1,8 +1,8 @@
-import { Grid, Paper, Typography } from "@mui/material";
-import { useState } from "react";
-import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
-import SerieDetailsPlayerData from "../types/admin/SerieDetailsPlayerData";
-import DraggablePlayer from "./DraggablePlayer";
+import { Grid, Paper, Typography } from '@mui/material';
+import { useState } from 'react';
+import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
+import SerieDetailsPlayerData from '../types/admin/SerieDetailsPlayerData';
+import DraggablePlayer from './DraggablePlayer';
 
 export default function GameDayPlayersComponent({
   initialPresentPlayers,
@@ -51,7 +51,10 @@ export default function GameDayPlayersComponent({
     sourcePlayers.setPlayers(sourcePlayers.players);
     destinationPlayers.setPlayers(destinationPlayers.players);
 
-    handleDataChange({ presentPlayers: initialPresentPlayers, missingPlayers: initialMissingPlayers });
+    handleDataChange({
+      presentPlayers: initialPresentPlayers,
+      missingPlayers: initialMissingPlayers,
+    });
   };
 
   return (
