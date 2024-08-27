@@ -1,117 +1,100 @@
 import { GetServerSideProps } from 'next'
-import {
-  Stack,
-  Grid,
-  FormControl,
-  TextField,
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
-  Button,
-} from '@mui/material'
-import { DatePicker } from '@mui/x-date-pickers'
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { Stack, Grid, FormControl, TextField, Checkbox, FormControlLabel, FormGroup, Button } from '@mui/material'
 
 import PlayerCardComponent from '../../../components/PlayerCardComponent'
 import PlayerProfileData from '../../../types/PlayerProfileData'
 import * as PlayerServices from '../../../services/player'
-import { ChangeEvent, FormEventHandler, useState } from 'react'
 import { useRouter } from 'next/router'
 import axios from 'axios'
+import * as yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { SubmitHandler, useForm } from 'react-hook-form'
+import { useMutation } from '@tanstack/react-query'
+
+const playerSchema = yup.object({
+  _id: yup.string().notRequired(),
+  fullName: yup.string().required(),
+  nickname: yup.string().required(),
+  birthdate: yup.date().required(),
+  active: yup.boolean().required(),
+})
+
+type PlayerForm = yup.InferType<typeof playerSchema>
 
 export default function AdminPlayerProfilePage({ player }: { player: PlayerProfileData }) {
   const router = useRouter()
-  const [playerData, setPlayerData] = useState(player)
+  const { register, handleSubmit } = useForm<PlayerForm>({
+    resolver: yupResolver(playerSchema),
+    defaultValues: {
+      _id: player._id,
+      fullName: player.fullName,
+      nickname: player.nickname,
+      birthdate: new Date(player.birthdate),
+      active: player.active,
+    },
+  })
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target
-    setPlayerData({
-      ...playerData,
-      [name]: value,
-    })
-  }
+  const { mutate: updatePlayer } = useMutation<{ _id: string }, unknown, PlayerForm>({
+    mutationKey: ['updatePlayer'],
+    onMutate: async (data: PlayerForm) => {
+      const response = await axios.put(`/api/admin/players/${player._id}`, data)
+      return response.data
+    },
+  })
 
-  const handleSubmit: FormEventHandler = async (event) => {
-    event.preventDefault()
+  const { mutate: createPlayer } = useMutation<{ _id: string }, unknown, PlayerForm>({
+    mutationKey: ['createPlayer'],
+    onMutate: async (data: PlayerForm) => {
+      const response = await axios.post(`/api/admin/players`, data)
+      return response.data
+    },
+  })
 
-    if (!player._id) {
-      const response = await axios.post(`/api/admin/players`, playerData)
-      if (response.status === 201) {
-        router.replace(`/admin/players/${response.data._id}`)
-        setPlayerData(response.data)
-      }
+  const onSubmit: SubmitHandler<PlayerForm> = async (data) => {
+    if (!data._id) {
+      createPlayer(data, {
+        onSuccess: (response) => {
+          router.push(`/admin/players/${response._id}`)
+        },
+      })
     } else {
-      const response = await axios.put(`/api/admin/players/${player._id}`, playerData)
-      if (response.status === 200) {
-        setPlayerData(response.data)
-      }
+      updatePlayer(data)
     }
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <FormControl>
         <Grid container spacing={1}>
           <Grid item>
-            <PlayerCardComponent player={playerData} width={150} height={200} href={''} />
+            <PlayerCardComponent player={player} width={150} height={200} href={''} />
           </Grid>
           <Grid item xs={10}>
             <Stack spacing={1}>
-              <TextField
-                name="fullName"
-                type="text"
-                required
-                value={playerData.fullName}
-                label="Nome"
-                onChange={handleChange}
-              />
-              <TextField
-                name="nickname"
-                type="text"
-                required
-                value={playerData.nickname}
-                label="Apelido"
-                onChange={handleChange}
-              />
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DatePicker
-                  label="Data"
-                  value={playerData.birthdate}
-                  inputFormat="dd/MM/yyyy"
-                  renderInput={(params) => <TextField fullWidth required {...params} />}
-                  onChange={(newValue) => {
-                    setPlayerData({ ...playerData, birthdate: newValue ?? '' })
-                  }}
-                />
-              </LocalizationProvider>
+              <TextField type='text' required label='Nome' {...register('fullName')} />
+              <TextField type='text' required label='Apelido' {...register('nickname')} />
+              <TextField fullWidth type='date' required {...register('birthdate')} />
               <FormGroup>
-                <FormControlLabel
-                  name="active"
-                  label="Ativo"
-                  control={<Checkbox name="active" checked={playerData.active} />}
-                  onChange={(_, checked) => {
-                    setPlayerData({ ...playerData, active: checked })
-                  }}
-                />
+                <FormControlLabel label='Ativo' control={<Checkbox {...register('active')} />} />
               </FormGroup>
             </Stack>
           </Grid>
         </Grid>
-        <Button type="submit" color="primary" variant="contained">
+        <Button type='submit' color='primary' variant='contained'>
           Salvar
         </Button>
       </FormControl>
     </form>
   )
 }
+
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const playerId = context.query.id as string
   if (playerId === 'new') {
     return {
       props: {
         player: {
-          picture: 'https://i.stack.imgur.com/gMbrL.jpg',
+          picture: 'https://www.shareicon.net/data/2016/06/30/788946_people_512x512.png',
           nickname: '',
           fullName: '',
           birthdate: new Date().toJSON(),

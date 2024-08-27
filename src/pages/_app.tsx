@@ -8,10 +8,12 @@ import ApplicationBarComponent from '../components/ApplicationBarComponent'
 import SideBarComponent from '../components/SideBarComponent'
 import createEmotionCache from '../config/createEmotionCache'
 import useRequest from '../utils/useRequest'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache()
 
+const queryClient = new QueryClient()
 interface MyAppProps extends AppProps {
   emotionCache?: EmotionCache
 }
@@ -29,21 +31,23 @@ export default function MyApp(props: MyAppProps) {
         <title>Racha dos Amigles</title>
       </Head>
       <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <ApplicationBarComponent />
-        <Grid container width="100%" padding={1} spacing={1}>
-          <Grid item xs={12} sm={9}>
-            <Paper sx={{ padding: 1 }} variant="outlined">
-              <Component {...pageProps} />
-            </Paper>
+        <QueryClientProvider client={queryClient}>
+          <CssBaseline />
+          <ApplicationBarComponent />
+          <Grid container width='100%' padding={1} spacing={1}>
+            <Grid item xs={12} sm={9}>
+              <Paper sx={{ padding: 1 }} variant='outlined'>
+                <Component {...pageProps} />
+              </Paper>
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <SideBarComponent
+                currentTeamRanking={data.currentTeamRanking}
+                currentPlayersStats={data.currentPlayersStats}
+              />
+            </Grid>
           </Grid>
-          <Grid item xs={12} sm={3}>
-            <SideBarComponent
-              currentTeamRanking={data.currentTeamRanking}
-              currentPlayersStats={data.currentPlayersStats}
-            />
-          </Grid>
-        </Grid>
+        </QueryClientProvider>
       </ThemeProvider>
     </CacheProvider>
   )

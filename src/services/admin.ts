@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import * as PlayerServices from '../services/player'
+import * as PlayerServices from './player'
 import Player, { IPlayer } from '../models/player'
 import Serie from '../models/serie'
 import Team, { ITeam } from '../models/team'
@@ -42,10 +42,7 @@ export const getSeriesSummaryByYear = async () => {
 }
 
 export const getSerieDetails = async (serieId: string) => {
-  const serie = await Serie.findById(serieId).populate([
-    'teams.players',
-    'gameDays.playersStats.player',
-  ])
+  const serie = await Serie.findById(serieId).populate(['teams.players', 'gameDays.playersStats.player'])
   return serie?.toJSON({ virtuals: true })
 }
 
@@ -64,7 +61,7 @@ export const setSerieTeams = async (serieId: string, teams: Array<ITeam>) => {
       } else {
         return Team.create(team)
       }
-    })
+    }),
   )
 
   serie.teams = newTeams as any
