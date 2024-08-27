@@ -1,11 +1,11 @@
 import { ptBR } from 'date-fns/locale'
 import { format } from 'date-fns'
 import { Button, Dialog, DialogContent, DialogTitle, FormControl, MenuItem, Select, TextField } from '@mui/material'
-import { FormEventHandler, useState } from 'react'
 import axios from 'axios'
 import { useRouter } from 'next/router'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import * as yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation } from '@tanstack/react-query'
 
 const addSerieFormSchema = yup
@@ -24,7 +24,7 @@ export default function AddSerieFormComponent({
   open: boolean
   handleClose: () => void
 }) {
-  const { register, handleSubmit, watch } = useForm<AddSerieForm>()
+  const { register, handleSubmit } = useForm<AddSerieForm>({ resolver: yupResolver(addSerieFormSchema) })
   const router = useRouter()
 
   const { mutate: addSerie, isPending } = useMutation<{ _id: string }, unknown, AddSerieForm>({
@@ -60,7 +60,7 @@ export default function AddSerieFormComponent({
                   </MenuItem>
                 ))}
             </Select>
-            <TextField required type='number' {...register('year')}></TextField>
+            <TextField required type='number' {...register('year')} />
             <Button type='submit' fullWidth disabled={isPending}>
               Salvar
             </Button>

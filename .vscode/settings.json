@@ -1,4 +1,13 @@
 {
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.enablePromptUseWorkspaceTsdk": true
+  "prettier.endOfLine": "lf",
+  "eslint.format.enable": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "editor.rulers": [
+    {
+      "column": 120
+    }
+  ],
+  "editor.tabSize": 2,
 }
