@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { Button, FormControl, Grid, MenuItem, Paper, TextField, Typography } from '@mui/material'
 import { Stack } from '@mui/system'
-import { FormEventHandler, useState } from 'react'
+import { useMemo } from 'react'
 import ActivePlayerData from '../types/admin/ActivePlayerData'
 
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd'
@@ -9,6 +9,29 @@ import DraggablePlayer from './DraggablePlayer'
 import axios from 'axios'
 import { useRouter } from 'next/router'
 import SerieDetailsTeamData from '../types/admin/SerieDetailsTeamData'
+import * as yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form'
+import { useMutation } from '@tanstack/react-query'
+
+const playerSchema = yup.object({
+  _id: yup.string().required(),
+  nickname: yup.string().required(),
+})
+
+const teamSchema = yup.object({
+  _id: yup.string().notRequired(),
+  color: yup.string().required(),
+  players: yup.array(playerSchema).required(),
+  captain: playerSchema.optional(),
+})
+
+const manageTeamsSchema = yup.object({
+  teams: yup.array(teamSchema).required(),
+  availablePlayers: yup.array(playerSchema).required(),
+})
+
+type ManageTeamsForm = yup.InferType<typeof manageTeamsSchema>
 
 export default function ManageTeamsComponent({
   players,
@@ -20,136 +43,149 @@ export default function ManageTeamsComponent({
   teams?: Array<SerieDetailsTeamData>
 }) {
   const router = useRouter()
+  const playersById = useMemo(() => _.keyBy(players, '_id'), [players])
+  const teamsPlayers = useMemo(
+    () =>
+      teams
+        ?.map((team) => team.players)
+        .flat()
+        .sort((a, b) => a.nickname.localeCompare(b.nickname)),
+    [teams],
+  )
+  const availablePlayers = useMemo(
+    () =>
+      players
+        .filter((player) => !teamsPlayers?.some((p) => p._id === player._id))
+        .sort((a, b) => a.nickname.localeCompare(b.nickname)),
+    [players, teamsPlayers],
+  )
 
-  const playersById = _.keyBy(players, '_id')
-
-  const initialTeams: {
-    [index: string]: {
-      _id?: string
-      color?: string
-      players: typeof players
-    }
-  } = {}
-
-  if (teams && teams.length) {
-    for (const index in teams) {
-      initialTeams[`team${index}`] = teams[index]
-      teams[index].players.forEach((player) => {
-        // Player is not available
-        delete playersById[player._id]
-      })
-    }
-  } else {
-    const defaultColors = ['Branco', 'Azul', 'Laranja']
-    for (const index in defaultColors) {
-      const color = defaultColors[index]
-      initialTeams[`team${index}`] = {
-        color: color,
-        players: [],
-      }
-    }
-  }
-
-  const [currentTeams, setCurrentTeams] = useState<{
-    [index: string]: {
-      _id?: string
-      color?: string
-      players: typeof players
-      captain?: string
-    }
-  }>({
-    availablePlayers: {
-      color: undefined,
-      players: Object.values(playersById),
+  const { control, register, handleSubmit, watch } = useForm<ManageTeamsForm>({
+    resolver: yupResolver(manageTeamsSchema),
+    defaultValues: {
+      teams: teams?.map((team) => ({
+        _id: team._id,
+        color: team.color,
+        captain: playersById[team.captain],
+        players: team.players.map((player) => ({
+          _id: player._id,
+          nickname: player.nickname,
+        })),
+      })) ?? [
+        {
+          color: 'Branco',
+          players: [],
+        },
+        {
+          color: 'Azul',
+          players: [],
+        },
+        {
+          color: 'Laranja',
+          players: [],
+        },
+      ],
+      availablePlayers: availablePlayers.map((player) => ({
+        _id: player._id,
+        nickname: player.nickname,
+      })),
     },
-    ...initialTeams,
   })
+
+  const team0PlayersMethods = useFieldArray({ control, name: 'teams.0.players' })
+  const team1PlayersMethods = useFieldArray({ control, name: 'teams.1.players' })
+  const team2PlayersMethods = useFieldArray({ control, name: 'teams.2.players' })
+  const availablePlayersMethods = useFieldArray({ control, name: 'availablePlayers' })
+  const currentTeams = watch('teams')
 
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return
-
-    const sourcePlayers = currentTeams[result.source.droppableId]
-    const destinationPlayers = currentTeams[result.destination.droppableId]
-    const sourceIndex = result.source.index
     const destinationIndex = result.destination.index
-    const player = sourcePlayers.players[sourceIndex]
 
-    sourcePlayers.players.splice(sourceIndex, 1)
-    destinationPlayers.players.splice(destinationIndex, 0, player)
+    switch (result.destination.droppableId) {
+      case 'availablePlayers':
+        availablePlayersMethods.insert(destinationIndex, playersById[result.draggableId])
+        break
+      case '0':
+        team0PlayersMethods.insert(destinationIndex, playersById[result.draggableId])
+        break
+      case '1':
+        team1PlayersMethods.insert(destinationIndex, playersById[result.draggableId])
+        break
+      case '2':
+        team2PlayersMethods.insert(destinationIndex, playersById[result.draggableId])
+        break
+    }
 
-    setCurrentTeams({ ...currentTeams })
-  }
-
-  const handleSubmit: FormEventHandler = async (event) => {
-    event.preventDefault()
-
-    const data = Object.keys(currentTeams)
-      .filter((key) => currentTeams[key].color !== undefined)
-      .map((key) => {
-        const team = currentTeams[key]
-
-        return {
-          _id: team._id,
-          color: team.color,
-          players: team.players.map((p) => p._id),
-          captain: team.captain,
-        }
-      })
-
-    const response = await axios.put(`/api/admin/series/${serieId}/teams`, data)
-
-    if (response.status === 200) {
-      router.reload()
+    switch (result.source.droppableId) {
+      case 'availablePlayers':
+        availablePlayersMethods.remove(result.source.index)
+        break
+      case '0':
+        team0PlayersMethods.remove(result.source.index)
+        break
+      case '1':
+        team1PlayersMethods.remove(result.source.index)
+        break
+      case '2':
+        team2PlayersMethods.remove(result.source.index)
+        break
     }
   }
 
+  const { mutate: saveTeams } = useMutation<{ _id: string }, unknown, ManageTeamsForm>({
+    mutationKey: ['saveTeams'],
+    mutationFn: async (data: ManageTeamsForm) => {
+      const teams = data.teams.map((team) => ({
+        _id: team._id,
+        color: team.color,
+        players: team.players.map((player) => ({
+          _id: player._id,
+        })),
+        captain: team.captain?._id,
+      }))
+
+      const response = await axios.put(`/api/admin/series/${serieId}/teams`, teams)
+      return response.data
+    },
+  })
+
+  const onSubmit: SubmitHandler<ManageTeamsForm> = async (data) => {
+    saveTeams(data, { onSuccess: () => router.reload() })
+  }
+
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <FormControl>
         <DragDropContext onDragEnd={handleDragEnd}>
           <Stack spacing={1}>
-            <Typography variant="h5" align="center">
+            <Typography variant='h5' align='center'>
               Atletas
             </Typography>
             <Paper>
-              <Droppable droppableId="availablePlayers">
+              <Droppable droppableId='availablePlayers'>
                 {(provided) => (
-                  <Grid
-                    container
-                    spacing={1}
-                    minHeight={50}
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
-                  >
-                    {currentTeams.availablePlayers.players.map((player, index) => (
+                  <Grid container spacing={1} minHeight={50} ref={provided.innerRef} {...provided.droppableProps}>
+                    {availablePlayersMethods.fields.map((player, index) => (
                       <Grid item key={player._id}>
-                        <DraggablePlayer player={player} index={index} />
+                        <DraggablePlayer player={playersById[player._id]} index={index} />
                       </Grid>
                     ))}
                   </Grid>
                 )}
               </Droppable>
             </Paper>
-            <Typography variant="h5" align="center">
+            <Typography variant='h5' align='center'>
               Times
             </Typography>
             <Grid container spacing={1}>
-              {Object.entries(currentTeams).map(([key, team]) => {
+              {currentTeams.map((team, index) => {
                 if (team?.color === undefined) return <></>
 
                 return (
-                  <Grid key={key} item xs={4}>
-                    <TextField
-                      label="Time"
-                      value={team.color}
-                      onChange={(event) => {
-                        team.color = event.target.value
-                        setCurrentTeams({ ...currentTeams })
-                      }}
-                      fullWidth
-                      required
-                    />
-                    <Droppable droppableId={key}>
+                  <Grid key={team.color} item xs={4}>
+                    <TextField label='Time' fullWidth required {...register(`teams.${index}.color`)} />
+                    <Droppable droppableId={String(index)}>
                       {(provided) => (
                         <Stack
                           spacing={1}
@@ -159,22 +195,12 @@ export default function ManageTeamsComponent({
                           component={Paper}
                         >
                           {team.players.map((player, index) => (
-                            <DraggablePlayer key={player._id} player={player} index={index} />
+                            <DraggablePlayer key={player._id} player={playersById[player._id]} index={index} />
                           ))}
                         </Stack>
                       )}
                     </Droppable>
-                    <TextField
-                      label="Capitão"
-                      value={team.captain}
-                      select
-                      onChange={(event) => {
-                        team.captain = event.target.value
-                        setCurrentTeams({ ...currentTeams })
-                      }}
-                      fullWidth
-                      required
-                    >
+                    <TextField label='Capitão' select fullWidth {...register(`teams.${index}.captain._id`)}>
                       {team.players?.map((player) => {
                         return (
                           <MenuItem key={player._id} value={player._id}>
@@ -189,7 +215,7 @@ export default function ManageTeamsComponent({
             </Grid>
           </Stack>
         </DragDropContext>
-        <Button type="submit">Salvar</Button>
+        <Button type='submit'>Salvar</Button>
       </FormControl>
     </form>
   )

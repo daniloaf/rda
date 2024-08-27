@@ -29,7 +29,7 @@ export default function AddSerieFormComponent({
 
   const { mutate: addSerie, isPending } = useMutation<{ _id: string }, unknown, AddSerieForm>({
     mutationKey: ['addSerie'],
-    onMutate: async (data: AddSerieForm) => {
+    mutationFn: async (data: AddSerieForm) => {
       const response = await axios.post(`/api/admin/series`, data)
       return response.data
     },

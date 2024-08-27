@@ -24,7 +24,7 @@ const ManageContentDialog = ({
   children: ReactElement | null
 }) => {
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="xl" sx={{ width: '100%' }}>
+    <Dialog open={open} onClose={handleClose} maxWidth='xl' sx={{ width: '100%' }}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>{children}</DialogContent>
     </Dialog>
@@ -66,11 +66,11 @@ export default function AdminSerieDetailsPage({
   return (
     <>
       <Stack spacing={1}>
-        <Typography variant="h5">
+        <Typography variant='h5'>
           Série {getMonthName(serie.month, 'LLLL')}/{serie.year}
         </Typography>
-        <Stack direction="row" spacing={1}>
-          <Typography variant="body1">
+        <Stack direction='row' spacing={1}>
+          <Typography variant='body1'>
             <b>Início: </b>
             <DateComponent dateString={serie.startDate} />
           </Typography>
@@ -81,17 +81,17 @@ export default function AdminSerieDetailsPage({
         </Stack>
         <br />
         <Stack component={Paper} spacing={1} padding={1}>
-          <Typography variant="h5" align="center">
+          <Typography variant='h5' align='center'>
             Times da série
           </Typography>
-          <Grid container spacing={2} padding={1} justifyContent="center">
+          <Grid container spacing={2} padding={1} justifyContent='center'>
             {serie.teams.map((team) => {
               return (
                 <Grid key={team._id} item xs={12} md={3}>
                   <Paper sx={{ padding: 1 }}>
-                    <Typography variant="subtitle2">Time {team.color}</Typography>
+                    <Typography variant='subtitle2'>Time {team.color}</Typography>
                     {team.players.map((player) => (
-                      <Typography variant="body1" key={player._id}>
+                      <Typography variant='body1' key={player._id}>
                         {player.nickname}
                       </Typography>
                     ))}
@@ -103,7 +103,7 @@ export default function AdminSerieDetailsPage({
           <Button onClick={handleManageTeamsOnClick}>Alterar Times</Button>
         </Stack>
         <Stack component={Paper} spacing={1} padding={1}>
-          <Typography variant="h5" align="center">
+          <Typography variant='h5' align='center'>
             Rachas
           </Typography>
           {serie?.gameDays?.map((gameDay) => {
@@ -125,7 +125,7 @@ export default function AdminSerieDetailsPage({
         </Stack>
       </Stack>
       <ManageContentDialog
-        title="Alterar times"
+        title='Alterar times'
         open={manageTeamsDialogOpen}
         handleClose={handleManageTeamsDialogClose}
         handleSave={handleManageTeamsSave}
@@ -133,7 +133,7 @@ export default function AdminSerieDetailsPage({
         <ManageTeamsComponent players={activePlayers} serieId={serie._id} teams={serie.teams} />
       </ManageContentDialog>
       <ManageContentDialog
-        title="Adicionar Racha"
+        title='Adicionar Racha'
         open={manageGameDayDialogOpen}
         handleClose={handleManageGameDayDialogClose}
         handleSave={handleManageGameDayDialogClose}
@@ -149,9 +149,7 @@ export default function AdminSerieDetailsPage({
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async (
-  context: GetServerSidePropsContext
-) => {
+export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
   const id = context.query.id as string
   const serie = await AdminServices.getSerieDetails(id)
   const activePlayers = await AdminServices.getActivePlayers()

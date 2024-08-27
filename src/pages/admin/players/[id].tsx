@@ -36,15 +36,15 @@ export default function AdminPlayerProfilePage({ player }: { player: PlayerProfi
 
   const { mutate: updatePlayer } = useMutation<{ _id: string }, unknown, PlayerForm>({
     mutationKey: ['updatePlayer'],
-    onMutate: async (data: PlayerForm) => {
-      const response = await axios.put(`/api/admin/players/${player._id}`, data)
+    mutationFn: async (data) => {
+      const response = await axios.put(`/api/admin/players/${data._id}`, data)
       return response.data
     },
   })
 
   const { mutate: createPlayer } = useMutation<{ _id: string }, unknown, PlayerForm>({
     mutationKey: ['createPlayer'],
-    onMutate: async (data: PlayerForm) => {
+    mutationFn: async (data: PlayerForm) => {
       const response = await axios.post(`/api/admin/players`, data)
       return response.data
     },
