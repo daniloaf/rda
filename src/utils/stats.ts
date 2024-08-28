@@ -59,7 +59,7 @@ export const calculatePlayerStats = (
   playerId: string,
   stats: any,
   teamColor: string,
-  currentPlayersStats: { [index: string]: PlayerStats }
+  currentPlayersStats: { [index: string]: PlayerStats },
 ) => {
   if (!currentPlayersStats[playerId]) {
     currentPlayersStats[playerId] = {

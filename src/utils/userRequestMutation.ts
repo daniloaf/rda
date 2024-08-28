@@ -1,10 +1,7 @@
 import useSWRMutation from 'swr/mutation'
 import axios from 'axios'
 
-export default function useRequestMutation<TData>(
-  request: any,
-  { initialData, ...config }: any = {}
-) {
+export default function useRequestMutation<TData>(request: any, { initialData, ...config }: any = {}) {
   return useSWRMutation<TData>(
     request && JSON.stringify(request),
     () => axios(request || {}).then((response) => response.data),
@@ -16,6 +13,6 @@ export default function useRequestMutation<TData>(
         headers: {},
         data: initialData,
       },
-    }
+    },
   )
 }
