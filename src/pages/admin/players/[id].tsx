@@ -15,7 +15,7 @@ const playerSchema = yup.object({
   _id: yup.string().notRequired(),
   fullName: yup.string().required(),
   nickname: yup.string().required(),
-  birthdate: yup.date().required(),
+  birthdate: yup.string().required(),
   active: yup.boolean().required(),
 })
 
@@ -23,13 +23,13 @@ type PlayerForm = yup.InferType<typeof playerSchema>
 
 export default function AdminPlayerProfilePage({ player }: { player: PlayerProfileData }) {
   const router = useRouter()
-  const { register, handleSubmit } = useForm<PlayerForm>({
+  const { register, handleSubmit, getValues } = useForm<PlayerForm>({
     resolver: yupResolver(playerSchema),
     defaultValues: {
       _id: player._id,
       fullName: player.fullName,
       nickname: player.nickname,
-      birthdate: new Date(player.birthdate),
+      birthdate: player.birthdate.split('T')[0],
       active: player.active,
     },
   })
@@ -75,7 +75,10 @@ export default function AdminPlayerProfilePage({ player }: { player: PlayerProfi
               <TextField type='text' required label='Apelido' {...register('nickname')} />
               <TextField fullWidth type='date' required {...register('birthdate')} />
               <FormGroup>
-                <FormControlLabel label='Ativo' control={<Checkbox {...register('active')} />} />
+                <FormControlLabel
+                  label='Ativo'
+                  control={<Checkbox defaultChecked={getValues('active')} {...register('active')} />}
+                />
               </FormGroup>
             </Stack>
           </Grid>

@@ -60,7 +60,7 @@ const playerStatsSchema = yup.object({
 })
 
 const manageGameDaySchema = yup.object({
-  date: yup.date().required(),
+  date: yup.string().required(),
   matches: yup.array(matchSchema).required(),
   presentPlayersStats: yup.array(playerStatsSchema).required(),
   missingPlayersStats: yup.array(playerStatsSchema).required(),
@@ -83,7 +83,7 @@ export default function ManageGameDayFormComponent({
   const methods = useForm<ManageGameDayForm>({
     resolver: yupResolver(manageGameDaySchema),
     defaultValues: {
-      date: gameDay?.date ? new Date(gameDay.date) : undefined,
+      date: gameDay?.date.split('T')[0] ?? '',
       matches: gameDay?.matches,
       presentPlayersStats: gameDay?.playersStats ?? [],
       teamPunishments: gameDay?.teamPunishments,
@@ -166,7 +166,12 @@ export default function ManageGameDayFormComponent({
         <FormControl fullWidth>
           <Grid container spacing={1} padding={1}>
             <Grid item xs={12}>
-              <TextField fullWidth type='date' required {...register('date')} />
+              <Controller
+                name='date'
+                control={methods.control}
+                render={({ field }) => <TextField fullWidth type='date' required {...field} />}
+              />
+              {/* <TextField fullWidth type='date' required {...register('date')} /> */}
             </Grid>
             <Grid item xs={12}>
               <Typography variant='h5' align='center'>
