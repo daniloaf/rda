@@ -27,6 +27,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { Controller, FormProvider, SubmitHandler, useFieldArray, useForm, useFormContext } from 'react-hook-form'
 import axios from 'axios'
 import { useMutation } from '@tanstack/react-query'
+import RHFDateField from './fields/rhf/RHFDateField'
 
 const playerSchema = yup.object({
   _id: yup.string().required(),
@@ -85,7 +86,9 @@ export default function ManageGameDayFormComponent({
     defaultValues: {
       date: gameDay?.date.split('T')[0] ?? '',
       matches: gameDay?.matches,
-      presentPlayersStats: gameDay?.playersStats ?? [],
+      presentPlayersStats:
+        gameDay?.playersStats ??
+        players.map((player) => ({ player, goals: 0, assists: 0, yellowCards: 0, redCards: 0 })),
       teamPunishments: gameDay?.teamPunishments,
       missingPlayersStats: players
         .filter((player) => !gameDay?.playersStats?.some((stats) => stats.player._id === player._id))
@@ -166,12 +169,7 @@ export default function ManageGameDayFormComponent({
         <FormControl fullWidth>
           <Grid container spacing={1} padding={1}>
             <Grid item xs={12}>
-              <Controller
-                name='date'
-                control={methods.control}
-                render={({ field }) => <TextField fullWidth type='date' required {...field} />}
-              />
-              {/* <TextField fullWidth type='date' required {...register('date')} /> */}
+              <RHFDateField name='date' required />
             </Grid>
             <Grid item xs={12}>
               <Typography variant='h5' align='center'>
@@ -218,52 +216,16 @@ export default function ManageGameDayFormComponent({
                                   <TableRow key={player._id}>
                                     <TableCell>{player.nickname}</TableCell>
                                     <TableCell>
-                                      <TextField
-                                        inputProps={{
-                                          inputMode: 'numeric',
-                                          step: 1,
-                                        }}
-                                        type='number'
-                                        required
-                                        variant='standard'
-                                        {...register(`presentPlayersStats.${playerStatsIndex}.goals`)}
-                                      />
+                                      <NumericPlayerStats stat={'goals'} index={playerStatsIndex} />
                                     </TableCell>
                                     <TableCell>
-                                      <TextField
-                                        inputProps={{
-                                          inputMode: 'numeric',
-                                          step: 1,
-                                        }}
-                                        type='number'
-                                        required
-                                        variant='standard'
-                                        {...register(`presentPlayersStats.${playerStatsIndex}.assists`)}
-                                      />
+                                      <NumericPlayerStats stat={'assists'} index={playerStatsIndex} />
                                     </TableCell>
                                     <TableCell>
-                                      <TextField
-                                        inputProps={{
-                                          inputMode: 'numeric',
-                                          step: 1,
-                                        }}
-                                        type='number'
-                                        required
-                                        variant='standard'
-                                        {...register(`presentPlayersStats.${playerStatsIndex}.yellowCards`)}
-                                      />
+                                      <NumericPlayerStats stat={'yellowCards'} index={playerStatsIndex} />
                                     </TableCell>
                                     <TableCell>
-                                      <TextField
-                                        inputProps={{
-                                          inputMode: 'numeric',
-                                          step: 1,
-                                        }}
-                                        type='number'
-                                        required
-                                        variant='standard'
-                                        {...register(`presentPlayersStats.${playerStatsIndex}.redCards`)}
-                                      />
+                                      <NumericPlayerStats stat={'redCards'} index={playerStatsIndex} />
                                     </TableCell>
                                   </TableRow>
                                 )
@@ -309,52 +271,16 @@ export default function ManageGameDayFormComponent({
                           <TableRow key={goalkeeper.player._id}>
                             <TableCell>{goalkeeper.player.nickname}</TableCell>
                             <TableCell>
-                              <TextField
-                                inputProps={{
-                                  inputMode: 'numeric',
-                                  step: 1,
-                                }}
-                                type='number'
-                                required
-                                variant='standard'
-                                {...register(`presentPlayersStats.${playerStatsIndex}.goals`)}
-                              />
+                              <NumericPlayerStats stat={'goals'} index={playerStatsIndex} />
                             </TableCell>
                             <TableCell>
-                              <TextField
-                                inputProps={{
-                                  inputMode: 'numeric',
-                                  step: 1,
-                                }}
-                                type='number'
-                                required
-                                variant='standard'
-                                {...register(`presentPlayersStats.${playerStatsIndex}.assists`)}
-                              />
+                              <NumericPlayerStats stat={'assists'} index={playerStatsIndex} />
                             </TableCell>
                             <TableCell>
-                              <TextField
-                                inputProps={{
-                                  inputMode: 'numeric',
-                                  step: 1,
-                                }}
-                                type='number'
-                                required
-                                variant='standard'
-                                {...register(`presentPlayersStats.${playerStatsIndex}.yellowCards`)}
-                              />
+                              <NumericPlayerStats stat={'yellowCards'} index={playerStatsIndex} />
                             </TableCell>
                             <TableCell>
-                              <TextField
-                                inputProps={{
-                                  inputMode: 'numeric',
-                                  step: 1,
-                                }}
-                                type='number'
-                                required
-                                variant='standard'
-                                {...register(`presentPlayersStats.${playerStatsIndex}.redCards`)}
-                              />
+                              <NumericPlayerStats stat={'redCards'} index={playerStatsIndex} />
                             </TableCell>
                             <TableCell>
                               <TextField
@@ -408,7 +334,7 @@ function MarchesForm({
   return (
     <Grid item xs={12}>
       <Stack spacing={1}>
-        {matches.map((match, index) => {
+        {matches?.map((_match, index) => {
           return (
             <Paper key={`match-${index}`} variant='outlined'>
               <FormControl>
@@ -559,5 +485,27 @@ function TeamPunishmentsForm({ teamMenuItems }: { teamMenuItems: (baseKey: strin
       })}
       <Button onClick={handleAddPunishment}>Adicionar</Button>
     </Stack>
+  )
+}
+
+function NumericPlayerStats({
+  stat,
+  index,
+}: {
+  stat: 'goals' | 'assists' | 'yellowCards' | 'redCards'
+  index: number
+}) {
+  const { register } = useFormContext<ManageGameDayForm>()
+  return (
+    <TextField
+      inputProps={{
+        inputMode: 'numeric',
+        step: 1,
+      }}
+      type='number'
+      required
+      variant='standard'
+      {...register(`presentPlayersStats.${index}.${stat}`)}
+    />
   )
 }

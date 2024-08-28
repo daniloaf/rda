@@ -1,6 +1,6 @@
 import { ptBR } from 'date-fns/locale'
 import { format } from 'date-fns'
-import { Button, Dialog, DialogContent, DialogTitle, FormControl, MenuItem, Select, TextField } from '@mui/material'
+import { Button, Dialog, DialogContent, DialogTitle, MenuItem, Stack, TextField } from '@mui/material'
 import axios from 'axios'
 import { useRouter } from 'next/router'
 import { SubmitHandler, useForm } from 'react-hook-form'
@@ -48,8 +48,8 @@ export default function AddSerieFormComponent({
       <DialogTitle>Nova Série</DialogTitle>
       <DialogContent>
         <form>
-          <FormControl>
-            <Select required type='number' {...register('month')}>
+          <Stack spacing={2}>
+            <TextField required select label='Mês' type='number' {...register('month')}>
               {Array(12)
                 .fill(null)
                 .map((_, index) => (
@@ -59,12 +59,12 @@ export default function AddSerieFormComponent({
                     })}
                   </MenuItem>
                 ))}
-            </Select>
-            <TextField required type='number' {...register('year')} />
+            </TextField>
+            <TextField required label='Ano' type='number' defaultValue={''} {...register('year')} />
             <Button type='submit' fullWidth disabled={isPending}>
               Salvar
             </Button>
-          </FormControl>
+          </Stack>
         </form>
       </DialogContent>
     </Dialog>
