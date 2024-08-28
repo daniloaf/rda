@@ -21,13 +21,13 @@ export default function AdminPlayersPage({ players }: { players: Array<PlayerCar
                 height={80}
                 linkEndabled={true}
                 href={`/admin/players/${player._id}`}
-              ></PlayerCardComponent>
+              />
             </Grid>
           )
         })}
       </Grid>
-      <Grid container justifyContent="flex-end">
-        <Fab color="primary" LinkComponent={Link} href="/admin/players/new">
+      <Grid container justifyContent='flex-end'>
+        <Fab color='primary' LinkComponent={Link} href='/admin/players/new'>
           <AddIcon />
         </Fab>
       </Grid>

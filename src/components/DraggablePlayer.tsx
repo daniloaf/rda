@@ -1,17 +1,18 @@
 import { Paper } from '@mui/material'
 import { Draggable } from 'react-beautiful-dnd'
-import ActivePlayerData from '../types/admin/ActivePlayerData'
 
-export default function DraggablePlayer({
-  index,
-  player,
-}: {
+interface DraggablePlayerProps {
   index: number
-  player: ActivePlayerData
-}) {
+  player: {
+    _id: string
+    nickname: string
+  }
+}
+
+export default function DraggablePlayer({ index, player }: DraggablePlayerProps) {
   return (
     <Draggable draggableId={player._id} index={index}>
-      {(provided, snapshot) => (
+      {(provided) => (
         <Paper
           elevation={3}
           ref={provided.innerRef}

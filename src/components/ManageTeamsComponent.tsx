@@ -168,7 +168,7 @@ export default function ManageTeamsComponent({
                   <Grid container spacing={1} minHeight={50} ref={provided.innerRef} {...provided.droppableProps}>
                     {availablePlayersMethods.fields.map((player, index) => (
                       <Grid item key={player._id}>
-                        <DraggablePlayer player={playersById[player._id]} index={index} />
+                        <DraggablePlayer player={player} index={index} />
                       </Grid>
                     ))}
                   </Grid>
@@ -195,7 +195,7 @@ export default function ManageTeamsComponent({
                           component={Paper}
                         >
                           {team.players.map((player, index) => (
-                            <DraggablePlayer key={player._id} player={playersById[player._id]} index={index} />
+                            <DraggablePlayer key={player._id} player={player} index={index} />
                           ))}
                         </Stack>
                       )}

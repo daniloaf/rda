@@ -9,11 +9,7 @@ import * as AdminServices from '../../../services/admin'
 import SerieSummaryByYearData from '../../../types/admin/SerieSummaryByYearData'
 import getMonthName from '../../../utils/getMonthName'
 
-export default function AdminSeriesPage({
-  seriesByYear,
-}: {
-  seriesByYear: SerieSummaryByYearData
-}) {
+export default function AdminSeriesPage({ seriesByYear }: { seriesByYear: SerieSummaryByYearData }) {
   const [addSerieOpen, setAddSerieOpen] = useState(false)
 
   return (

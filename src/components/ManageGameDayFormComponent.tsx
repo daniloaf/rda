@@ -1,13 +1,10 @@
-import _ from 'lodash'
-import { parseJSON } from 'date-fns'
-import { Button, IconButton } from '@mui/material'
-import RemoveIcon from '@mui/icons-material/Remove'
 import {
+  Button,
+  IconButton,
   FormControl,
   Grid,
   MenuItem,
   Paper,
-  Select,
   Stack,
   Table,
   TableBody,
@@ -18,19 +15,59 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import { DatePicker } from '@mui/x-date-pickers'
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
+import RemoveIcon from '@mui/icons-material/Remove'
 
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
-import axios from 'axios'
 import { useRouter } from 'next/router'
-import { ChangeEvent, FormEventHandler, useState } from 'react'
-import SerieDetailsGameDayData, { TeamPunishmentData } from '../types/admin/SerieDetailsGameDayData'
+import SerieDetailsGameDayData from '../types/admin/SerieDetailsGameDayData'
 import SerieDetailsTeamData from '../types/admin/SerieDetailsTeamData'
 import GameDayPlayersComponent from './GameDayPlayersComponent'
-import SerieDetailsMatchTeamData from '../types/admin/SerieDetailsMatchTeamData'
-import SerieDetailsMatchData from '../types/admin/SerieDetailsMatchData'
 import ActivePlayerData from '../types/admin/ActivePlayerData'
+import * as yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { Controller, FormProvider, SubmitHandler, useFieldArray, useForm, useFormContext } from 'react-hook-form'
+import axios from 'axios'
+import { useMutation } from '@tanstack/react-query'
+
+const playerSchema = yup.object({
+  _id: yup.string().required(),
+  nickname: yup.string().required(),
+  position: yup.string().required(),
+})
+
+const teamMatchSchema = yup.object({
+  team: yup.string().required(),
+  goals: yup.number().required(),
+  goalkeeper: yup.string().nullable(),
+})
+
+const matchSchema = yup.object({
+  teamA: teamMatchSchema,
+  teamB: teamMatchSchema,
+})
+
+const teamPunishmentSchema = yup.object({
+  team: yup.string().required(),
+  points: yup.number().required(),
+  reason: yup.string().required(),
+})
+
+const playerStatsSchema = yup.object({
+  player: playerSchema.required(),
+  goals: yup.number().required(),
+  assists: yup.number().required(),
+  yellowCards: yup.number().required(),
+  redCards: yup.number().required(),
+})
+
+const manageGameDaySchema = yup.object({
+  date: yup.date().required(),
+  matches: yup.array(matchSchema).required(),
+  presentPlayersStats: yup.array(playerStatsSchema).required(),
+  missingPlayersStats: yup.array(playerStatsSchema).required(),
+  teamPunishments: yup.array(teamPunishmentSchema).required(),
+})
+
+export type ManageGameDayForm = yup.InferType<typeof manageGameDaySchema>
 
 export default function ManageGameDayFormComponent({
   gameDay,
@@ -43,221 +80,135 @@ export default function ManageGameDayFormComponent({
   players: Array<ActivePlayerData>
   serieId: string
 }) {
-  const teamMenuItems = () =>
+  const methods = useForm<ManageGameDayForm>({
+    resolver: yupResolver(manageGameDaySchema),
+    defaultValues: {
+      date: gameDay?.date ? new Date(gameDay.date) : undefined,
+      matches: gameDay?.matches,
+      presentPlayersStats: gameDay?.playersStats ?? [],
+      teamPunishments: gameDay?.teamPunishments,
+      missingPlayersStats: players
+        .filter((player) => !gameDay?.playersStats?.some((stats) => stats.player._id === player._id))
+        .map((player) => ({
+          player,
+          goals: 0,
+          assists: 0,
+          yellowCards: 0,
+          redCards: 0,
+        })),
+    },
+  })
+  const { register, handleSubmit, getValues, setValue, watch } = methods
+  const presentPlayersStats = watch('presentPlayersStats')
+
+  const teamMenuItems = (baseKey: string) =>
     teams.map((team) => (
-      <MenuItem key={team._id} value={team._id}>
+      <MenuItem key={`${baseKey}-${team._id}`} value={team._id}>
         {team.color}
       </MenuItem>
     ))
 
-  const teamGoalkeeperMenuItems = () => {
-    return matchPlayers.presentPlayers
-      .filter((player) => player.position === 'Goleiro')
+  const teamGoalkeeperMenuItems = (baseKey: string) => {
+    return presentPlayersStats
+      .filter((player) => player.player.position === 'Goleiro')
       .map((goalkeeper) => (
-        <MenuItem key={goalkeeper._id} value={goalkeeper._id}>
-          {goalkeeper.nickname}
+        <MenuItem key={`${baseKey}-${goalkeeper.player._id}`} value={goalkeeper.player._id}>
+          {goalkeeper.player.nickname}
         </MenuItem>
       ))
   }
 
   const router = useRouter()
 
-  const [date, setDate] = useState<Date | null>(
-    gameDay?.date ? parseJSON(gameDay.date) : new Date()
-  )
-  const [matches, setMatches] = useState<Array<SerieDetailsMatchData>>(
-    gameDay?.matches ??
-      Array(6)
-        .fill(null)
-        .map(() => ({
-          teamA: {
-            team: '',
-            goals: 0,
-            goalkeeper: undefined,
-          },
-          teamB: {
-            team: '',
-            goals: 0,
-            goalkeeper: undefined,
-          },
-        }))
-  )
-  const [teamPunishments, setTeamPunishments] = useState<Array<TeamPunishmentData>>(
-    gameDay?.teamPunishments ?? []
-  )
-
-  let initialPlayersStats: {
-    [index: string]: {
-      player: ActivePlayerData
-      goals: number
-      assists: number
-      yellowCards: number
-      redCards: number
-    }
-  }
-
-  if (gameDay?.playersStats) {
-    initialPlayersStats = _.keyBy(
-      gameDay.playersStats.map((stats) => ({
-        player: stats.player,
-        goals: stats.goals,
-        assists: stats.assists,
-        yellowCards: stats.yellowCards,
-        redCards: stats.redCards,
-      })),
-      (stats) => stats.player._id
-    )
-  } else {
-    initialPlayersStats = _.keyBy(
-      players.map((player) => ({
-        player: player,
-        goals: 0,
-        assists: 0,
-        yellowCards: 0,
-        redCards: 0,
-      })),
-      (stats) => stats.player._id
-    )
-  }
-
-  const [playersStats, serPlayerStats] = useState(initialPlayersStats)
-
-  const [matchPlayers, setMatchPlayers] = useState({
-    presentPlayers: players.filter((player) => !!initialPlayersStats[player._id]),
-    missingPlayers: players.filter((player) => !initialPlayersStats[player._id]),
+  const { mutate: addGameDay } = useMutation<{ _id: string }, unknown, ManageGameDayForm>({
+    mutationKey: ['addGameDay'],
+    mutationFn: async (data: ManageGameDayForm) => {
+      const response = await axios.post(`/api/admin/series/${serieId}/gameDays`, data)
+      return response.data
+    },
   })
 
-  const handlePlayersChange = (data: any) => {
-    for (const missingPlayer of data.missingPlayers) {
-      delete playersStats[missingPlayer._id]
-    }
-    for (const presentPlayer of data.presentPlayers) {
-      if (!playersStats[presentPlayer._id]) {
-        playersStats[presentPlayer._id] = {
-          player: presentPlayer,
-          goals: 0,
-          assists: 0,
-          yellowCards: 0,
-          redCards: 0,
-        }
-      }
-    }
-    setMatchPlayers(data)
-  }
+  const { mutate: updateGameDay } = useMutation<{ _id: string }, unknown, ManageGameDayForm>({
+    mutationKey: ['updateGameDay'],
+    mutationFn: async (data: ManageGameDayForm) => {
+      const response = await axios.put(`/api/admin/series/${serieId}/gameDays/${gameDay?._id}`, data)
+      return response.data
+    },
+  })
 
-  const handleSubmit: FormEventHandler = async (event) => {
-    event.preventDefault()
-
-    const data = {
-      date: date,
-      matches: matches,
-      playersStats: Object.values(playersStats),
-      teamPunishments: teamPunishments,
-    }
-
-    let response
+  const onSubmit: SubmitHandler<ManageGameDayForm> = async (data) => {
     if (!gameDay) {
-      response = await axios.post(`/api/admin/series/${serieId}/gameDays`, data)
+      addGameDay(data, {
+        onSuccess: () => {
+          router.reload()
+        },
+      })
     } else {
-      response = await axios.put(`/api/admin/series/${serieId}/gameDays/${gameDay?._id}`, data)
-    }
-
-    if (response.status === 200) {
-      router.reload()
+      updateGameDay(data, {
+        onSuccess: () => {
+          router.reload()
+        },
+      })
     }
   }
 
-  const handleTeamChange =
-    (team: SerieDetailsMatchTeamData) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      team.team = event.target.value
-      setMatches([...matches])
-    }
-
-  const handleTeamGoalsChange =
-    (team: SerieDetailsMatchTeamData) => (event: ChangeEvent<HTMLInputElement>) => {
-      team.goals = parseInt(event.target.value)
-      setMatches([...matches])
-    }
-
-  const handleGoalkeeperTeamChange =
-    (goalkeeper: ActivePlayerData) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      const teamSide = event.target.value
-      matches.forEach((match) => {
-        if (teamSide === 'teamA') match.teamA.goalkeeper = goalkeeper
-        else if (teamSide === 'teamB') match.teamB.goalkeeper = goalkeeper
-      })
-      setMatches([...matches])
-    }
-
-  const handleTeamGoalkeeperChange =
-    (team: SerieDetailsMatchTeamData) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      const goalkeeperId = event.target.value
-      team.goalkeeper = playersStats[goalkeeperId]?.player
-      setMatches([...matches])
-    }
+  const handleGoalkeeperTeamChange = (goalkeeper: ActivePlayerData) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    const teamSide = event.target.value
+    getValues('matches').forEach((match, index) => {
+      if (teamSide === 'teamA') setValue(`matches.${index}.teamA.goalkeeper`, goalkeeper._id)
+      else if (teamSide === 'teamB') setValue(`matches.${index}.teamB.goalkeeper`, goalkeeper._id)
+    })
+  }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <FormControl fullWidth>
-        <Grid container spacing={1} padding={1}>
-          <Grid item xs={12}>
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <DatePicker
-                label="Data"
-                value={date}
-                inputFormat="dd/MM/yyyy"
-                onChange={(newValue) => {
-                  setDate(newValue)
-                }}
-                renderInput={(params) => <TextField fullWidth required {...params} />}
-              />
-            </LocalizationProvider>
-          </Grid>
-          <Grid item xs={12}>
-            <Typography variant="h5" align="center">
-              Presenças
-            </Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <GameDayPlayersComponent
-              initialPresentPlayers={matchPlayers.presentPlayers}
-              initialMissingPlayers={matchPlayers.missingPlayers}
-              handleDataChange={handlePlayersChange}
-            />
-          </Grid>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <FormProvider {...methods}>
+        <FormControl fullWidth>
+          <Grid container spacing={1} padding={1}>
+            <Grid item xs={12}>
+              <TextField fullWidth type='date' required {...register('date')} />
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant='h5' align='center'>
+                Presenças
+              </Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <GameDayPlayersComponent />
+            </Grid>
 
-          <Grid item xs={12}>
-            <Typography variant="h5" align="center">
-              Estatísticas
-            </Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <Grid container spacing={1}>
-              {teams.map((team) => {
-                return (
-                  <Grid key={team._id} item xs={12} md={4}>
-                    <Paper variant="outlined">
-                      <Typography variant="h6" align="center">
-                        Time {team.color}
-                      </Typography>
-                      <TableContainer>
-                        <Table>
-                          <TableHead>
-                            <TableRow>
-                              <TableCell>Atleta</TableCell>
-                              <TableCell>G</TableCell>
-                              <TableCell>A</TableCell>
-                              <TableCell>CA</TableCell>
-                              <TableCell>CV</TableCell>
-                            </TableRow>
-                          </TableHead>
-                          <TableBody>
-                            {team.players
-                              .filter(
-                                (player) =>
-                                  !!matchPlayers.presentPlayers.find((p) => p._id === player._id)
-                              )
-                              .map((player) => {
+            <Grid item xs={12}>
+              <Typography variant='h5' align='center'>
+                Estatísticas
+              </Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <Grid container spacing={1}>
+                {teams.map((team) => {
+                  return (
+                    <Grid key={team._id} item xs={12} md={4}>
+                      <Paper variant='outlined'>
+                        <Typography variant='h6' align='center'>
+                          Time {team.color}
+                        </Typography>
+                        <TableContainer>
+                          <Table>
+                            <TableHead>
+                              <TableRow>
+                                <TableCell>Atleta</TableCell>
+                                <TableCell>G</TableCell>
+                                <TableCell>A</TableCell>
+                                <TableCell>CA</TableCell>
+                                <TableCell>CV</TableCell>
+                              </TableRow>
+                            </TableHead>
+                            <TableBody>
+                              {team.players.map((player) => {
+                                const playerStatsIndex = presentPlayersStats.findIndex(
+                                  (stats) => stats.player._id === player._id,
+                                )
+                                if (playerStatsIndex === -1) return <></>
+
                                 return (
                                   <TableRow key={player._id}>
                                     <TableCell>{player.nickname}</TableCell>
@@ -267,16 +218,11 @@ export default function ManageGameDayFormComponent({
                                           inputMode: 'numeric',
                                           step: 1,
                                         }}
-                                        type="number"
+                                        type='number'
                                         required
-                                        value={playersStats[player._id].goals}
-                                        onChange={(event) => {
-                                          playersStats[player._id].goals =
-                                            parseInt(event.target.value) ?? 0
-                                          serPlayerStats({ ...playersStats })
-                                        }}
-                                        variant="standard"
-                                      ></TextField>
+                                        variant='standard'
+                                        {...register(`presentPlayersStats.${playerStatsIndex}.goals`)}
+                                      />
                                     </TableCell>
                                     <TableCell>
                                       <TextField
@@ -284,16 +230,11 @@ export default function ManageGameDayFormComponent({
                                           inputMode: 'numeric',
                                           step: 1,
                                         }}
-                                        type="number"
+                                        type='number'
                                         required
-                                        value={playersStats[player._id].assists}
-                                        onChange={(event) => {
-                                          playersStats[player._id].assists =
-                                            parseInt(event.target.value) ?? 0
-                                          serPlayerStats({ ...playersStats })
-                                        }}
-                                        variant="standard"
-                                      ></TextField>
+                                        variant='standard'
+                                        {...register(`presentPlayersStats.${playerStatsIndex}.assists`)}
+                                      />
                                     </TableCell>
                                     <TableCell>
                                       <TextField
@@ -301,16 +242,11 @@ export default function ManageGameDayFormComponent({
                                           inputMode: 'numeric',
                                           step: 1,
                                         }}
-                                        type="number"
+                                        type='number'
                                         required
-                                        value={playersStats[player._id].yellowCards}
-                                        onChange={(event) => {
-                                          playersStats[player._id].yellowCards =
-                                            parseInt(event.target.value) ?? 0
-                                          serPlayerStats({ ...playersStats })
-                                        }}
-                                        variant="standard"
-                                      ></TextField>
+                                        variant='standard'
+                                        {...register(`presentPlayersStats.${playerStatsIndex}.yellowCards`)}
+                                      />
                                     </TableCell>
                                     <TableCell>
                                       <TextField
@@ -318,235 +254,185 @@ export default function ManageGameDayFormComponent({
                                           inputMode: 'numeric',
                                           step: 1,
                                         }}
-                                        type="number"
+                                        type='number'
                                         required
-                                        value={playersStats[player._id].redCards}
-                                        onChange={(event) => {
-                                          playersStats[player._id].redCards =
-                                            parseInt(event.target.value) ?? 0
-                                          serPlayerStats({ ...playersStats })
-                                        }}
-                                        variant="standard"
-                                      ></TextField>
+                                        variant='standard'
+                                        {...register(`presentPlayersStats.${playerStatsIndex}.redCards`)}
+                                      />
                                     </TableCell>
                                   </TableRow>
                                 )
                               })}
-                          </TableBody>
-                        </Table>
-                      </TableContainer>
-                    </Paper>
-                  </Grid>
-                )
-              })}
+                            </TableBody>
+                          </Table>
+                        </TableContainer>
+                      </Paper>
+                    </Grid>
+                  )
+                })}
+              </Grid>
+            </Grid>
+
+            <Grid item xs={12}>
+              <Typography variant='h5' align='center'>
+                Goleiros
+              </Typography>
+            </Grid>
+
+            <Grid item xs={12}>
+              <TableContainer>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Goleiro</TableCell>
+                      <TableCell>Gols</TableCell>
+                      <TableCell>Assistências</TableCell>
+                      <TableCell>CA</TableCell>
+                      <TableCell>CV</TableCell>
+                      <TableCell>Time</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {presentPlayersStats
+                      .filter((player) => player.player.position === 'Goleiro')
+                      .map((goalkeeper) => {
+                        const playerStatsIndex = presentPlayersStats.findIndex(
+                          (stats) => stats.player._id === goalkeeper.player._id,
+                        )
+                        if (playerStatsIndex === -1) return <></>
+                        return (
+                          <TableRow key={goalkeeper.player._id}>
+                            <TableCell>{goalkeeper.player.nickname}</TableCell>
+                            <TableCell>
+                              <TextField
+                                inputProps={{
+                                  inputMode: 'numeric',
+                                  step: 1,
+                                }}
+                                type='number'
+                                required
+                                variant='standard'
+                                {...register(`presentPlayersStats.${playerStatsIndex}.goals`)}
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <TextField
+                                inputProps={{
+                                  inputMode: 'numeric',
+                                  step: 1,
+                                }}
+                                type='number'
+                                required
+                                variant='standard'
+                                {...register(`presentPlayersStats.${playerStatsIndex}.assists`)}
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <TextField
+                                inputProps={{
+                                  inputMode: 'numeric',
+                                  step: 1,
+                                }}
+                                type='number'
+                                required
+                                variant='standard'
+                                {...register(`presentPlayersStats.${playerStatsIndex}.yellowCards`)}
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <TextField
+                                inputProps={{
+                                  inputMode: 'numeric',
+                                  step: 1,
+                                }}
+                                type='number'
+                                required
+                                variant='standard'
+                                {...register(`presentPlayersStats.${playerStatsIndex}.redCards`)}
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <TextField
+                                label='Time'
+                                sx={{ width: 200 }}
+                                onChange={handleGoalkeeperTeamChange(goalkeeper.player)}
+                                select
+                              >
+                                <MenuItem value='teamA'>Casa</MenuItem>
+                                <MenuItem value='teamB'>Visitante</MenuItem>
+                              </TextField>
+                            </TableCell>
+                          </TableRow>
+                        )
+                      })}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Grid>
+
+            <Grid item xs={12}>
+              <Typography variant='h5' align='center'>
+                Partidas
+              </Typography>
+              <MarchesForm teamGoalkeeperMenuItems={teamGoalkeeperMenuItems} teamMenuItems={teamMenuItems} />
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant='h5' align='center'>
+                Punições
+              </Typography>
+              <TeamPunishmentsForm teamMenuItems={teamMenuItems} />
             </Grid>
           </Grid>
-
-          <Grid item xs={12}>
-            <Typography variant="h5" align="center">
-              Goleiros
-            </Typography>
-          </Grid>
-
-          <Grid item xs={12}>
-            <TableContainer>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Goleiro</TableCell>
-                    <TableCell>Gols</TableCell>
-                    <TableCell>Assistências</TableCell>
-                    <TableCell>CA</TableCell>
-                    <TableCell>CV</TableCell>
-                    <TableCell>Time</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {matchPlayers.presentPlayers
-                    .filter((player) => player.position === 'Goleiro')
-                    .map((goalkeeper) => {
-                      return (
-                        <TableRow key={goalkeeper._id}>
-                          <TableCell>{goalkeeper.nickname}</TableCell>
-                          <TableCell>
-                            <TextField
-                              inputProps={{
-                                inputMode: 'numeric',
-                                pattern: '[0-9]*',
-                                step: 1,
-                              }}
-                              required
-                              value={playersStats[goalkeeper._id].goals}
-                              onChange={(event) => {
-                                playersStats[goalkeeper._id].goals =
-                                  parseInt(event.target.value) ?? 0
-                                serPlayerStats({ ...playersStats })
-                              }}
-                              variant="standard"
-                            ></TextField>
-                          </TableCell>
-                          <TableCell>
-                            <TextField
-                              inputProps={{
-                                inputMode: 'numeric',
-                                pattern: '[0-9]*',
-                                step: 1,
-                              }}
-                              required
-                              value={playersStats[goalkeeper._id].assists}
-                              onChange={(event) => {
-                                playersStats[goalkeeper._id].assists =
-                                  parseInt(event.target.value) ?? 0
-                                serPlayerStats({ ...playersStats })
-                              }}
-                              variant="standard"
-                            ></TextField>
-                          </TableCell>
-                          <TableCell>
-                            <TextField
-                              inputProps={{
-                                inputMode: 'numeric',
-                                step: 1,
-                              }}
-                              type="number"
-                              required
-                              value={playersStats[goalkeeper._id].yellowCards}
-                              onChange={(event) => {
-                                playersStats[goalkeeper._id].yellowCards =
-                                  parseInt(event.target.value) ?? 0
-                                serPlayerStats({ ...playersStats })
-                              }}
-                              variant="standard"
-                            ></TextField>
-                          </TableCell>
-                          <TableCell>
-                            <TextField
-                              inputProps={{
-                                inputMode: 'numeric',
-                                step: 1,
-                              }}
-                              type="number"
-                              required
-                              value={playersStats[goalkeeper._id].redCards}
-                              onChange={(event) => {
-                                playersStats[goalkeeper._id].redCards =
-                                  parseInt(event.target.value) ?? 0
-                                serPlayerStats({ ...playersStats })
-                              }}
-                              variant="standard"
-                            ></TextField>
-                          </TableCell>
-                          <TableCell>
-                            <TextField
-                              label="Time"
-                              sx={{ width: 200 }}
-                              onChange={handleGoalkeeperTeamChange(goalkeeper)}
-                              select
-                            >
-                              <MenuItem value="teamA">Casa</MenuItem>
-                              <MenuItem value="teamB">Visitante</MenuItem>
-                            </TextField>
-                          </TableCell>
-                        </TableRow>
-                      )
-                    })}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Grid>
-
-          <Grid item xs={12}>
-            <Typography variant="h5" align="center">
-              Partidas
-            </Typography>
-            <MarchesForm
-              matches={matches}
-              handleTeamGoalkeeperChange={handleTeamGoalkeeperChange}
-              teamGoalkeeperMenuItems={teamGoalkeeperMenuItems}
-              handleTeamChange={handleTeamChange}
-              teamMenuItems={teamMenuItems}
-              handleTeamGoalsChange={handleTeamGoalsChange}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <Typography variant="h5" align="center">
-              Punições
-            </Typography>
-            <TeamPunishmentsForm
-              teamPunishments={teamPunishments}
-              teamMenuItems={teamMenuItems}
-              setTeamPunishments={setTeamPunishments}
-            />
-          </Grid>
-        </Grid>
-        <Button type="submit">Salvar</Button>
-      </FormControl>
+          <Button type='submit'>Salvar</Button>
+        </FormControl>
+      </FormProvider>
     </form>
   )
 }
 
 function MarchesForm({
-  matches,
-  handleTeamGoalkeeperChange,
   teamGoalkeeperMenuItems,
-  handleTeamChange,
   teamMenuItems,
-  handleTeamGoalsChange,
 }: {
-  matches: SerieDetailsMatchData[]
-  handleTeamGoalkeeperChange: (
-    team: SerieDetailsMatchTeamData
-  ) => (event: React.ChangeEvent<HTMLInputElement>) => void
-  teamGoalkeeperMenuItems: () => JSX.Element[]
-  handleTeamChange: (
-    team: SerieDetailsMatchTeamData
-  ) => (event: React.ChangeEvent<HTMLInputElement>) => void
-  teamMenuItems: () => JSX.Element[]
-  handleTeamGoalsChange: (
-    team: SerieDetailsMatchTeamData
-  ) => (event: ChangeEvent<HTMLInputElement>) => void
+  teamGoalkeeperMenuItems: (baseKey: string) => JSX.Element[]
+  teamMenuItems: (baseKey: string) => JSX.Element[]
 }) {
+  const { register, watch, control } = useFormContext<ManageGameDayForm>()
+  const matches = watch('matches')
+
   return (
     <Grid item xs={12}>
       <Stack spacing={1}>
         {matches.map((match, index) => {
           return (
-            <Paper key={index} variant="outlined">
+            <Paper key={`match-${index}`} variant='outlined'>
               <FormControl>
-                <Grid
-                  container
-                  padding={1}
-                  spacing={1}
-                  direction="row"
-                  justifyContent="center"
-                  alignItems="center"
-                >
+                <Grid container padding={1} spacing={1} direction='row' justifyContent='center' alignItems='center'>
                   <Grid item>
                     <Typography>Partida {index + 1}</Typography>
                   </Grid>
                   <Grid item>
-                    <TextField
-                      label="Goleiro"
-                      sx={{ width: 200 }}
-                      value={match.teamA.goalkeeper?._id || ''}
-                      onChange={handleTeamGoalkeeperChange(match.teamA)}
-                      select
-                    >
-                      <MenuItem value={''}>Convidado</MenuItem>
-                      {teamGoalkeeperMenuItems()}
-                    </TextField>
+                    <Controller
+                      name={`matches.${index}.teamA.goalkeeper`}
+                      control={control}
+                      render={({ field }) => (
+                        <TextField label='Goleiro' sx={{ width: 200 }} select defaultValue='' {...field}>
+                          <MenuItem value={''}>Convidado</MenuItem>
+                          {teamGoalkeeperMenuItems(`match-${index}`)}
+                        </TextField>
+                      )}
+                    />
                   </Grid>
                   <Grid item>
-                    <TextField
-                      required
-                      label="Time"
-                      sx={{ width: 200 }}
-                      value={match.teamA.team}
-                      onChange={handleTeamChange(match.teamA)}
-                      select
-                    >
-                      {teamMenuItems()}
-                    </TextField>
+                    <Controller
+                      name={`matches.${index}.teamA.team`}
+                      control={control}
+                      render={({ field }) => (
+                        <TextField label='Time' sx={{ width: 200 }} select defaultValue='' {...field}>
+                          {teamMenuItems(`match-${index}`)}
+                        </TextField>
+                      )}
+                    />
                   </Grid>
                   <Grid item>
                     <TextField
@@ -554,14 +440,13 @@ function MarchesForm({
                         inputMode: 'numeric',
                         pattern: '[0-9]*',
                       }}
-                      value={match.teamA.goals}
-                      onChange={handleTeamGoalsChange(match.teamA)}
                       sx={{ width: 50 }}
                       required
-                    ></TextField>
+                      {...register(`matches.${index}.teamA.goals`)}
+                    />
                   </Grid>
                   <Grid item>
-                    <Typography variant="body1" align="center">
+                    <Typography variant='body1' align='center'>
                       X
                     </Typography>
                   </Grid>
@@ -571,35 +456,33 @@ function MarchesForm({
                         inputMode: 'numeric',
                         pattern: '[0-9]*',
                       }}
-                      value={match.teamB.goals}
-                      onChange={handleTeamGoalsChange(match.teamB)}
                       sx={{ width: 50 }}
                       required
-                    ></TextField>
+                      {...register(`matches.${index}.teamB.goals`)}
+                    />
                   </Grid>
                   <Grid item>
-                    <TextField
-                      label="Time"
-                      required
-                      sx={{ width: 200 }}
-                      value={match.teamB.team}
-                      onChange={handleTeamChange(match.teamB)}
-                      select
-                    >
-                      {teamMenuItems()}
-                    </TextField>
+                    <Controller
+                      name={`matches.${index}.teamB.team`}
+                      control={control}
+                      render={({ field }) => (
+                        <TextField label='Time' sx={{ width: 200 }} select defaultValue='' {...field}>
+                          {teamMenuItems(`match-${index}`)}
+                        </TextField>
+                      )}
+                    />
                   </Grid>
                   <Grid item>
-                    <TextField
-                      label="Goleiro"
-                      sx={{ width: 200 }}
-                      value={match.teamB.goalkeeper?._id || ''}
-                      onChange={handleTeamGoalkeeperChange(match.teamB)}
-                      select
-                    >
-                      <MenuItem value={''}>Convidado</MenuItem>
-                      {teamGoalkeeperMenuItems()}
-                    </TextField>
+                    <Controller
+                      name={`matches.${index}.teamB.goalkeeper`}
+                      control={control}
+                      render={({ field }) => (
+                        <TextField label='Goleiro' sx={{ width: 200 }} select defaultValue='' {...field}>
+                          <MenuItem value={''}>Convidado</MenuItem>
+                          {teamGoalkeeperMenuItems(`match-${index}`)}
+                        </TextField>
+                      )}
+                    />
                   </Grid>
                 </Grid>
               </FormControl>
@@ -611,67 +494,35 @@ function MarchesForm({
   )
 }
 
-function TeamPunishmentsForm({
-  teamPunishments,
-  teamMenuItems,
-  setTeamPunishments,
-}: {
-  teamPunishments: TeamPunishmentData[]
-  teamMenuItems: () => JSX.Element[]
-  setTeamPunishments: (punishments: TeamPunishmentData[]) => void
-}) {
-  const handleTeamChange =
-    (punishment: TeamPunishmentData) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      punishment.team = event.target.value
-      setTeamPunishments([...teamPunishments])
-    }
+function TeamPunishmentsForm({ teamMenuItems }: { teamMenuItems: (baseKey: string) => JSX.Element[] }) {
+  const { control, register } = useFormContext<ManageGameDayForm>()
+  const punishmentsMethods = useFieldArray({ control, name: 'teamPunishments' })
 
   const handleAddPunishment = () => {
-    setTeamPunishments([...teamPunishments, { team: '', points: 0, reason: '' }])
+    punishmentsMethods.append({ team: '', points: 0, reason: '' })
   }
 
-  const handleScoreChange =
-    (punishment: TeamPunishmentData) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      punishment.points = parseInt(event.target.value)
-      setTeamPunishments([...teamPunishments])
-    }
-
-  const handleReasonChange =
-    (punishment: TeamPunishmentData) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      punishment.reason = event.target.value
-      setTeamPunishments([...teamPunishments])
-    }
-
   const handleRemovePunishment = (index: number) => () => {
-    teamPunishments.splice(index, 1)
-    setTeamPunishments([...teamPunishments])
+    punishmentsMethods.remove(index)
   }
 
   return (
     <Stack spacing={1}>
-      {teamPunishments?.map((punishment, index) => {
+      {punishmentsMethods.fields.map((punishment, index) => {
         return (
-          <Paper key={index} variant="outlined">
-            <Grid item key={index}>
+          <Paper key={`punishment${index}`} variant='outlined'>
+            <Grid item>
               <FormControl>
-                <Grid
-                  container
-                  padding={1}
-                  spacing={1}
-                  direction="row"
-                  justifyContent="center"
-                  alignItems="center"
-                >
+                <Grid container padding={1} spacing={1} direction='row' justifyContent='center' alignItems='center'>
                   <Grid item>
                     <TextField
                       required
-                      label="Time"
+                      label='Time'
                       sx={{ width: 200 }}
-                      value={punishment.team}
-                      onChange={handleTeamChange(punishment)}
                       select
+                      {...register(`teamPunishments.${index}.team`)}
                     >
-                      {teamMenuItems()}
+                      {teamMenuItems(`punishment-${index}`)}
                     </TextField>
                   </Grid>
                   <Grid item>
@@ -680,25 +531,18 @@ function TeamPunishmentsForm({
                         inputMode: 'numeric',
                         step: 1,
                       }}
-                      type="number"
-                      value={punishment.points}
-                      onChange={handleScoreChange(punishment)}
+                      type='number'
                       sx={{ width: 100 }}
-                      label="Pontos"
+                      label='Pontos'
                       required
-                    ></TextField>
+                      {...register(`teamPunishments.${index}.points`)}
+                    />
                   </Grid>
                   <Grid item>
-                    <TextField
-                      value={punishment.reason}
-                      onChange={handleReasonChange(punishment)}
-                      label="Motivo"
-                      required
-                      fullWidth
-                    ></TextField>
+                    <TextField label='Motivo' required fullWidth {...register(`teamPunishments.${index}.reason`)} />
                   </Grid>
                   <Grid item>
-                    <IconButton color="primary" onClick={handleRemovePunishment(index)}>
+                    <IconButton color='primary' onClick={handleRemovePunishment(index)}>
                       <RemoveIcon />
                     </IconButton>
                   </Grid>
