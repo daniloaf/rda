@@ -24,11 +24,11 @@ export default function SerieDetailsPage({
 }) {
   return (
     <Stack spacing={1}>
-      <Typography variant="h5">
+      <Typography variant='h5'>
         Série {getMonthName(serie.month, 'LLLL')}/{serie.year}
       </Typography>
-      <Stack direction="row" spacing={1}>
-        <Typography variant="body1">
+      <Stack direction='row' spacing={1}>
+        <Typography variant='body1'>
           <b>Início: </b>
           <DateComponent dateString={serie.startDate} />
         </Typography>
@@ -39,17 +39,17 @@ export default function SerieDetailsPage({
       </Stack>
       <br />
       <Stack component={Paper} spacing={1} padding={1}>
-        <Typography variant="h5" align="center">
+        <Typography variant='h5' align='center'>
           Times da série
         </Typography>
-        <Grid container spacing={2} padding={1} justifyContent="center">
+        <Grid container spacing={2} padding={1} justifyContent='center'>
           {serie.teams.map((team) => {
             return (
               <Grid key={team._id} item xs={12} md={3}>
                 <Paper sx={{ padding: 1 }}>
-                  <Typography variant="subtitle2">Time {team.color}</Typography>
+                  <Typography variant='subtitle2'>Time {team.color}</Typography>
                   {team.players.map((player) => (
-                    <Typography variant="body1" key={player._id}>
+                    <Typography variant='body1' key={player._id}>
                       {player.nickname}
                     </Typography>
                   ))}
@@ -58,9 +58,9 @@ export default function SerieDetailsPage({
             )
           })}
         </Grid>
-        <TeamRankingTableComponent title="Classificação" ranking={teamRanking} />
+        <TeamRankingTableComponent title='Classificação' ranking={teamRanking} />
         <GameDayPlayerStatsComponent title={'Atletas'} playersStats={playersStats} />
-        <Typography variant="h5" align="center">
+        <Typography variant='h5' align='center'>
           Rachas
         </Typography>
         {serie.gameDays.map((gameDay) => {
@@ -71,9 +71,7 @@ export default function SerieDetailsPage({
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async (
-  context: GetServerSidePropsContext
-) => {
+export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
   const id = context.query.id as string
   const serieDetails = await SerieServices.getSerieDetails(id)
   const { teamRanking, playersStats } = await SerieServices.getSerieStats(id)

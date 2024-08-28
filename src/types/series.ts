@@ -25,7 +25,7 @@ export interface SerieDetailsGameDayPlayerStats {
 export interface SerieDetailsMatchTeamData {
   team: string
   goals: number
-  goalkeeper?: PlayerData
+  goalkeeper?: string
 }
 
 export interface SerieDetailsMatchData {

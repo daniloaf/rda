@@ -9,7 +9,7 @@ import { ReactElement, useState } from 'react'
 import ManageGameDayFormComponent from '../../../components/ManageGameDayFormComponent'
 import ManageTeamsComponent from '../../../components/ManageTeamsComponent'
 import ActivePlayerData from '../../../types/admin/ActivePlayerData'
-import SerieDetailsGameDayData from '../../../types/admin/SerieDetailsGameDayData'
+import { SerieDetailsGameDayData } from '../../../types/series'
 
 const ManageContentDialog = ({
   title,

@@ -1,8 +1,6 @@
 import { FilterQuery } from 'mongoose'
-import { IGameDay } from '../models/gameDay'
 import Player, { IPlayer } from '../models/player'
 import Serie, { ISerie } from '../models/serie'
-import { ITeam } from '../models/team'
 
 export const getPlayerById = async (playerId: string) => {
   return Player.findById(playerId)
@@ -30,6 +28,8 @@ export const getPlayerStats = async (playerId: string) => {
       losses: number
       totalScore: number
       numScores: number
+      yellowCards: number
+      redCards: number
     }
   } = {}
   for (const serie of series) {
@@ -44,6 +44,8 @@ export const getPlayerStats = async (playerId: string) => {
         losses: 0,
         totalScore: 0,
         numScores: 0,
+        yellowCards: 0,
+        redCards: 0,
       }
     }
     const yearStats = playerStats[serie.year]
@@ -58,6 +60,8 @@ export const getPlayerStats = async (playerId: string) => {
       yearStats.totalScore += playerStats?.score || 0
       yearStats.numScores += playerStats?.score ? 1 : 0
       yearStats.attendance += playerStats ? 1 : 0
+      yearStats.yellowCards += playerStats?.yellowCards || 0
+      yearStats.redCards += playerStats?.redCards || 0
 
       for (const match of gameDay.matches) {
         const goalsDiff = match.teamA.goals - match.teamB.goals
@@ -146,13 +150,7 @@ export const getPlayerYearStats = async (playerId: string, year: number) => {
   }
 }
 
-export const createPlayer = async ({
-  fullName,
-  nickname,
-  position,
-  birthdate,
-  picture,
-}: IPlayer) => {
+export const createPlayer = async ({ fullName, nickname, position, birthdate, picture }: IPlayer) => {
   return Player.create({
     fullName,
     nickname,
@@ -164,13 +162,13 @@ export const createPlayer = async ({
 
 export const updatePlayer = async (
   playerId: string,
-  { fullName, nickname, position, birthdate, picture, active }: IPlayer
+  { fullName, nickname, position, birthdate, picture, active }: IPlayer,
 ) => {
   return Player.findByIdAndUpdate(
     playerId,
     {
       $set: { fullName, nickname, position, birthdate, picture, active },
     },
-    { new: true }
+    { new: true },
   )
 }

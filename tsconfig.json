@@ -30,5 +30,5 @@
     ".next/types/**/*.ts",
     "src/scripts/createTestData.js"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "src/scripts"]
 }

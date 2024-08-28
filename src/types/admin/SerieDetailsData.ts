@@ -1,5 +1,5 @@
+import { SerieDetailsGameDayData } from '../series'
 import SerieDetailsTeamData from './SerieDetailsTeamData'
-import SerieDetailsGameDayData from './SerieDetailsGameDayData'
 
 export default interface SerieDetailsData {
   _id: string
@@ -7,6 +7,6 @@ export default interface SerieDetailsData {
   year: number
   startDate: string
   endDate?: string
-  teams: Array<SerieDetailsTeamData>
-  gameDays: Array<SerieDetailsGameDayData>
+  teams: SerieDetailsTeamData[]
+  gameDays: SerieDetailsGameDayData[]
 }

@@ -18,7 +18,6 @@ import {
 import RemoveIcon from '@mui/icons-material/Remove'
 
 import { useRouter } from 'next/router'
-import SerieDetailsGameDayData from '../types/admin/SerieDetailsGameDayData'
 import SerieDetailsTeamData from '../types/admin/SerieDetailsTeamData'
 import GameDayPlayersComponent from './GameDayPlayersComponent'
 import ActivePlayerData from '../types/admin/ActivePlayerData'
@@ -28,6 +27,7 @@ import { Controller, FormProvider, SubmitHandler, useFieldArray, useForm, useFor
 import axios from 'axios'
 import { useMutation } from '@tanstack/react-query'
 import RHFDateField from './fields/rhf/RHFDateField'
+import { SerieDetailsGameDayData } from '../types/series'
 
 const playerSchema = yup.object({
   _id: yup.string().required(),
@@ -77,8 +77,8 @@ export default function ManageGameDayFormComponent({
   players,
 }: {
   gameDay?: SerieDetailsGameDayData
-  teams: Array<SerieDetailsTeamData>
-  players: Array<ActivePlayerData>
+  teams: SerieDetailsTeamData[]
+  players: ActivePlayerData[]
   serieId: string
 }) {
   const methods = useForm<ManageGameDayForm>({
@@ -101,7 +101,7 @@ export default function ManageGameDayFormComponent({
         })),
     },
   })
-  const { register, handleSubmit, getValues, setValue, watch } = methods
+  const { handleSubmit, getValues, setValue, watch } = methods
   const presentPlayersStats = watch('presentPlayersStats')
 
   const teamMenuItems = (baseKey: string) =>

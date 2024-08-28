@@ -17,17 +17,12 @@ export default function PlayerProfilePage({
   player: PlayerProfileData
   playerYearStats: Array<PlayerYearStats>
 }) {
+  console.log(playerYearStats)
   return (
-    <Stack sx={{ padding: 1 }} width="100%">
+    <Stack sx={{ padding: 1 }} width='100%'>
       <Grid container spacing={1}>
         <Grid item>
-          <PlayerCardComponent
-            player={player}
-            width={150}
-            height={200}
-            href={''}
-            linkEndabled={false}
-          />
+          <PlayerCardComponent player={player} width={150} height={200} href={''} linkEndabled={false} />
         </Grid>
         <Grid item xs={10}>
           <PlayerDataComponent player={player} />

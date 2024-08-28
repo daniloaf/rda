@@ -5,18 +5,12 @@ import * as GameDayServices from '../services/gameDay'
 import { Stack } from '@mui/system'
 import getMonthName from '../utils/getMonthName'
 import GameDayComponent from '../components/GameDayComponent'
+import GameDaySummaryData from '../types/GameDaySummaryData'
 
-export default function Home({
-  previousGameDays,
-}: {
-  previousGameDays: Array<{
-    _id: string
-    date: string
-    year: number
-    month: number
-  }>
-}) {
-  const groupedData = {} as any
+export default function Home({ previousGameDays }: { previousGameDays: GameDaySummaryData[] }) {
+  const groupedData = {} as {
+    [year: string]: { [month: string]: GameDaySummaryData[] }
+  }
 
   _(previousGameDays)
     .orderBy(['year', 'month', 'date'], ['desc', 'desc', 'desc'])
@@ -35,7 +29,7 @@ export default function Home({
           .map((year) => {
             return (
               <Stack key={year} spacing={1} padding={1} component={Paper}>
-                <Typography variant="h5">{year}</Typography>
+                <Typography variant='h5'>{year}</Typography>
                 <Divider />
                 {_.keys(groupedData[year])
                   .sort()
@@ -43,9 +37,7 @@ export default function Home({
                   .map((month) => {
                     return (
                       <Stack key={month} spacing={1}>
-                        <Typography variant="h6">
-                          {getMonthName(parseInt(month), 'LLLL')}
-                        </Typography>
+                        <Typography variant='h6'>{getMonthName(parseInt(month), 'LLLL')}</Typography>
                         {_(groupedData[year][month])
                           .orderBy(['year', 'month', 'date'], ['desc', 'desc', 'desc'])
                           .map((gameDay) => {
