@@ -17,7 +17,6 @@ export default function PlayerProfilePage({
   player: PlayerProfileData
   playerYearStats: Array<PlayerYearStats>
 }) {
-  console.log(playerYearStats)
   return (
     <Stack sx={{ padding: 1 }} width='100%'>
       <Grid container spacing={1}>
