@@ -81,24 +81,28 @@ export default function ManageGameDayFormComponent({
   players: ActivePlayerData[]
   serieId: string
 }) {
+  const initialPresentPlayers =
+    gameDay?.playersStats ??
+    teams
+      .map((team) => team.players.map((player) => ({ player, goals: 0, assists: 0, yellowCards: 0, redCards: 0 })))
+      .flat()
+      .concat(
+        players
+          .filter((player) => player.position === 'Goleiro')
+          .map((player) => ({ player, goals: 0, assists: 0, yellowCards: 0, redCards: 0 })),
+      )
+      .sort((a, b) => a.player.nickname.localeCompare(b.player.nickname))
   const methods = useForm<ManageGameDayForm>({
     resolver: yupResolver(manageGameDaySchema),
     defaultValues: {
       date: gameDay?.date.split('T')[0] ?? '',
       matches: gameDay?.matches,
-      presentPlayersStats:
-        gameDay?.playersStats ??
-        players.map((player) => ({ player, goals: 0, assists: 0, yellowCards: 0, redCards: 0 })),
+      presentPlayersStats: initialPresentPlayers,
       teamPunishments: gameDay?.teamPunishments,
       missingPlayersStats: players
-        .filter((player) => !gameDay?.playersStats?.some((stats) => stats.player._id === player._id))
-        .map((player) => ({
-          player,
-          goals: 0,
-          assists: 0,
-          yellowCards: 0,
-          redCards: 0,
-        })),
+        .filter((player) => !initialPresentPlayers.some((presentPlayer) => presentPlayer.player._id === player._id))
+        .map((player) => ({ player, goals: 0, assists: 0, yellowCards: 0, redCards: 0 }))
+        .sort((a, b) => a.player.nickname.localeCompare(b.player.nickname)),
     },
   })
   const { handleSubmit, getValues, setValue, watch } = methods
