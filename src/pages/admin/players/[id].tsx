@@ -16,6 +16,7 @@ const playerSchema = yup.object({
   fullName: yup.string().required(),
   nickname: yup.string().required(),
   birthdate: yup.string().required(),
+  position: yup.string().required(),
   active: yup.boolean().required(),
 })
 
@@ -74,6 +75,7 @@ export default function AdminPlayerProfilePage({ player }: { player: PlayerProfi
               <TextField type='text' required label='Nome' {...register('fullName')} />
               <TextField type='text' required label='Apelido' {...register('nickname')} />
               <TextField fullWidth type='date' required {...register('birthdate')} />
+              <TextField type='text' required label='Posição' {...register('position')} />
               <FormGroup>
                 <FormControlLabel
                   label='Ativo'
